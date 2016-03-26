@@ -4,11 +4,62 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var multer = require('multer');
+
+// Using the custom module I created to check that all of the folders required
+// within the uploads directory exist. If they don't, then they will be created.
+// Envoking the function contained within this module by adding () to the end,
+// as this funciton expects no parametres. Only calling this function when the
+// server starts up, as there should be no reason that this directories would
+// end up being deleted after this point. If I were to check/create these directories
+// each time a file were uploaded, it would significantly increase the time requrired
+// to store the files.
+var checkUploadDirectories = require('./custom_modules/checkUploadDirectories')();
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var admin = require('./routes/admin');
 
 var app = express();
+
+var multerStorage = multer.diskStorage({
+    destination: function(req, file, cb){
+        // Getting the file type of this file by splitting the mimetype (e.g. image/jpg) at
+        // the "/" and then taking the first half of this new array of strings i.e. image
+        var fileType = file.mimetype.split("/")[0];
+        
+        // Logging out the file type to the console (testing purposes)
+        console.log("This file is an " + fileType + " file");
+        
+        // Creating a pathName variable, to store the path to the directory that this file
+        // should be stored in (this will be decided based on the filetype). This variable
+        // will then be passed to the destination function's callback, to pass the required
+        // pathName back so that multer knows where to store the file
+        var pathName;
+        
+        // Deciding which folder to store the file in, depending on it's file type
+        if(fileType == "image"){
+           // Setting the pathname so that multer knows where to store image files
+           pathName = './file_uploads/images';
+        } else if(fileType == "audio"){
+            // Setting the pathname so that multer knows where to store audio files
+           pathName = './file_uploads/audio';
+        } else {
+            // Setting the pathname so that multer knows where to store all other files
+           pathName = './file_uploads/other';
+        }
+        
+        // Using the destination function's callback to pass the required pathname back
+        // so that multer knows where to store this file
+        cb(null, pathName);
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + "_" + file.originalname);
+    }
+});
+
+var multerUpload = multer({
+    storage: multerStorage
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -22,8 +73,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use("/", multerUpload.any());
 app.use('/', routes);
-app.use('/users', users);
+app.use('/admin', admin);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

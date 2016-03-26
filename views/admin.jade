@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= title
+  h2 Welcome to #{title}
+  
+  h3 Upload Media
+  form(id="uploadMedia" method="post" action="/admin" enctype="multipart/form-data")
+    input(type="file" name="fileToUpload")
+    input(type="submit" name="Upload")
