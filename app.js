@@ -4,17 +4,37 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+
+// Additional Modules
 var multer = require('multer');
+
+// Custom Modules
+var checkDirectories = require('./custom_modules/checkDirectories');
+
+// Specifying the root path of the uploads directories, so that it
+// can be prepened to each of the subdirectories below
+var mainUploadDirectory = './file_uploads/';
+
+// Creating an array to store all of the directories required for storing
+// file uploads, including the main directory (as declared above). Prepending
+// each of the subdirectories with the main directory path, so that they will
+// appear as a folder hierarchy.
+var uploadsDirectories = [
+    mainUploadDirectory,
+    mainUploadDirectory + "audio",
+    mainUploadDirectory + "images",
+    mainUploadDirectory + "other"
+];
 
 // Using the custom module I created to check that all of the folders required
 // within the uploads directory exist. If they don't, then they will be created.
-// Envoking the function contained within this module by adding () to the end,
-// as this funciton expects no parametres. Only calling this function when the
-// server starts up, as there should be no reason that this directories would
-// end up being deleted after this point. If I were to check/create these directories
-// each time a file were uploaded, it would significantly increase the time requrired
-// to store the files.
-var checkUploadDirectories = require('./custom_modules/checkUploadDirectories')();
+// Only calling this function when the server starts up, as there should be no 
+// reason that this directories would end up being deleted after this point. 
+// If I were to check/create these directories each time a file were uploaded, 
+// it would significantly increase the time required to store the files. Passing
+// the array which contains each of the directories for this file structure
+console.log("Checking if the upload directories exist");
+checkDirectories(uploadsDirectories);
 
 var routes = require('./routes/index');
 var admin = require('./routes/admin');
