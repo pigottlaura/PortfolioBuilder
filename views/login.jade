@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title
+  h2 Welcome to Portfolio Builder
+  
+  h3 Login
+  if warning
+    p(class="warning") #{warning}
+  form(id="adminLogin" method="post" action="/login" enctype="multipart/form-data")
+    input(type="text" name="username")
+    input(type="password" name="password")
+    input(type="submit" name="Login")

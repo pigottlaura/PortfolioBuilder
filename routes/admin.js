@@ -3,11 +3,13 @@ var router = express.Router();
 
 /* GET admin listing. */
 router.get('/', function(req, res, next) {
-  res.render("admin", {title: "Admin Section"});
+    console.log("Admin - in admin section");
+    res.render("admin", { title: "Admin Section" });
 });
 
-router.post('/', function(req, res, next) {
-  res.render("admin", {title: "File Uploaded"});
+router.post("/uploadMedia", function(req, res, next) {
+    console.log("Admin - file successfully uploaded");
+    res.redirect("/admin");
 });
 
 module.exports = router;

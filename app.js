@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 
 // Additional Modules
 var multer = require('multer');
+var mongoose = require('mongoose');
+var session = require('express-session');
 
 // Custom Modules
 var checkDirectories = require('./custom_modules/checkDirectories');
@@ -38,41 +40,43 @@ checkDirectories(uploadsDirectories);
 
 var routes = require('./routes/index');
 var admin = require('./routes/admin');
+var login = require('./routes/login');
+var authentication = require('./routes/authentication');
 
 var app = express();
 
 var multerStorage = multer.diskStorage({
-    destination: function(req, file, cb){
+    destination: function(req, file, cb) {
         // Getting the file type of this file by splitting the mimetype (e.g. image/jpg) at
         // the "/" and then taking the first half of this new array of strings i.e. image
         var fileType = file.mimetype.split("/")[0];
-        
+
         // Logging out the file type to the console (testing purposes)
         console.log("This file is an " + fileType + " file");
-        
+
         // Creating a pathName variable, to store the path to the directory that this file
         // should be stored in (this will be decided based on the filetype). This variable
         // will then be passed to the destination function's callback, to pass the required
         // pathName back so that multer knows where to store the file
         var pathName;
-        
+
         // Deciding which folder to store the file in, depending on it's file type
-        if(fileType == "image"){
-           // Setting the pathname so that multer knows where to store image files
-           pathName = './file_uploads/images';
-        } else if(fileType == "audio"){
+        if (fileType == "image") {
+            // Setting the pathname so that multer knows where to store image files
+            pathName = './file_uploads/images';
+        } else if (fileType == "audio") {
             // Setting the pathname so that multer knows where to store audio files
-           pathName = './file_uploads/audio';
+            pathName = './file_uploads/audio';
         } else {
             // Setting the pathname so that multer knows where to store all other files
-           pathName = './file_uploads/other';
+            pathName = './file_uploads/other';
         }
-        
+
         // Using the destination function's callback to pass the required pathname back
         // so that multer knows where to store this file
         cb(null, pathName);
     },
-    filename: function (req, file, cb) {
+    filename: function(req, file, cb) {
         cb(null, Date.now() + "_" + file.originalname);
     }
 });
@@ -93,15 +97,24 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+    secret: 'sessionSecret',
+    resave: false,
+    saveUninitialized: false
+}));
+
 app.use("/", multerUpload.any());
+
 app.use('/', routes);
+app.use("/login", login);
+app.use(["/login", "/admin"], authentication);
 app.use('/admin', admin);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handlers
@@ -109,23 +122,23 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
     });
-  });
 }
 
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
 });
 
 
