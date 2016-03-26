@@ -2,4 +2,26 @@ extends layout
 
 block content
   h1= title
-  p Welcome to Portfolio Builder
+  h2 Welcome to Portfolio Builder
+  
+  h3 Create a new Portfolio
+  form(id="createAccount" method="post" action="/createAccount")
+    label(for="username") Username:
+    input(type="text" name="username")
+    br
+    label(for="password") Password:
+    input(type="password" name="password")
+    br
+    label(for="confirmPassword") Confirm Password:
+    input(type="password" name="confirmPassword")
+    br
+    label(for="firstName") First Name:
+    input(type="text" name="firstName")
+    br
+    label(for="lastName") Last Name:
+    input(type="text" name="lastName")
+    br
+    label(for="portfolioURL") www.myportfolio.com/
+    input(type="text" name="portfolioURL")
+    br
+    input(type="submit" name="Create Portfolio")

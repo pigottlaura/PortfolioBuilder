@@ -12,6 +12,7 @@ var session = require('express-session');
 
 // Custom Modules
 var checkDirectories = require('./custom_modules/checkDirectories');
+var mongoose = require("./custom_modules/database");
 
 // Specifying the root path of the uploads directories, so that it
 // can be prepened to each of the subdirectories below
@@ -107,7 +108,7 @@ app.use("/", multerUpload.any());
 
 app.use('/', routes);
 app.use("/login", login);
-app.use(["/login", "/admin"], authentication);
+app.use(["/createAccount", "/login", "/admin"], authentication);
 app.use('/admin', admin);
 
 // catch 404 and forward to error handler

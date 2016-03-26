@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var databaseModels = require("../custom_modules/databaseModels");
+var MediaItem = databaseModels.MediaItem;
 
 /* GET admin listing. */
 router.get('/', function(req, res, next) {

@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var databaseModels = require("../custom_modules/databaseModels");
+var User = databaseModels.User;
 
 router.get("/", function(req, res, next) {
     // If the current session does not contain a username property, then
@@ -13,18 +15,30 @@ router.get("/", function(req, res, next) {
         console.log("Auth - This user is already logged in");
         next();
     }
-    
+
 });
 
-router.post("/", function(req, res, next){
-    if(req.body.username == "laura" && req.body.password == "password"){
-        req.session.username = req.body.username;
-        console.log("Auth - correct username/password");
-        res.redirect("/admin");
-    } else {
-        console.log("Auth - wrong username/password");
-        res.render("login", { title: "Login", warning: "Wrong username/password" });
-    }
+router.post("/", function(req, res, next) {
+    User.findOne({ username: req.body.username }, {}, function(err, users) {
+        if (err) {
+            console.log("Auth - Could not check if this username exists - " + err);
+            res.render("login", { title: "Login", warning: "There was an unexpected error - please try again"});
+        } else {
+            if(users == null){
+                console.log("Auth - This user does not exist");
+                res.render("login", { title: "Login", warning: "This username does not exist"});
+            } else {
+                if (req.body.username == users.username && req.body.password == users.password) {
+                    req.session.username = req.body.username;
+                    console.log("Auth - correct username/password");
+                    res.redirect("/admin");
+                } else {
+                    console.log("Auth - wrong username/password");
+                    res.render("login", { title: "Login", warning: "Wrong username/password" });
+                }
+            }
+        }
+    });
 });
 
 module.exports = router;

@@ -7,7 +7,8 @@ block content
   h3 Login
   if warning
     p(class="warning") #{warning}
-  form(id="adminLogin" method="post" action="/login" enctype="multipart/form-data")
+    
+  form(id="adminLogin" method="post" action="/login")
     input(type="text" name="username")
     input(type="password" name="password")
     input(type="submit" name="Login")
