@@ -5,7 +5,7 @@ var User = databaseModels.User;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: "Portfolio Builder" });
+    res.render('index', { title: "Portfolio Builder" });
 });
 
 router.post('/createAccount', function(req, res, next) {
@@ -14,7 +14,7 @@ router.post('/createAccount', function(req, res, next) {
             console.log("Index - Could not check if this username exists - " + err);
             res.redirect("/");
         } else {
-            if(users == null){
+            if (users == null) {
                 // This user does not exist so this username is available
                 var newUser = new User({
                     username: req.body.username,
@@ -23,9 +23,9 @@ router.post('/createAccount', function(req, res, next) {
                     lastName: req.body.lastName,
                     portfolioURL: req.body.portfolioURL
                 });
-                
-                newUser.save(function (err, newUser){
-                    if(err){
+
+                newUser.save(function(err, newUser) {
+                    if (err) {
                         console.log("Index - Could not save new user to the database - " + err);
                     } else {
                         console.log("Index - New user successfully saved to the database");
@@ -39,4 +39,5 @@ router.post('/createAccount', function(req, res, next) {
         }
     });
 });
+
 module.exports = router;

@@ -48,7 +48,7 @@ var databaseModels = {
         fileType: {
             type: String,
             required: true
-        },        
+        },    
     })
 }
 

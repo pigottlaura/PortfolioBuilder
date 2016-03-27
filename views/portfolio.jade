@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  h1= title
+
+  -for(var i = 0; i < mediaItems.length; i++)
+    p #{mediaItems[i].file.originalname}

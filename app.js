@@ -43,6 +43,7 @@ var routes = require('./routes/index');
 var admin = require('./routes/admin');
 var login = require('./routes/login');
 var authentication = require('./routes/authentication');
+var portfolio = require('./routes/portfolio');
 
 var app = express();
 
@@ -112,6 +113,7 @@ app.use('/', routes);
 app.use("/login", login);
 app.use(["/createAccount", "/login", "/admin"], authentication);
 app.use('/admin', admin);
+app.use("/portfolio", portfolio);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
