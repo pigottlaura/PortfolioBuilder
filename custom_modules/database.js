@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var connectionString = process.env.CUSTOMCONNSTR_mongoDB || "localhost:27017/PortfolioBuilder";
+var connectionString = process.env.CUSTOMCONNSTR_PortfolioBuilderMongo || "localhost:27017/PortfolioBuilder";
 
 mongoose.connect(connectionString);
 var db = mongoose.connection
