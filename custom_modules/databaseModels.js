@@ -44,7 +44,11 @@ var databaseModels = {
         uploadedAt: {
             type: Date,
             default: Date.now
-        }
+        },
+        fileType: {
+            type: String,
+            required: true
+        },        
     })
 }
 

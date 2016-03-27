@@ -11,7 +11,19 @@ router.get('/', function(req, res, next) {
 
 router.post("/uploadMedia", function(req, res, next) {
     console.log("Admin - file successfully uploaded");
-    res.redirect("/admin");
+    var newMediaItem = new MediaItem({
+        file: req.files[0],
+        fileType: req.fileType,
+        owner: req.session.username
+    });
+    newMediaItem.save(function(err, newMediaItem){
+        if(err){
+            console.log("Admin - Could not save media item to database");
+        } else{
+            console.log("Admin - Media item successfully saved to database");
+            res.redirect("/admin");
+        }
+    });
 });
 
 module.exports = router;

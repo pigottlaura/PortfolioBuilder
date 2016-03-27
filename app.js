@@ -73,6 +73,8 @@ var multerStorage = multer.diskStorage({
             pathName = './file_uploads/other';
         }
 
+        req.fileType = fileType;
+        
         // Using the destination function's callback to pass the required pathname back
         // so that multer knows where to store this file
         cb(null, pathName);
