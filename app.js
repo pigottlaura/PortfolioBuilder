@@ -16,7 +16,7 @@ var mongoose = require("./custom_modules/database");
 
 // Specifying the root path of the uploads directories, so that it
 // can be prepened to each of the subdirectories below
-var mainUploadDirectory = './file_uploads/';
+var mainUploadDirectory = './media_uploads/';
 
 // Creating an array to store all of the directories required for storing
 // file uploads, including the main directory (as declared above). Prepending
@@ -25,7 +25,7 @@ var mainUploadDirectory = './file_uploads/';
 var uploadsDirectories = [
     mainUploadDirectory,
     mainUploadDirectory + "audio",
-    mainUploadDirectory + "images",
+    mainUploadDirectory + "image",
     mainUploadDirectory + "other"
 ];
 
@@ -65,13 +65,13 @@ var multerStorage = multer.diskStorage({
         // Deciding which folder to store the file in, depending on it's file type
         if (fileType == "image") {
             // Setting the pathname so that multer knows where to store image files
-            pathName = './file_uploads/images';
+            pathName = mainUploadDirectory + '/image';
         } else if (fileType == "audio") {
             // Setting the pathname so that multer knows where to store audio files
-            pathName = './file_uploads/audio';
+            pathName = mainUploadDirectory + '/audio';
         } else {
             // Setting the pathname so that multer knows where to store all other files
-            pathName = './file_uploads/other';
+            pathName = mainUploadDirectory + '/other';
         }
 
         req.fileType = fileType;
@@ -100,6 +100,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'media_uploads')));
 
 app.use(session({
     secret: 'sessionSecret',

@@ -5,3 +5,5 @@ block content
 
   -for(var i = 0; i < mediaItems.length; i++)
     p #{mediaItems[i].file.originalname}
+    if mediaItems[i].fileType == "image"
+        img(src='#{mediaItems[i].filePath}' alt="Alt Text")
