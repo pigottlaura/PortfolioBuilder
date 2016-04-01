@@ -1,13 +1,22 @@
 extends layout
 
 block content
-  h1= title
-
-  -for(var i = 0; i < mediaItems.length; i++)
-    if mediaItems[i].fileType == "image"
-        figure
-            img(src='#{mediaItems[i].filePath}' alt="Alt Text" class="thumbnail")
-            if mediaItems[i].title
-                figcaption #{mediaItems[i].title}
-            else
-                figcaption #{mediaItems[i].file.originalname}
+  div.row
+    div.col-md-12
+        h1= title
+ 
+  -for(var i = 0; i < mediaItems.length; i+=3)
+    
+    div.row
+        
+        - for(var j = 0; j < 3; j++)
+            if(i + j < mediaItems.length)
+            
+                if(mediaItems[i + j].fileType == "image")
+                    div.col-md-4.col-xs-4
+                        figure
+                            img(src='#{mediaItems[i + j].filePath}' alt="Alt Text" class="thumbnail")
+                            if mediaItems[i + j].title
+                                figcaption #{mediaItems[i + j].title}
+                            else
+                                figcaption #{mediaItems[i + j].file.originalname}
