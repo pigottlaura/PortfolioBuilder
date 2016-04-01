@@ -19,7 +19,7 @@ router.get("/", function(req, res, next) {
 });
 
 router.post("/", function(req, res, next) {
-    User.findOne({ username:  }, {}, function(err, users) {
+    User.findOne({ username: req.body.username.toLowerCase() }, {}, function(err, users) {
         if (err) {
             console.log("Auth - Could not check if this username exists - " + err);
             res.render("login", { title: "Login", warning: "There was an unexpected error - please try again"});
