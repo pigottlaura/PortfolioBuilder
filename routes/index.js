@@ -1,5 +1,28 @@
 var express = require('express');
 var router = express.Router();
+var crypto = require('crypto');
+var cryptoAlgorithm = ("aes-256-ctr");
+var cryptoPasswordKey = process.env.CRYPTO_PASSWORD_KEY;
+//var cryptoPasswordKey = "testing";
+
+function encrypt(text) {
+    // Function sourced from an example use of Crypto
+    // https://github.com/chris-rock/node-crypto-examples/blob/master/crypto-ctr.js
+    var cipher = crypto.createCipher(cryptoAlgorithm, cryptoPasswordKey)
+    var crypted = cipher.update(text, 'utf8', 'hex')
+    crypted += cipher.final('hex');
+    return crypted;
+}
+
+function decrypt(text) {
+    // Function sourced from an example use of Crypto
+    // https://github.com/chris-rock/node-crypto-examples/blob/master/crypto-ctr.js
+    var decipher = crypto.createDecipher(cryptoAlgorithm, cryptoPasswordKey)
+    var dec = decipher.update(text, 'hex', 'utf8')
+    dec += decipher.final('utf8');
+    return dec;
+}
+
 var databaseModels = require("../custom_modules/databaseModels");
 var User = databaseModels.User;
 
@@ -9,12 +32,24 @@ router.get('/', function(req, res, next) {
 });
 
 router.post("/checkCredentialsAvailable", function(req, res, next) {
+    var fakePassword = "abc123def456";
+
+    console.log("---------------------------");
+
+    console.log(fakePassword);
+    fakePassword = encrypt(fakePassword);
+    console.log(fakePassword);
+    fakePassword = decrypt(fakePassword);
+    console.log(fakePassword);
+
+    console.log("---------------------------");
+
     var credentials = {
         usernameAvailable: true,
         portfolioURLAvailable: true
     };
 
-    User.find({ $or: [{username: req.body.requestedUsername}, {portfolioURL: req.body.requestedPortfolioURL}] }, {}, function(err, users) {
+    User.find({ $or: [{ username: req.body.requestedUsername }, { portfolioURL: req.body.requestedPortfolioURL }] }, {}, function(err, users) {
         if (users.length > 0) {
             users.forEach(function(user) {
                 if (user.username == req.body.requestedUsername) {
