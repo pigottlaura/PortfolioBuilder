@@ -1,17 +1,16 @@
 extends layout
 
 block content
-  div.row
-    div.col-md-12
-        h1= title
+    div.row
+        div.col-md-12
+            h1= title
  
-  -for(var i = 0; i < mediaItems.length; i+=3)
-    
+    -for(var i = 0; i < mediaItems.length; i+=3)
     div.row
         
         - for(var j = 0; j < 3; j++)
             if(i + j < mediaItems.length)
-            
+
                 if(mediaItems[i + j].fileType == "image")
                     div.col-md-4.col-xs-4
                         figure

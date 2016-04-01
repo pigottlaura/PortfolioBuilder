@@ -1,27 +1,48 @@
 extends layout
 
 block content
-  h1= title
-  h2 Welcome to Portfolio Builder
-  
-  h3 Create a new Portfolio
-  form(id="createAccount" method="post" action="/createAccount")
-    label(for="username") Username:
-    input(type="text" name="username")
-    br
-    label(for="password") Password:
-    input(type="password" name="password")
-    br
-    label(for="confirmPassword") Confirm Password:
-    input(type="password" name="confirmPassword")
-    br
-    label(for="firstName") First Name:
-    input(type="text" name="firstName")
-    br
-    label(for="lastName") Last Name:
-    input(type="text" name="lastName")
-    br
-    label(for="portfolioURL") www.myportfolio.com/
-    input(type="text" name="portfolioURL")
-    br
-    input(type="submit" name="Create Portfolio")
+    div.row
+        div.col-md-12
+            h1= title
+            h2 Welcome to Portfolio Builder
+    div.row
+        div.col-md-6
+            div.tabs
+                ul
+                    li
+                        a(href="#createAccountTab") Create New
+                    li
+                        a(href="#loginTab") Login
+                div#createAccountTab
+                    h3 Create a new Portfolio
+                    form(id="createAccount" method="post" action="/createAccount")
+                        label(for="username") Username:
+                        input(type="text" name="username")
+                        span(id="usernameStatusIcon")
+                        span(id="usernameStatus" aria-hidden="true")
+                        br
+                        label(for="password") Password:
+                        input(type="password" name="password")
+                        br
+                        label(for="confirmPassword") Confirm Password:
+                        input(type="password" name="confirmPassword")
+                        br
+                        label(for="firstName") First Name:
+                        input(type="text" name="firstName")
+                        br
+                        label(for="lastName") Last Name:
+                        input(type="text" name="lastName")
+                        br
+                        label(for="portfolioURL") www.myportfolio.com/
+                        input(type="text" name="portfolioURL")
+                        br
+                        input(type="submit" name="Create Portfolio")
+                div#loginTab
+                    h3 Login
+                    if warning
+                        p(class="warning") #{warning}
+                        
+                    form(id="adminLogin" method="post" action="/login")
+                        input(type="text" name="username")
+                        input(type="password" name="password")
+                        input(type="submit" name="Login")

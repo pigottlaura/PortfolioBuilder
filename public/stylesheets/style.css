@@ -11,3 +11,11 @@ a {
     width: 100%;
     height: auto;
 }
+
+#usernameStatusIcon.glyphicon-ok-circle {
+    color: #007700;
+}
+
+#usernameStatusIcon.glyphicon-ban-circle {
+    color: #770000;
+}

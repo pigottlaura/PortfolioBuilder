@@ -8,6 +8,27 @@ router.get('/', function(req, res, next) {
     res.render('index', { title: "Portfolio Builder" });
 });
 
+router.post("/checkUsernameAvailable", function(req, res, next) {
+    var usernameAvailable = "false";
+    console.log("HI - " + req.body.requestedUsername.toLowerCase());
+
+    User.findOne({ username: req.body.requestedUsername.toLowerCase() }, {}, function(err, users) {
+        if (err) {
+            console.log("Could not check if this username exists - " + err);
+        } else {
+            if (users == null) {
+                usernameAvailable = "true";
+            }
+            console.log("USERNAME AVAILABLE = " + usernameAvailable);
+            res.format({
+                'text/plain': function() {
+                    res.send(usernameAvailable);
+                }
+            });
+        }
+    });
+});
+
 router.post('/createAccount', function(req, res, next) {
     User.findOne({ username: req.body.username }, {}, function(err, users) {
         if (err) {
