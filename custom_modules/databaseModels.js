@@ -2,17 +2,9 @@ var mongoose = require("mongoose");
 
 var databaseModels = {
     User: mongoose.model("User", {
-        username: {
-            type: String,
-            required: true,
-            index: {
-                unique: true
-            }
-        },
-        password: {
-            type: String,
-            required: true
-        },
+        username: String,
+        password: String,
+        googleId: String,
         firstName: {
             type: String,
             required: true
@@ -21,10 +13,7 @@ var databaseModels = {
             type: String,
             required: true
         },
-        portfolioURL: {
-            type: String,
-            required: true
-        }
+        portfolioURL: String
     }),
     MediaItem: mongoose.model("MediaItem", {
         file: {
