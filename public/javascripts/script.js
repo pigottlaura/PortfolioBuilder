@@ -2,22 +2,37 @@ jQuery(document).ready(function($) {
     console.log("Document ready");
     $(".tabs").tabs();
 
-    $("input[name='username']").change(function() {
-        var username = $(this).val().toLowerCase();
+    $("#createAccount input").change(function() {
+        
+        $("input[name='username'], input[name='portfolioURL']").val(function(){
+            return $(this).val().toLowerCase().replace(/ /g, "");
+        });
+        
+        var username = $("input[name='username']").val().toLowerCase();
+        var url = $("input[name='portfolioURL']").val().toLowerCase();
+        
+        if ($("input[name='portfolioURL']").val() == "") {
+            $("input[name='portfolioURL']").val(username.replace(/ /g, ""));
+        }
+        
+        $.post("/checkCredentialsAvailable", { requestedUsername: username, requestedPortfolioURL: url }, function(responseData) {
+            console.log(responseData);
 
-        $.post("/checkUsernameAvailable", { requestedUsername: username }, function(usernameAvailable) {
-            if (usernameAvailable == "true") {
-                if ($("input[name='portfolioURL']").val() == "") {
-                    $("input[name='portfolioURL']").val(username.replace(/ /g, ""));
-                }
+            if (responseData.usernameAvailable) {
                 $("#usernameStatusIcon").attr("class", "glyphicon glyphicon-ok-circle");
-                $("#usernameStatus").text("available");
             } else {
                 console.log("Username not available");
                 $("#usernameStatusIcon").attr("class", "glyphicon glyphicon-ban-circle");
-                $("#usernameStatus").text("not available");
             }
 
-        });
+            if (responseData.portfolioURLAvailable) {
+                $("#portfolioURLStatusIcon").attr("class", "glyphicon glyphicon-ok-circle");
+            } else {
+                console.log("Portfolio URL not available");
+                $("#portfolioURLStatusIcon").attr("class", "glyphicon glyphicon-ban-circle");
+            }
+
+
+        }, "json");
     });
 });

@@ -18,8 +18,7 @@ block content
                     form(id="createAccount" method="post" action="/createAccount")
                         label(for="username") Username:
                         input(type="text" name="username")
-                        span(id="usernameStatusIcon")
-                        span(id="usernameStatus" aria-hidden="true")
+                        span(id="usernameStatusIcon" aria-hidden="true")
                         br
                         label(for="password") Password:
                         input(type="password" name="password")
@@ -35,6 +34,7 @@ block content
                         br
                         label(for="portfolioURL") www.myportfolio.com/
                         input(type="text" name="portfolioURL")
+                        span(id="portfolioURLStatusIcon" aria-hidden="true")
                         br
                         input(type="submit" name="Create Portfolio")
                 div#loginTab

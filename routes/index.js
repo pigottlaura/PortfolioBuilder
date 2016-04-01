@@ -8,26 +8,32 @@ router.get('/', function(req, res, next) {
     res.render('index', { title: "Portfolio Builder" });
 });
 
-router.post("/checkUsernameAvailable", function(req, res, next) {
-    var usernameAvailable = "false";
-    console.log("HI - " + req.body.requestedUsername.toLowerCase());
+router.post("/checkCredentialsAvailable", function(req, res, next) {
+    var credentials = {
+        usernameAvailable: true,
+        portfolioURLAvailable: true
+    };
 
-    User.findOne({ username: req.body.requestedUsername.toLowerCase() }, {}, function(err, users) {
-        if (err) {
-            console.log("Could not check if this username exists - " + err);
-        } else {
-            if (users == null) {
-                usernameAvailable = "true";
-            }
-            console.log("USERNAME AVAILABLE = " + usernameAvailable);
-            res.format({
-                'text/plain': function() {
-                    res.send(usernameAvailable);
+    User.find({ $or: [{username: req.body.requestedUsername}, {portfolioURL: req.body.requestedPortfolioURL}] }, {}, function(err, users) {
+        if (users.length > 0) {
+            users.forEach(function(user) {
+                if (user.username == req.body.requestedUsername) {
+                    console.log("Matched username");
+                    credentials.usernameAvailable = false;
+                }
+
+                if (user.portfolioURL == req.body.requestedPortfolioURL) {
+                    console.log("Matched url");
+                    credentials.portfolioURLAvailable = false;
                 }
             });
         }
+        console.log("Username available = " + credentials.usernameAvailable);
+        console.log("URL available = " + credentials.portfolioURLAvailable);
+        res.json(credentials);
     });
 });
+
 
 router.post('/createAccount', function(req, res, next) {
     User.findOne({ username: req.body.username }, {}, function(err, users) {
