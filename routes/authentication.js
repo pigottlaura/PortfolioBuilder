@@ -19,7 +19,7 @@ router.get("/", function(req, res, next) {
 });
 
 router.post("/", function(req, res, next) {
-    User.findOne({ username: req.body.username }, {}, function(err, users) {
+    User.findOne({ username:  }, {}, function(err, users) {
         if (err) {
             console.log("Auth - Could not check if this username exists - " + err);
             res.render("login", { title: "Login", warning: "There was an unexpected error - please try again"});
@@ -28,8 +28,8 @@ router.post("/", function(req, res, next) {
                 console.log("Auth - This user does not exist");
                 res.render("login", { title: "Login", warning: "This username does not exist"});
             } else {
-                if (req.body.username == users.username && req.body.password == users.password) {
-                    req.session.username = req.body.username;
+                if (req.body.username.toLowerCase() == users.username && req.body.password == users.password) {
+                    req.session.username = req.body.username.toLowerCase();
                     console.log("Auth - correct username/password");
                     res.redirect("/admin");
                 } else {

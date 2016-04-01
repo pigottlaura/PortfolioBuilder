@@ -17,7 +17,7 @@ router.post('/createAccount', function(req, res, next) {
             if (users == null) {
                 // This user does not exist so this username is available
                 var newUser = new User({
-                    username: req.body.username,
+                    username: req.body.username.toLowerCase(),
                     password: req.body.password,
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
