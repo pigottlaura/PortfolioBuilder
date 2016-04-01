@@ -6,5 +6,7 @@ block content
   
   h3 Upload Media
   form(id="uploadMedia" method="post" action="/admin/uploadMedia" enctype="multipart/form-data")
-    input(type="file" name="fileToUpload")
+    input(type="file" name="mediaItem")
+    label(for="mediaItemTitle") Title:
+    input(type="text" id="mediaItemTitle" name="mediaItemTitle")
     input(type="submit" name="Upload")

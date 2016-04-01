@@ -49,6 +49,10 @@ var databaseModels = {
             type: String,
             required: true
         },
+        fileTitle: {
+            type: String,
+            required: false
+        },
         filePath: {
             type: String,
             required: true
