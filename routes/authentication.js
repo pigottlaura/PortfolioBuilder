@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var cryptoEncryption = require("../custom_modules/cryptoEncryption");
 var databaseModels = require("../custom_modules/databaseModels");
 var User = databaseModels.User;
 
@@ -15,7 +16,6 @@ router.get("/", function(req, res, next) {
         console.log("Auth - This user is already logged in");
         next();
     }
-
 });
 
 router.post("/", function(req, res, next) {
@@ -28,7 +28,7 @@ router.post("/", function(req, res, next) {
                 console.log("Auth - This user does not exist");
                 res.render("login", { title: "Login", warning: "This username does not exist"});
             } else {
-                if (req.body.username.toLowerCase() == users.username && req.body.password == users.password) {
+                if (req.body.username.toLowerCase() == users.username && req.body.password == cryptoEncryption.decrypt(users.password)) {
                     req.session.username = req.body.username.toLowerCase();
                     console.log("Auth - correct username/password");
                     res.redirect("/admin");
