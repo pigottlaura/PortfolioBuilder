@@ -4,6 +4,10 @@ block content
   h1= title
 
   -for(var i = 0; i < mediaItems.length; i++)
-    p #{mediaItems[i].file.originalname}
     if mediaItems[i].fileType == "image"
-        img(src='#{mediaItems[i].filePath}' alt="Alt Text")
+        figure
+            img(src='#{mediaItems[i].filePath}' alt="Alt Text" class="thumbnail")
+            if mediaItems[i].title
+                figcaption #{mediaItems[i].title}
+            else
+                figcaption #{mediaItems[i].file.originalname}
