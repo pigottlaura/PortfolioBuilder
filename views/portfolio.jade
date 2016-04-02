@@ -6,16 +6,16 @@ block content
             h1= title
  
     -for(var i = 0; i < mediaItems.length; i+=3)
-    div.row
+        div.row
         
-        - for(var j = 0; j < 3; j++)
-            if(i + j < mediaItems.length)
+            - for(var j = 0; j < 3; j++)
+                if(i + j < mediaItems.length)
 
-                if(mediaItems[i + j].fileType == "image")
-                    div.col-md-4.col-xs-4
-                        figure
-                            img(src='#{mediaItems[i + j].filePath}' alt="Alt Text" class="thumbnail")
-                            if(mediaItems[i + j].fileTitle)
-                                figcaption #{mediaItems[i + j].fileTitle}
-                            else
-                                figcaption #{mediaItems[i + j].file.originalname}
+                    if(mediaItems[i + j].fileType == "image")
+                        div.col-md-4.col-xs-4
+                            figure
+                                img(src='#{mediaItems[i + j].filePath}' alt="Alt Text" class="thumbnail")
+                                if(mediaItems[i + j].fileTitle)
+                                    figcaption #{mediaItems[i + j].fileTitle}
+                                else
+                                    figcaption #{mediaItems[i + j].file.originalname}
