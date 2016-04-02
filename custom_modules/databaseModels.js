@@ -5,6 +5,7 @@ var databaseModels = {
         username: String,
         password: String,
         googleId: String,
+        portfolioURL: String,
         firstName: {
             type: String,
             required: true
@@ -12,8 +13,7 @@ var databaseModels = {
         lastName: {
             type: String,
             required: true
-        },
-        portfolioURL: String
+        }
     }),
     MediaItem: mongoose.model("MediaItem", {
         file: {

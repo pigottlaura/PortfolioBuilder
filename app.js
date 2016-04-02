@@ -15,6 +15,7 @@ var checkDirectories = require('./custom_modules/checkDirectories');
 var mongoose = require("./custom_modules/database");
 var databaseModels = require("./custom_modules/databaseModels");
 var User = databaseModels.User;
+var googlePassport = require("./custom_modules/googlePassport");
 
 
 // Specifying the root path of the uploads directories, so that it
@@ -104,85 +105,34 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'media_uploads')));
-
 app.use(session({
     secret: 'sessionSecret',
     resave: false,
     saveUninitialized: false
 }));
+app.use(googlePassport.initialize());
+app.use(googlePassport.session());
+
+googlePassport.serializeUser(function(user, done) {
+    console.log("SERIALIZING USER");
+    done(null, user);
+});
+
+googlePassport.deserializeUser(function(id, done) {
+    User.findById(id, function(err, user) {
+        console.log("DESERIALIZING USER");
+        done(err, user);
+    });
+});
 
 app.use("/", multerUpload.any());
 
-var passport = require('passport');
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-
-// Use the GoogleStrategy within Passport.
-//   Strategies in Passport require a `verify` function, which accept
-//   credentials (in this case, an accessToken, refreshToken, and Google
-//   profile), and invoke a callback with a user object.
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/google/callback"
-},
-    function(accessToken, refreshToken, profile, done) {
-        for (var p in profile) {
-            console.log(profile[p]);
-        }
-        User.findOne({ googleId: profile.id }, {}, function(err, users) {
-            if (err) {
-                console.log("Cannot check if this Google users already exists - " + err);
-            } else {
-                if (users == null) {
-                    
-                    console.log(profile.name + " is a new user");
-                    var newUser = new User({
-                        portfolioURL: profile.emails[0].value.split("@")[0],
-                        firstName: profile.name.givenName,
-                        lastName: profile.name.familyName,
-                        googleId: profile.id
-                    });
-
-                    newUser.save(function(err, newUser) {
-                        if (err) {
-                            console.log("Index - Could not save new user to the database - " + err);
-                        } else {
-                            console.log("Index - New user successfully saved to the database");
-                        }
-                        next();
-                    });
-                } else {
-                    console.log(profile.name + " is an existing user");
-                }
-            }
-        });
-    }
-));
-
-// GET /auth/google
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  The first step in Google authentication will involve
-//   redirecting the user to google.com.  After authorization, Google
-//   will redirect the user back to this application at /auth/google/callback
-app.get('/auth/google',
-    passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/userinfo.email'] }));
-
-// GET /auth/google/callback
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  If authentication fails, the user will be redirected back to the
-//   login page.  Otherwise, the primary route function function will be called,
-//   which, in this example, will redirect the user to the home page.
-app.get('/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/login' }),
-    function(req, res) {
-        res.redirect('/');
-    });
-
 app.use('/', routes);
-app.use("/login", login);
-app.use(["/createAccount", "/login", "/admin"], authentication);
-app.use('/admin', admin);
 app.use("/portfolio", portfolio);
+app.use("/login", login);
+app.use(["/authentication", "/createAccount", "/login", "/admin"], authentication);
+app.use('/admin', admin);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
