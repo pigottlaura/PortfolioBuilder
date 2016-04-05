@@ -20,7 +20,7 @@ var googlePassport = require("./custom_modules/googlePassport");
 
 // Specifying the root path of the uploads directories, so that it
 // can be prepened to each of the subdirectories below
-var mainUploadDirectory = './media_uploads/';
+var mainUploadDirectory = './public/media_uploads/';
 
 // Creating an array to store all of the directories required for storing
 // file uploads, including the main directory (as declared above). Prepending
@@ -104,7 +104,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'media_uploads')));
 app.use(session({
     secret: 'sessionSecret',
     resave: false,

@@ -15,7 +15,7 @@ router.post("/uploadMedia", function(req, res, next) {
         file: req.files[0],
         fileType: req.fileType,
         owner: req.session.username,
-        filePath: "../" + req.files[0].path.split("media_uploads\\")[1],
+        filePath: "../" + req.files[0].path.split("public\\")[1],
         fileTitle: req.body.mediaItemTitle
     });
     newMediaItem.save(function(err, newMediaItem){
