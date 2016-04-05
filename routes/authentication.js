@@ -24,19 +24,21 @@ router.post("/", function(req, res, next) {
     User.findOne({ username: req.body.username }, {}, function(err, users) {
         if (err) {
             console.log("Auth - Could not check if this username exists - " + err);
-            res.render("login", { title: "Login", warning: "There was an unexpected error - please try again"});
+            res.render("login", { title: "Login", warning: "There was an unexpected error - please try again" });
         } else {
-            if(users == null){
+            if (users == null) {
                 console.log("Auth - This user does not exist");
-                res.render("login", { title: "Login", warning: "This username does not exist"});
+                res.render("login", { title: "Login", warning: "This username does not exist" });
             } else {
-                if(req.session.username != null){
-                    if(req.session.username ==  users.googleId){
+                if (req.session.username != null) {
+                    if (req.session.username == users.googleId) {
                         console.log("Auth - Google verified user");
                         res.redirect("/admin");
                     }
                 } else if (req.body.username == users.username && req.body.password == cryptoEncryption.decrypt(users.password)) {
                     req.session.username = req.body.username;
+                    req.session.profilePicture = users.profilePicture;
+                    req.session.firstName = users.firstName;
                     console.log("Auth - correct username/password");
                     res.redirect("/admin");
                 } else {
@@ -62,8 +64,10 @@ router.get('/google/callback', googlePassport.authenticate(
     }),
     function(req, res, next) {
         req.session.username = req.user.googleId;
+        req.session.profilePicture = req.session.passport.user.profilePicture;
+        req.session.firstName = req.session.passport.user.firstName;
         console.log(req.session.username);
         res.redirect('/admin');
-});
+    });
 
 module.exports = router;

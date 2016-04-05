@@ -14,6 +14,7 @@ passport.use(new GoogleStrategy({
             console.log(profile[p]);
         }
         */
+        
         User.findOne({ googleId: profile.id }, {}, function(err, user) {
             if (err) {
                 console.log("Cannot check if this Google users already exists - " + err);
@@ -23,10 +24,10 @@ passport.use(new GoogleStrategy({
                     console.log(profile.name + " is a new user");
                     var newUser = new User({
                         username: profile.id,
-                        portfolioURL: "googleuser-" + profile.id,
                         firstName: profile.name.givenName,
                         lastName: profile.name.familyName,
-                        googleId: profile.id
+                        googleId: profile.id,
+                        profilePicture: profile._json.image.url
                     });
 
                     newUser.save(function(err, newUser) {

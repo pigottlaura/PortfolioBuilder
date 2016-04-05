@@ -6,9 +6,7 @@ block content
             h1= title
             h2 Welcome to Portfolio Builder
     div.row
-        div.col-md-6
-            a(href="/authentication/google") Sign In with Google
-        div.col-md-6
+        div.col-md-8
             div.tabs
                 ul
                     li
@@ -16,29 +14,35 @@ block content
                     li
                         a(href="#loginTab") Login
                 div#createAccountTab
-                    h3 Create a new Portfolio
-                    form(id="createAccount" method="post" action="/createAccount")
-                        label(for="username") Username:
-                        input(type="text" name="username")
-                        span(id="usernameStatusIcon" aria-hidden="true")
-                        br
-                        label(for="password") Password:
-                        input(type="password" name="password")
-                        br
-                        label(for="confirmPassword") Confirm Password:
-                        input(type="password" name="confirmPassword")
-                        br
-                        label(for="firstName") First Name:
-                        input(type="text" name="firstName")
-                        br
-                        label(for="lastName") Last Name:
-                        input(type="text" name="lastName")
-                        br
-                        label(for="portfolioURL") www.myportfolio.com/
-                        input(type="text" name="portfolioURL")
-                        span(id="portfolioURLStatusIcon" aria-hidden="true")
-                        br
-                        input(type="submit" name="Create Portfolio")
+                    div
+                        h3 Create a new Portfolio
+                        form(id="createAccount" method="post" action="/createAccount")
+                            label(for="username") Username:
+                            input(type="text" name="username")
+                            span(id="usernameStatusIcon" aria-hidden="true")
+                            br
+                            label(for="password") Password:
+                            input(type="password" name="password")
+                            br
+                            label(for="confirmPassword") Confirm Password:
+                            input(type="password" name="confirmPassword")
+                            br
+                            label(for="firstName") First Name:
+                            input(type="text" name="firstName")
+                            br
+                            label(for="lastName") Last Name:
+                            input(type="text" name="lastName")
+                            br
+                            label(for="portfolioURL") www.myportfolio.com/
+                            input(type="text" name="portfolioURL")
+                            span(id="portfolioURLStatusIcon" aria-hidden="true")
+                            br
+                            input(type="submit" name="Create Portfolio")
+                    div
+                      span
+                        or sign up with your Google Account
+                        a(href="/authentication/google")
+                            button(type="button" class="btn btn-default") Sign In with Google
                 div#loginTab
                     h3 Login
                     if warning

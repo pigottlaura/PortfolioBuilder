@@ -2,9 +2,13 @@ extends layout
 
 block content
     div.row
-        div.col-md-12
+        div.col-xs-10
             h1= title
-            h2 Welcome to Portfolio Builder
+            h2 Welcome back #{user.firstName}
+        div.col-xs-2
+            img(src="#{user.profilePicture}" alt="#{user.firstName}" id="profilePicture" class="img-circle")
+            a(href="/admin/settings/changeProfilePicture")
+                button Change Profile Picture
     div.row
         div.col-md-4
             h3 Upload Media

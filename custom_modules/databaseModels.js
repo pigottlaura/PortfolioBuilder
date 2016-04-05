@@ -13,6 +13,10 @@ var databaseModels = {
         lastName: {
             type: String,
             required: true
+        },
+        profilePicture: {
+            type: String,
+            default: "../images/profilePicture.jpg"
         }
     }),
     MediaItem: mongoose.model("MediaItem", {
