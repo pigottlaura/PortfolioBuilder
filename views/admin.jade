@@ -5,7 +5,9 @@ block content
         div.col-xs-10
             h1= title
             h2 Welcome back #{user.firstName}
-        div.col-xs-2
+        div.col-xs-2.center
+            a(href="/logout")
+                button Log out
             img(src="#{user.profilePicture}" alt="#{user.firstName}" id="profilePicture" class="img-circle")
             a(href="/admin/settings/changeProfilePicture")
                 button Change Profile Picture

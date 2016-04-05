@@ -45,3 +45,11 @@ button {
     min-width: 70px;
     max-width: 130px;
 }
+
+.right {
+    text-align: right;
+}
+
+.center {
+    text-align: center;
+}
