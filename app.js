@@ -12,15 +12,21 @@ var session = require('express-session');
 
 // Custom Modules
 var checkDirectories = require('./custom_modules/checkDirectories');
-var mongoose = require("./custom_modules/database");
+var db = require("./custom_modules/database");
+console.log("Database is - " + db.readyState);
+
 var databaseModels = require("./custom_modules/databaseModels");
 var User = databaseModels.User;
 var googlePassport = require("./custom_modules/googlePassport");
 
 
 // Specifying the root path of the uploads directories, so that it
-// can be prepened to each of the subdirectories below
-var mainUploadDirectory = './public/media_uploads/';
+// can be prepened to each of the subdirectories below. Checking if
+// the application is in the development environment (by checking
+// if the NODE_ENV connection string is accessible) or in the Azure
+// environment (as the site will be running in a the /bin folder
+// and so the public directory will be one level up from the site)
+var mainUploadDirectory = process.env.NODE_ENV == "development" ? './public/media_uploads/' : "../public/media_uploads/";
 
 // Creating an array to store all of the directories required for storing
 // file uploads, including the main directory (as declared above). Prepending
@@ -32,6 +38,8 @@ var uploadsDirectories = [
     mainUploadDirectory + "image",
     mainUploadDirectory + "other"
 ];
+
+console.log("Database is - " + db.readyState);
 
 // Using the custom module I created to check that all of the folders required
 // within the uploads directory exist. If they don't, then they will be created.
@@ -53,6 +61,7 @@ var app = express();
 
 var multerStorage = multer.diskStorage({
     destination: function(req, file, cb) {
+      console.log("Database is - " + db.readyState);
         // Getting the file type of this file by splitting the mimetype (e.g. image/jpg) at
         // the "/" and then taking the first half of this new array of strings i.e. image
         var fileType = file.mimetype.split("/")[0];

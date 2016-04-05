@@ -5,6 +5,7 @@ var cryptoEncryption = require("../custom_modules/cryptoEncryption");
 var databaseModels = require("../custom_modules/databaseModels");
 var User = databaseModels.User;
 
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: "Portfolio Builder" });
