@@ -10,7 +10,8 @@ router.get('/', function(req, res, next) {
     title: "Admin Section",
     user: {
       firstName: req.session.firstName,
-      profilePicture: req.session.profilePicture
+      profilePicture: req.session.profilePicture,
+      portfolioURL: req.session.portfolioURL
     }
   });
 

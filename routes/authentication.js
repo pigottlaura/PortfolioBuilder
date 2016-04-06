@@ -39,6 +39,7 @@ router.post("/", function(req, res, next) {
                     req.session.username = req.body.username;
                     req.session.profilePicture = users.profilePicture;
                     req.session.firstName = users.firstName;
+                    req.session.portfolioURL = "/portfolio/" + users.portfolioURL;
                     console.log("Auth - correct username/password");
                     res.redirect("/admin");
                 } else {
@@ -66,6 +67,7 @@ router.get('/google/callback', googlePassport.authenticate(
         req.session.username = req.user.googleId;
         req.session.profilePicture = req.session.passport.user.profilePicture;
         req.session.firstName = req.session.passport.user.firstName;
+        req.session.portfolioURL = "/portfolio/" + req.session.passport.user.portfolioURL;
         console.log(req.session.username);
         res.redirect('/admin');
     });

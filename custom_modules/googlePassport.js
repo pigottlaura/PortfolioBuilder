@@ -27,7 +27,8 @@ passport.use(new GoogleStrategy({
                         firstName: profile.name.givenName,
                         lastName: profile.name.familyName,
                         googleId: profile.id,
-                        profilePicture: profile._json.image.url
+                        profilePicture: profile._json.image.url,
+                        portfolioURL: "GoogleUser-" + profile.id
                     });
 
                     newUser.save(function(err, newUser) {
