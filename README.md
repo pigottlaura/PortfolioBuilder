@@ -2,16 +2,19 @@
 
 Assignment-02 for the Server Side Programming module, as part of the Creative Mulitimedia B.Sc (hons) degree course in Limerick Institute of Technology, Clonmel.
 
+Available on: http://portfoliobuilder.azurewebsites.net/
+
 - App structure
     - Basis of app created using express-generator
     - Basis of website layout completed using a Bootstrap grid system
 - Database
     - All users and media items are stored in a Mongo database (generated and run using the Mongoose module).
     - The database connection is shared among multiple routes through a custom module (see below)
+    - Running a both a local database (for development purposes) and a MongoLabs database remotely (for use when the app is running live on Azure)
 - Login
     - Users can log in to create a new portfolio using their Google account. Using the passport-google-oauth module to generate this functionality.
     - Users can create their own accounts on the server, by providing their own username and password, while also being able to choose their portfolio url.
-    - When users are filling out the log in form, using AJAX request to the server to check if the username and/or portfolioURL are available. Giving feedback to the user (i.e. to let them know if these credentials are available) through the use of glyphicons to the right of the relevant input fields
+    - When users are filling out the log in form, using an AJAX request to the server to check if the username and/or portfolioURL are available. Giving feedback to the user (i.e. to let them know if these credentials are available) through the use of glyphicons to the right of the relevant input fields
 - Media Uploads
     - Media files can be uploaded to the server, using the multer module to parse the file data.
     - Media is stored in different directories based on it's mimetype i.e. images are stored in the 'file_uploads/images' directory
