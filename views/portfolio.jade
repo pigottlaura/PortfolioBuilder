@@ -22,12 +22,16 @@ block content
                                     
                     else if(mediaItems[i + j].mediaType == 'swf')
                         div.col-sm-4.col-xs-12
-                            div.swfContainer
+                            figure.swfContainer
                                 object(classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%")
                                     param(name='movie' value='#{mediaItems[i + j].filePath}')
                                     param(name='quality' value='high')
                                     param(name='scale' value='default')
                                     embed(src='#{mediaItems[i + j].filePath}' quality="high" type='#{mediaItems[i + j].file.mimetype}' width='100%' height='100%' scale="default" pluginspage="http://www.macromedia.com/go/getflashplayer")
+                                if(mediaItems[i + j].fileTitle)
+                                    figcaption #{mediaItems[i + j].fileTitle}
+                                else
+                                    figcaption #{mediaItems[i + j].file.originalname}
  
                                     
                                   

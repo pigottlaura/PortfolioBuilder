@@ -10,6 +10,7 @@ a {
 .thumbnail {
     width: 100%;
     height: auto;
+    margin-bottom: 0;
 }
 
 .glyphicon-ok-circle {
@@ -56,4 +57,12 @@ button {
 
 .swfContainer {
     height: 50vh
+}
+
+figcaption {
+    margin-top: 2%;
+}
+
+figure {
+    margin-bottom: 6%;
 }
