@@ -21,7 +21,7 @@ router.post("/uploadMedia", function(req, res, next) {
   console.log("Admin - file successfully uploaded");
   var newMediaItem = new MediaItem({
     file: req.files[0],
-    fileType: req.fileType,
+    mediaType: req.mediaType,
     owner: req.session.username,
     filePath: "../" + req.files[0].path.split("public\\")[1],
     fileTitle: req.body.mediaItemTitle

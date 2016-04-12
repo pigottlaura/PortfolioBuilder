@@ -6,7 +6,7 @@ block content
             h1= title
             h2 Welcome to Portfolio Builder
     div.row
-        div.col-md-12
+        div.col-md-8.col-sm-12
             div.tabs
                 ul
                     li
@@ -40,7 +40,8 @@ block content
                             input(type="submit" name="Create Portfolio")
                     div
                       span
-                        or sign up with your Google Account
+                        | or sign up with your Google Account
+                        br
                         a(href="/authentication/google")
                             button(type="button" class="btn btn-default") Sign In with Google
                 div#loginTab

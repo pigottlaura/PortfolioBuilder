@@ -48,7 +48,7 @@ var databaseModels = {
             type: Date,
             default: Date.now
         },
-        fileType: {
+        mediaType: {
             type: String,
             required: true
         },

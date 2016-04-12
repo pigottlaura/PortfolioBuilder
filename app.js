@@ -36,6 +36,7 @@ var uploadsDirectories = [
     mainUploadDirectory,
     mainUploadDirectory + "audio",
     mainUploadDirectory + "image",
+    mainUploadDirectory + "swf",
     mainUploadDirectory + "other"
 ];
 
@@ -64,30 +65,36 @@ var multerStorage = multer.diskStorage({
       console.log("Database is - " + db.readyState);
         // Getting the file type of this file by splitting the mimetype (e.g. image/jpg) at
         // the "/" and then taking the first half of this new array of strings i.e. image
-        var fileType = file.mimetype.split("/")[0];
+        var mimeType = file.mimetype.split("/")[0];
+        
+        var fileType = file.mimetype.split("/")[1];
 
         // Logging out the file type to the console (testing purposes)
-        console.log("This file is an " + fileType + " file");
+        console.log("This file is an " + mimeType + " file. More specifically, a " + fileType + " file.");
 
         // Creating a pathName variable, to store the path to the directory that this file
         // should be stored in (this will be decided based on the filetype). This variable
         // will then be passed to the destination function's callback, to pass the required
         // pathName back so that multer knows where to store the file
         var pathName;
+        
+        req.mediaType = mimeType;
 
         // Deciding which folder to store the file in, depending on it's file type
-        if (fileType == "image") {
+        if (mimeType == "image") {
             // Setting the pathname so that multer knows where to store image files
             pathName = mainUploadDirectory + '/image';
-        } else if (fileType == "audio") {
+        } else if (mimeType == "audio") {
             // Setting the pathname so that multer knows where to store audio files
             pathName = mainUploadDirectory + '/audio';
+        } else if(mimeType == "application" && fileType == "x-shockwave-flash") {
+            // Setting the pathname so that multer knows where to store swf files
+            pathName = mainUploadDirectory + '/swf';
+            req.mediaType = "swf";
         } else {
             // Setting the pathname so that multer knows where to store all other files
             pathName = mainUploadDirectory + '/other';
         }
-
-        req.fileType = fileType;
 
         // Using the destination function's callback to pass the required pathname back
         // so that multer knows where to store this file
