@@ -5,6 +5,9 @@ block content
         div.col-md-12
             h1= title
  
+    div.row
+        div.col-xs-12
+            h2 Images
     -for(var i = 0; i < mediaItems.length; i+=3)
         div.row
             - for(var j = 0; j < 3; j++)
@@ -20,7 +23,15 @@ block content
                                 else
                                     figcaption #{mediaItems[i + j].file.originalname}
                                     
-                    else if(mediaItems[i + j].mediaType == 'swf')
+    div.row
+        div.col-xs-12
+            h2 SWFs                              
+    -for(var i = 0; i < mediaItems.length; i+=3)
+        div.row
+            - for(var j = 0; j < 3; j++)
+                if(i + j < mediaItems.length)
+
+                    if(mediaItems[i + j].mediaType == 'swf')
                         div.col-sm-4.col-xs-12
                             figure.swfContainer
                                 object(classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%")
