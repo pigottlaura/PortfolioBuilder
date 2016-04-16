@@ -74,3 +74,7 @@ figure {
 figure > video {
     width: 100%;
 }
+
+.formWarning {
+    background-color: #FC9D9D;
+}

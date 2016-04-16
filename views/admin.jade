@@ -6,7 +6,8 @@ block content
             h1= title
             h2 Welcome back #{user.firstName}
             p View your portfolio: 
-                a(href="#{user.portfolioURL}" target="_blank") #{user.portfolioURL}
+                a(href="#{user.portfolioURL}" target="_blank") #{user.portfolioURL}  
+                button(id="changePortfolioURL") Edit
         div.col-xs-2.center
             a(href="/logout")
                 button Log out
