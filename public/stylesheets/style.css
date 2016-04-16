@@ -70,3 +70,7 @@ figcaption {
 figure {
     margin-bottom: 6%;
 }
+
+figure > video {
+    width: 100%;
+}

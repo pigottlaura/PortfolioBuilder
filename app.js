@@ -37,6 +37,7 @@ var uploadsDirectories = [
     mainUploadDirectory + "audio",
     mainUploadDirectory + "image",
     mainUploadDirectory + "swf",
+    mainUploadDirectory + "video",
     mainUploadDirectory + "other"
 ];
 
@@ -91,6 +92,9 @@ var multerStorage = multer.diskStorage({
             // Setting the pathname so that multer knows where to store swf files
             pathName = mainUploadDirectory + '/swf';
             req.mediaType = "swf";
+        } else if(mimeType == "video") {
+            // Setting the pathname so that multer knows where to store video files
+            pathName = mainUploadDirectory + '/video';
         } else {
             // Setting the pathname so that multer knows where to store all other files
             pathName = mainUploadDirectory + '/other';
