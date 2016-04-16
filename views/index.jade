@@ -14,42 +14,77 @@ block content
                     li
                         a(href="#loginTab") Login
                 div#createAccountTab
-                    div
-                        h3 Create a new Portfolio
-                        form(id="createAccount" method="post" action="/createAccount")
-                            label(for="username") Username:
-                            input(type="text" name="username")
-                            span(id="usernameStatusIcon" aria-hidden="true")
-                            br
-                            label(for="password") Password:
-                            input(type="password" name="password")
-                            br
-                            label(for="confirmPassword") Confirm Password:
-                            input(type="password" name="confirmPassword")
-                            br
-                            label(for="firstName") First Name:
-                            input(type="text" name="firstName")
-                            br
-                            label(for="lastName") Last Name:
-                            input(type="text" name="lastName")
-                            br
-                            label(for="portfolioURL") www.myportfolio.com/
-                            input(type="text" name="portfolioURL")
-                            span(id="portfolioURLStatusIcon" aria-hidden="true")
-                            br
-                            input(type="submit" name="Create Portfolio")
-                    div
-                      span
-                        | or sign up with your Google Account
-                        br
-                        a(href="/authentication/google")
-                            button(type="button" class="btn btn-default") Sign In with Google
+                    div.row
+                        div.col-xs-12
+                            h3 Create a new Portfolio
+                    div.row
+                        div.col-sm-8.col-xs-12
+                            form(id="createAccount" method="post" action="/createAccount").full-contents
+                                div.row
+                                    div.col-md-6.col-sm-12
+                                        label(for="username") Username:
+                                    div.col-md-6.col-sm-12
+                                        input(type="text" name="username")
+                                        span(id="usernameStatusIcon" aria-hidden="true")
+                                div.row
+                                    div.col-md-6.col-sm-12
+                                        label(for="password") Password:
+                                    div.col-md-6.col-sm-12
+                                        input(type="password" name="password")
+                                div.row
+                                    div.col-md-6.col-sm-12
+                                        label(for="confirmPassword") Confirm Password:
+                                    div.col-md-6.col-sm-12
+                                        input(type="password" name="confirmPassword")
+                                div.row
+                                    div.col-md-6.col-sm-12
+                                        label(for="firstName") First Name:
+                                    div.col-md-6.col-sm-12
+                                        input(type="text" name="firstName")
+                                div.row
+                                    div.col-md-6.col-sm-12
+                                        label(for="lastName") Last Name:
+                                    div.col-md-6.col-sm-12
+                                        input(type="text" name="lastName")
+                                div.row
+                                    div.col-md-6.col-sm-12
+                                        label(for="portfolioURL") www.myportfolio.com/
+                                    div.col-md-6.col-sm-12
+                                        input(type="text" name="portfolioURL")
+                                        span(id="portfolioURLStatusIcon" aria-hidden="true")
+                                div.row
+                                    div.col-xs-12
+                                        input(type="submit" name="Create Portfolio")
+                        div.col-sm-4.col-xs-12.center-contents
+                            span.center-vertical
+                                | or sign up with your Google Account
+                                br
+                                a(href="/authentication/google")
+                                    button(type="button" class="btn btn-default") Sign In with Google
                 div#loginTab
                     h3 Login
                     if warning
                         p(class="warning") #{warning}
                         
-                    form(id="adminLogin" method="post" action="/login")
-                        input(type="text" name="username")
-                        input(type="password" name="password")
-                        input(type="submit" name="Login")
+                    form(id="adminLogin" method="post" action="/login").full-contents
+                        div.row
+                            div.col-xs-8
+                                div.row
+                                    div.col-md-6.col-sm-12
+                                        label(for="username") Username:
+                                    div.col-md-6.col-sm-12
+                                        input(type="text" name="username")
+                                div.row
+                                    div.col-md-6.col-sm-12
+                                        label(for="password") Password:
+                                    div.col-md-6.col-sm-12
+                                        input(type="password" name="password")
+                                div.row
+                                    div.col-xs-12
+                                        input(type="submit" name="Login")
+                            div.col-sm-4.col-xs-12.center-contents
+                                span.center-vertical
+                                    | or sign in with your Google Account
+                                    br
+                                    a(href="/authentication/google")
+                                        button(type="button" class="btn btn-default") Sign In with Google

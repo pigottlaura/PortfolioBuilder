@@ -21,21 +21,25 @@ a {
     color: #770000;
 }
 
-#createAccountTab > div {
-    display: inline-block;
-    width: 49%;
-}
 
-#createAccountTab > div:last-of-type {
+.center-contents {
+    display: inline-block;
+    position: relative;
     text-align: center;
     vertical-align: middle;
+    height: 40vh;
 }
-#createAccountTab > div:last-of-type > span {
+.center-vertical {
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: 15%;
 }
-
+.full-contents input, .full-contents label {
+    width: 100%;
+}
+.row {
+    margin: 2% 0;
+}
 button {
     margin: 2% 0;
 }
