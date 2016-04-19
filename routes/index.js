@@ -7,41 +7,67 @@ var User = databaseModels.User;
 
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.render('index', { title: "Portfolio Builder" });
 });
 
-router.post("/checkCredentialsAvailable", function(req, res, next) {
+router.post("/checkCredentialsAvailable", function (req, res, next) {
   var credentials = {
     usernameAvailable: true,
     portfolioURLAvailable: true
   };
 
-  User.find({ $or: [{ username: req.body.requestedUsername }, { portfolioURL: req.body.requestedPortfolioURL }] }, {}, function(err, users) {
+  User.find({ $or: [{ username: req.body.requestedUsername }, { portfolioURL: req.body.requestedPortfolioURL }] }, {}, function (err, users) {
     if (users.length > 0) {
-      users.forEach(function(user) {
+      users.forEach(function (user) {
         if (user.username == req.body.requestedUsername) {
-          console.log("Matched username");
+          console.log("INDEX - Matched username");
           credentials.usernameAvailable = false;
         }
 
         if (user.portfolioURL == req.body.requestedPortfolioURL) {
-          console.log("Matched url");
+          console.log("INDEX - Matched url");
           credentials.portfolioURLAvailable = false;
         }
       });
     }
-    console.log("Username available = " + credentials.usernameAvailable);
-    console.log("URL available = " + credentials.portfolioURLAvailable);
+    console.log("INDEX - Username available = " + credentials.usernameAvailable);
+    console.log("INDEX - URL available = " + credentials.portfolioURLAvailable);
     res.json(credentials);
   });
 });
 
+router.post("/login", function (req, res, next) {
+    User.findOne({ username: req.body.username }, {}, function (err, users) {
+        if (err) {
+            console.log("INDEX - Could not check if this username exists - " + err);
+            res.render("login", { title: "Login", warning: "There was an unexpected error - please try again" });
+        } else {
+            if (users == null) {
+                console.log("INDEX - This user does not exist");
+                res.render("login", { title: "Login", warning: "This username does not exist" });
+            } else {
+                if (req.body.username == users.username && req.body.password == cryptoEncryption.decrypt(users.password)) {
+                    req.session.username = req.body.username;
+                    req.session.profilePicture = users.profilePicture;
+                    req.session.firstName = users.firstName;
+                    req.session.portfolioURL = users.portfolioURL;
+                    console.log("INDEX - correct username/password");
+                    res.redirect("/admin");
+                } else {
+                    console.log("INDEX - wrong username/password");
+                    res.render("index", { title: "Portfolio Builder", warning: "Wrong username/password" });
+                }
 
-router.post('/createAccount', function(req, res, next) {
-  User.findOne({ username: req.body.username }, {}, function(err, users) {
+            }
+        }
+    });
+});
+
+router.post('/createAccount', function (req, res, next) {
+  User.findOne({ username: req.body.username }, {}, function (err, users) {
     if (err) {
-      console.log("Index - Could not check if this username exists - " + err);
+      console.log("INDEX - Could not check if this username exists - " + err);
       res.redirect("/");
     } else {
       if (users == null) {
@@ -54,24 +80,29 @@ router.post('/createAccount', function(req, res, next) {
           portfolioURL: req.body.portfolioURL
         });
 
-        newUser.save(function(err, newUser) {
+        req.session.username = newUser.username;
+        req.session.profilePicture = newUser.profilePicture;
+        req.session.firstName = newUser.firstName;
+        req.session.portfolioURL = newUser.portfolioURL;
+
+        newUser.save(function (err, newUser) {
           if (err) {
-            console.log("Index - Could not save new user to the database - " + err);
+            console.log("INDEX - Could not save new user to the database - " + err);
           } else {
-            console.log("Index - New user successfully saved to the database");
+            console.log("INDEX - New user successfully saved to the database");
           }
-          next();
+          res.redirect("/admin");
         });
       } else {
-        console.log("Index - This username already exists");
+        console.log("INDEX - This username already exists");
         res.redirect("/");
       }
     }
   });
 });
 
-router.get("/logout", function(req, res, next) {
-  req.session.destroy(function(err) {
+router.get("/logout", function (req, res, next) {
+  req.session.destroy(function (err) {
     res.redirect("/");
   });
 });

@@ -55,7 +55,6 @@ checkDirectories(uploadsDirectories);
 
 var routes = require('./routes/index');
 var admin = require('./routes/admin');
-var login = require('./routes/login');
 var authentication = require('./routes/authentication');
 var portfolio = require('./routes/portfolio');
 
@@ -146,10 +145,17 @@ googlePassport.deserializeUser(function(id, done) {
 
 app.use("/", multerUpload.any());
 
+
 app.use('/', routes);
 app.use("/portfolio", portfolio);
-app.use("/login", login);
-app.use(["/authentication", "/createAccount", "/login", "/admin"], authentication);
+// Passing all requests for login, to be checked against the users in the database.
+// Passing all requests for admin, to ensure that user which is not logged in
+// can not get into the admin secion.
+// Passing all requests for authentication (which will only be called in Google callback
+// functions, when a user is logging in with their account)
+app.use("/", authentication);
+// I a request has made it through the above, then the user must be logged in, and can
+// be granted access to the admin section
 app.use('/admin', admin);
 
 

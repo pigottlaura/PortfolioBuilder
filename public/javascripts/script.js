@@ -2,6 +2,44 @@ jQuery(document).ready(function ($) {
     console.log("Document ready");
     $(".tabs").tabs();
 
+    $("#currentPortfolioURL").click(function (event) {
+        if ($(event.target).text() == "Edit") {
+            $(event.target).text("Undo");
+            $(this).find("a").hide();
+            $(this).find("form input")
+                .val($(this).find("a").text())
+                .show();
+            $(this).find(".save").show();
+        } else if ($(event.target).text() == "Undo") {
+            $(event.target).text("Edit");
+            $(this).find("a").show();
+            $(this).find("form input")
+                .val("")
+                .hide();
+            $(this).find(".save").hide();
+        } else if ($(event.target).text() == "Save") {
+            checkCredentialsAvailable(null, $(this).find("form input").val(), function(responseData){
+                if(responseData.portfolioURLAvailable){
+                    $("#currentPortfolioURL form").submit();
+                }
+            }); 
+        }
+    });
+
+    $("#cancelChangePortfolioURLButton").click(function () {
+        $("#changePortfolioURLButton").show();
+        $("#changePortfolioURL a")
+            .show();
+        $("#changePortfolioURL form input")
+            .val("")
+            .hide();
+        $(this).hide();
+    });
+
+    $("#saveChangePortfolioURLButton").click(function () {
+        console.log("SAVE NEW URL");
+    });
+
     $("#createAccount input").change(function () {
 
         $("input[name='username'], input[name='portfolioURL']").val(function () {
@@ -73,13 +111,13 @@ jQuery(document).ready(function ($) {
     $("#changePortfolioURL").click(function () {
         console.log("click");
     });
-    
+
     // Creating an asynchronous function to check if the credentials a user has supplied are available.
     // Takes in three parametres. The requested username, requested url, and the callback function to which
     // the response data should be returned when a response is received from the server
     function checkCredentialsAvailable(username, url, cb) {
         $.post("/checkCredentialsAvailable", { requestedUsername: username, requestedPortfolioURL: url }, function (responseData) {
-            
+
             // Passing the response data back to the callback function
             cb(responseData);
         }, "json");

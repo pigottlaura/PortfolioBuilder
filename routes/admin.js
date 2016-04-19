@@ -4,7 +4,7 @@ var databaseModels = require("../custom_modules/databaseModels");
 var MediaItem = databaseModels.MediaItem;
 var User = databaseModels.User;
 
-/* GET admin listing. */
+// Get main admin dashboard
 router.get('/', function (req, res, next) {
   console.log("Admin - in admin section");
   res.render("admin", {
@@ -18,6 +18,7 @@ router.get('/', function (req, res, next) {
 
 });
 
+// Upload media to admin
 router.post("/uploadMedia", function (req, res, next) {
   console.log("Admin - file successfully uploaded");
   var newMediaItem = new MediaItem({
@@ -37,17 +38,17 @@ router.post("/uploadMedia", function (req, res, next) {
   });
 });
 
-/*
+// Change admin's portfolio URL
 router.post("/changePortfolioURL", function (req, res, next) {
   console.log("Admin - requested portfolioURL to be changed");
-  User.update({ username: req.session.username }, { $set: { portfolioURL: req.body.requestedURL} }, function (err, user) {
+  User.update({ username: req.session.username }, { $set: { portfolioURL: req.body.newPortfolioURL} }, function (err, user) {
     if (err) {
       console.log("Admin - Could not check if this username exists - " + err);
     } else {
       console.log("Admin - updated " + user.username + "'s portfolio URL to " + user.portfolioURL);
+      res.redirect("/admin");
     }
   });
 });
-*/
 
 module.exports = router;

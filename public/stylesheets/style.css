@@ -21,6 +21,10 @@ a {
     color: #770000;
 }
 
+#currentPortfolioURL form input, #currentPortfolioURL div:last-of-type button:last-of-type {
+    display: none;
+    width: 100%;
+}
 
 .center-contents {
     display: inline-block;
