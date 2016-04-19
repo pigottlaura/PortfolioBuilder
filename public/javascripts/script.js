@@ -3,41 +3,54 @@ jQuery(document).ready(function ($) {
     $(".tabs").tabs();
 
     $("#currentPortfolioURL").click(function (event) {
+        // Determining which button was clicked on, based on the text of the element
+        // which was clicked on
         if ($(event.target).text() == "Edit") {
-            $(event.target).text("Undo");
+            // The user wants to edit their current portfolioURL
+            
+            // Hiding the current link to the user's portfolio
             $(this).find("a").hide();
-            $(this).find("form input")
-                .val($(this).find("a").text())
-                .show();
+            
+            // Setting the value of the form input to be equal to the current value of the
+            // users portfolioURL. Then displaying this input (so the user can edit this value)
+            $(this).find("form input").val($(this).find("a").text()).show();
+            
+            // Changing the text of the element that was clicked on to be undo (i.e. reusing the
+            // same button for undo and edit, as they do not carry any additional information
+            // other than letting us know what was clicked on)
+            $(event.target).text("Undo");
+            
+            // Locating the save button within this div, and displaying it
             $(this).find(".save").show();
+            
         } else if ($(event.target).text() == "Undo") {
+            // The user wants to disgard the changes they just made to their portfolioURL
+            
+            // Clearing the value of the form input, and then hiding it, so that he user's changes
+            // will be disgarded
+            $(this).find("form input").val("").hide();
+            
+            // Changing the text of the element that was clicked on to be edit (i.e. reusing the
+            // same button for undo and edit, as they do not carry any additional information
+            // other than letting us know what was clicked on)
             $(event.target).text("Edit");
+            
+            // Displayign the current link to the user's portfolio
             $(this).find("a").show();
-            $(this).find("form input")
-                .val("")
-                .hide();
+                            
+            // Locating the save button within this div, and hiding it
             $(this).find(".save").hide();
+            
         } else if ($(event.target).text() == "Save") {
+            
+            // Calling the asynchronous checkCredentialsAvailable() method, passing it in the 
             checkCredentialsAvailable(null, $(this).find("form input").val(), function(responseData){
                 if(responseData.portfolioURLAvailable){
                     $("#currentPortfolioURL form").submit();
+                    $("#currentPortfolioURL a").text(responseData.portfolioURL);
                 }
             }); 
         }
-    });
-
-    $("#cancelChangePortfolioURLButton").click(function () {
-        $("#changePortfolioURLButton").show();
-        $("#changePortfolioURL a")
-            .show();
-        $("#changePortfolioURL form input")
-            .val("")
-            .hide();
-        $(this).hide();
-    });
-
-    $("#saveChangePortfolioURLButton").click(function () {
-        console.log("SAVE NEW URL");
     });
 
     $("#createAccount input").change(function () {

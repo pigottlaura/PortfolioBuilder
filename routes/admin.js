@@ -41,12 +41,14 @@ router.post("/uploadMedia", function (req, res, next) {
 // Change admin's portfolio URL
 router.post("/changePortfolioURL", function (req, res, next) {
   console.log("Admin - requested portfolioURL to be changed");
-  User.update({ username: req.session.username }, { $set: { portfolioURL: req.body.newPortfolioURL} }, function (err, user) {
+  req.session.portfolioURL = req.body.newPortfolioURL.toLowerCase();
+  res.redirect("/admin");
+  
+  User.update({ username: req.session.username }, { $set: { portfolioURL: req.session.portfolioURL} }, function (err, user) {
     if (err) {
       console.log("Admin - Could not check if this username exists - " + err);
     } else {
-      console.log("Admin - updated " + user.username + "'s portfolio URL to " + user.portfolioURL);
-      res.redirect("/admin");
+      console.log("Admin - updated portfolio URL to " + req.session.portfolioURL);
     }
   });
 });

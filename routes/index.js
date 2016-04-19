@@ -23,11 +23,15 @@ router.post("/checkCredentialsAvailable", function (req, res, next) {
         if (user.username == req.body.requestedUsername) {
           console.log("INDEX - Matched username");
           credentials.usernameAvailable = false;
+        } else {
+          credentials.username = req.body.requestedUsername;
         }
 
         if (user.portfolioURL == req.body.requestedPortfolioURL) {
           console.log("INDEX - Matched url");
           credentials.portfolioURLAvailable = false;
+        } else {
+          credentials.portfolioURL = req.body.requestedPortfolioURL;
         }
       });
     }
@@ -47,8 +51,8 @@ router.post("/login", function (req, res, next) {
                 console.log("INDEX - This user does not exist");
                 res.render("login", { title: "Login", warning: "This username does not exist" });
             } else {
-                if (req.body.username == users.username && req.body.password == cryptoEncryption.decrypt(users.password)) {
-                    req.session.username = req.body.username;
+                if (req.body.username.toLowerCase() == users.username && req.body.password == cryptoEncryption.decrypt(users.password)) {
+                    req.session.username = req.body.username.toLowerCase();
                     req.session.profilePicture = users.profilePicture;
                     req.session.firstName = users.firstName;
                     req.session.portfolioURL = users.portfolioURL;
