@@ -1,9 +1,9 @@
 jQuery(document).ready(function ($) {
     console.log("Document ready");
     $(".tabs").tabs();
-    $(".swfContainer").css("height", $("figure img").height());
+    resizeFigures();
     $(window).resize(function(){
-        $(".swfContainer").css("height", $("figure img").height());
+        resizeFigures();
     });
     $("#currentPortfolioURL").click(function (event) {
         // Determining which button was clicked on, based on the text of the element
@@ -139,3 +139,12 @@ jQuery(document).ready(function ($) {
         }, "json");
     }
 });
+
+function resizeFigures(){
+    var maxFigHeight = 0;
+    $('figure').each(function() {
+        maxFigHeight = maxFigHeight > $(this).height() ? maxFigHeight : $(this).height();
+    });
+    $(".swfContainer").css("height", $("figure img").height());
+    $("figure").css("height", maxFigHeight);
+}

@@ -51,8 +51,7 @@ button {
 #profilePicture {
     width: 100%;
     height: auto;
-    min-width: 70px;
-    max-width: 130px;
+    max-width: 50px;
 }
 
 .right {
@@ -75,7 +74,7 @@ figure {
     margin-bottom: 6%;
 }
 
-figure > video {
+video {
     width: 100%;
 }
 

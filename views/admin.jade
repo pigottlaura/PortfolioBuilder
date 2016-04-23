@@ -19,6 +19,7 @@ block content
         div.col-xs-2.center
             a(href="/logout")
                 button Log out
+            br
             img(src="#{user.profilePicture}" alt="#{user.firstName}" id="profilePicture" class="img-circle")
             a(href="/admin/settings/changeProfilePicture")
                 button Change Profile Picture
@@ -31,23 +32,24 @@ block content
                 input(type="text" id="mediaItemTitle" name="mediaItemTitle")
                 input(type="submit" name="Upload")
     div.row
-    -for(var i = 0; i < mediaItems.length; i++)
-        div.col-md-3.col-xs-4
-            figure
-                if(mediaItems[i].mediaType == 'image')
-                    img(src='#{mediaItems[i].filePath}' alt='Alt Text' class='thumbnail')
-                else if(mediaItems[i].mediaType == 'swf')
-                    div.swfContainer
-                        object(classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%")
-                            param(name='movie' value='#{mediaItems[i].filePath}')
-                            param(name='quality' value='high')
-                            param(name='scale' value='default')
-                            embed(src='#{mediaItems[i].filePath}' quality="high" type='#{mediaItems[i].file.mimetype}' width='100%' height='100%' scale="default" pluginspage="http://www.macromedia.com/go/getflashplayer")
-                else if(mediaItems[i].mediaType == "video")
-                    video(controls)
-                        source(src='#{mediaItems[i].filePath}' type='#{mediaItems[i].file.mimetype}')
-                                
-                if(mediaItems[i].fileTitle)
-                    figcaption #{mediaItems[i].fileTitle}
-                else
-                    figcaption #{mediaItems[i].file.originalname}
+        -for(var i = 0; i < mediaItems.length; i++)
+            div.col-md-3.col-xs-4
+                figure
+                    if(mediaItems[i].mediaType == 'image')
+                        img(src='#{mediaItems[i].filePath}' alt='Alt Text' class='thumbnail')
+                    else if(mediaItems[i].mediaType == 'swf')
+                        div.swfContainer
+                            object(classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%")
+                                param(name='movie' value='#{mediaItems[i].filePath}')
+                                param(name='quality' value='high')
+                                param(name='scale' value='default')
+                                embed(src='#{mediaItems[i].filePath}' quality="high" type='#{mediaItems[i].file.mimetype}' width='100%' height='100%' scale="default" pluginspage="http://www.macromedia.com/go/getflashplayer")
+                    else if(mediaItems[i].mediaType == "video")
+                        div.swfContainer
+                            video(controls)
+                                source(src='#{mediaItems[i].filePath}' type='#{mediaItems[i].file.mimetype}' volume="0")
+                                    
+                    if(mediaItems[i].fileTitle)
+                        figcaption #{mediaItems[i].fileTitle}
+                    else
+                        figcaption #{mediaItems[i].file.originalname}

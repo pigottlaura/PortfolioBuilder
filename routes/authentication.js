@@ -34,9 +34,6 @@ router.get('/authentication/google/callback', googlePassport.authenticate(
     }),
     function (req, res, next) {
         req.session.username = req.user.googleId;
-        req.session.profilePicture = req.session.passport.user.profilePicture;
-        req.session.firstName = req.session.passport.user.firstName;
-        req.session.portfolioURL = req.session.passport.user.portfolioURL;
         console.log(req.session.username);
         res.redirect('/admin');
     });
