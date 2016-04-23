@@ -1,7 +1,10 @@
 jQuery(document).ready(function ($) {
     console.log("Document ready");
     $(".tabs").tabs();
-
+    $(".swfContainer").css("height", $("figure img").height());
+    $(window).resize(function(){
+        $(".swfContainer").css("height", $("figure img").height());
+    });
     $("#currentPortfolioURL").click(function (event) {
         // Determining which button was clicked on, based on the text of the element
         // which was clicked on

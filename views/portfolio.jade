@@ -47,14 +47,14 @@ block content
         div.col-xs-12
             h2 Videos  
     div.row
-    -for(var i = 0; i < mediaItems.length; i+=3)
+        -for(var i = 0; i < mediaItems.length; i+=3)
             - for(var j = 0; j < 3; j++)
                 if(i + j < mediaItems.length)
 
                     if(mediaItems[i + j].mediaType == 'video')
                         div.col-sm-4.col-xs-12
                             figure
-                                video(controls)
+                                video(controls).swfContainer
                                     source(src='#{mediaItems[i + j].filePath}' type='#{mediaItems[i + j].file.mimetype}')
                             if(mediaItems[i + j].fileTitle)
                                     figcaption #{mediaItems[i + j].fileTitle}
