@@ -5,6 +5,11 @@ jQuery(document).ready(function ($) {
     $(window).resize(function(){
         resizeFigures();
     });
+    $(".deleteMedia").click(function(event){
+        $.post("/admin/deleteMedia", { mediaId: event.target.id }, function (responseData) {
+            $(".row > div").find("button[id='"+ responseData.mediaId + "']").parent().parent().remove();
+        }, "json");
+    });
     $("#currentPortfolioURL").click(function (event) {
         // Determining which button was clicked on, based on the text of the element
         // which was clicked on

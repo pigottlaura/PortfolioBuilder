@@ -36,6 +36,8 @@ block content
             if(mediaItems[i].mediaType == 'image' || mediaItems[i].mediaType == 'swf' || mediaItems[i].mediaType == 'video')
                 div.col-md-3.col-xs-4
                     figure
+                        button(id="#{mediaItems[i]._id}" class="deleteMedia" title="Delete #{mediaItems[i].fileTitle}") x
+                        
                         if(mediaItems[i].mediaType == 'image')
                             img(src='#{mediaItems[i].filePath}' alt='Alt Text' class='thumbnail')
                         else if(mediaItems[i].mediaType == 'swf')
@@ -50,7 +52,4 @@ block content
                                 video(controls)
                                     source(src='#{mediaItems[i].filePath}' type='#{mediaItems[i].file.mimetype}' volume="0")
                                         
-                        if(mediaItems[i].fileTitle)
-                            figcaption #{mediaItems[i].fileTitle}
-                        else
-                            figcaption #{mediaItems[i].file.originalname}
+                        figcaption #{mediaItems[i].fileTitle}

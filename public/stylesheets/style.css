@@ -72,8 +72,15 @@ figcaption {
 
 figure {
     margin-bottom: 6%;
+    position: relative;
 }
 
+figure > button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+}
 video {
     width: 100%;
 }
