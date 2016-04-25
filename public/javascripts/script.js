@@ -7,6 +7,7 @@ jQuery(document).ready(function ($) {
         resizeFigures();
     });
     $( "#sortable" ).sortable({
+        cancel: "figcaption",
         stop: function( event, ui ) {
             var mediaItemOrder = [];
             
@@ -23,15 +24,16 @@ jQuery(document).ready(function ($) {
             $.post("/admin/changeMediaOrder", {newOrder: JSON.stringify(mediaItemOrder)});
         }
     });
-    $("#sortable figcaption").click(function(event){
-        // Explicitly returning focus to the figcaption elements when they are clicked on, as 
-        // the jQuery UI sortable() functionality seems to be taking the focus from these
-        $(event.target).focus();
-    });
     //$( "#sortable" ).disableSelection();
     $("figcaption").blur(function(event){
         var mediaItemId = $(event.target).siblings("button").attr("id");
        $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text()});
+    }).keypress(function(event){
+        console.log(event.which);
+        if(event.which == 13){
+            event.preventDefault();
+            $(event.target).blur();
+        }
     });
     $(".deleteMedia").click(function(event){
         $.post("/admin/deleteMedia", { mediaId: event.target.id }, function (responseData) {
