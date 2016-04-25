@@ -23,7 +23,10 @@ Available on: http://portfoliobuilder.azurewebsites.net/
     - Images are clickable/expandable throught the use of LightBox2. Currently, all images are stored in the one "set", and so can be scrolled through from within the one lightbox session.
 - Admin page
     - Displaying the user's Google profile picture, or default profile picture
-    - Allowing the user to upload media items, with the option to give them a title
+    - Allowing the user to upload multiple media items, with the option to give them a title
+    - Media items can be reordered by dragging and dropping them around in the admin panel. Each time the media items order changes, an AJAX request is sent to the server to store their new index positions
+    - Media item titles can be updated
+    - Media items can be deleted by clicking the "x" in which appears in their top right corner
 - Custom Modules
     - checkDirectories - An array of directory paths can be passed to this custom module, to check if they exist and create them if they do not. Utilises the file system module.
     - databaseModels - An object which contains all of the database models for the app i.e. User and Media items, so that they can be used for querying, adding, deleting and updating users throughout routes.
