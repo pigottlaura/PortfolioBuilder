@@ -13,7 +13,6 @@ var session = require('express-session');
 // Custom Modules
 var checkDirectories = require('./custom_modules/checkDirectories');
 var db = require("./custom_modules/database");
-console.log("Database is - " + db.readyState);
 
 var databaseModels = require("./custom_modules/databaseModels");
 var User = databaseModels.User;
@@ -40,8 +39,6 @@ var uploadsDirectories = [
     mainUploadDirectory + "video",
     mainUploadDirectory + "other"
 ];
-
-console.log("Database is - " + db.readyState);
 
 // Using the custom module I created to check that all of the folders required
 // within the uploads directory exist. If they don't, then they will be created.
@@ -78,7 +75,7 @@ var multerStorage = multer.diskStorage({
         // pathName back so that multer knows where to store the file
         var pathName;
         
-        req.mediaType = mimeType;
+        file.mediaType = mimeType;
 
         // Deciding which folder to store the file in, depending on it's file type
         if (mimeType == "image") {
@@ -90,7 +87,7 @@ var multerStorage = multer.diskStorage({
         } else if(mimeType == "application" && fileType == "x-shockwave-flash") {
             // Setting the pathname so that multer knows where to store swf files
             pathName = mainUploadDirectory + '/swf';
-            req.mediaType = "swf";
+            file.mediaType = "swf";
         } else if(mimeType == "video") {
             // Setting the pathname so that multer knows where to store video files
             pathName = mainUploadDirectory + '/video';

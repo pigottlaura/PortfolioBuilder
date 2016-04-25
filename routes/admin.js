@@ -40,22 +40,24 @@ router.get('/', function (req, res, next) {
 
 // Upload media to admin
 router.post("/uploadMedia", function (req, res, next) {
-  console.log("Admin - file successfully uploaded");
-  var newMediaItem = new MediaItem({
-    file: req.files[0],
-    mediaType: req.mediaType,
-    owner: req.session.username,
-    filePath: "../" + req.files[0].path.split("public\\")[1],
-    fileTitle: req.body.mediaItemTitle
-  });
-  newMediaItem.save(function (err, newMediaItem) {
-    if (err) {
-      console.log("Admin - Could not save media item to database - " + err);
-    } else {
-      console.log("Admin - Media item successfully saved to database");
-      res.redirect("/admin");
-    }
-  });
+  for(var i = 0; i < req.files.length; i++){
+    console.log("Admin - file successfully uploaded");
+    var newMediaItem = new MediaItem({
+      file: req.files[i],
+      mediaType: req.files[i].mediaType,
+      owner: req.session.username,
+      filePath: "../" + req.files[i].path.split("public\\")[1],
+      fileTitle: req.body.mediaItemTitle
+    });
+    newMediaItem.save(function (err, newMediaItem) {
+      if (err) {
+        console.log("Admin - Could not save media item to database - " + err);
+      } else {
+        console.log("Admin - Media item successfully saved to database");
+      }
+    });
+  }
+  res.redirect("/admin");
 });
 
 // Change admin's portfolio URL
