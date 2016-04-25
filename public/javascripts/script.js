@@ -5,6 +5,10 @@ jQuery(document).ready(function ($) {
     $(window).resize(function(){
         resizeFigures();
     });
+    $("figcaption").blur(function(event){
+        var mediaItemId = $(event.target).siblings("button").attr("id");
+       $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text()});
+    });
     $(".deleteMedia").click(function(event){
         $.post("/admin/deleteMedia", { mediaId: event.target.id }, function (responseData) {
             $(".row > div").find("button[id='"+ responseData.mediaId + "']").parent().parent().remove();

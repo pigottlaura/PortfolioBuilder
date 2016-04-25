@@ -98,4 +98,16 @@ router.post("/deleteMedia", function (req, res, next) {
   });
 });
 
+router.post("/changeMediaTitle", function(req, res, next){
+  console.log("ID = " + req.body.mediaId);
+  console.log("NEW TITLE - " + req.body.newTitle);
+  MediaItem.update({"_id" : ObjectId(req.body.mediaId)}, { $set: {fileTitle: req.body.newTitle}}, function(err, mediaItem){
+    if(err){
+      console.log("ADMIN - Unable to change media item title - " + err);
+    } else {
+      console.log("ADMIN - Media item title updated - " + mediaItem.fileTitle);
+    }
+  });
+});
+
 module.exports = router;

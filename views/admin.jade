@@ -52,4 +52,4 @@ block content
                                 video(controls)
                                     source(src='#{mediaItems[i].filePath}' type='#{mediaItems[i].file.mimetype}' volume="0")
                                         
-                        figcaption #{mediaItems[i].fileTitle}
+                        figcaption(contenteditable="true") #{mediaItems[i].fileTitle}
