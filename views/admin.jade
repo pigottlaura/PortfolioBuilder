@@ -5,17 +5,17 @@ block content
         div.col-xs-10
             h1= title
             h2 Welcome back #{user.firstName}
+            div.row
+                div.col-xs-12 View your portfolio:
             div.row(id="currentPortfolioURL")
-                div.col-xs-2 View your portfolio: 
-                div.col-xs-5
+                div.col-xs-8
                     a(href="/portfolio/#{user.portfolioURL}" target="_blank") #{user.portfolioURL}
                     form(action="/admin/changePortfolioURL" method="post")
                         input(type="text" name="newPortfolioURL")
-                div.col-xs-1
+                div.col-xs-2
                     button Edit
-                div.col-xs-1
+                div.col-xs-2
                     button.save Save
-                
         div.col-xs-2.center
             a(href="/logout")
                 button Log out
@@ -31,7 +31,7 @@ block content
                 label(for="mediaItemTitle") Title:
                 input(type="text" id="mediaItemTitle" name="mediaItemTitle")
                 input(type="submit" name="Upload")
-    div.row
+    div.row(id="sortable")
         -for(var i = 0; i < mediaItems.length; i++)
             if(mediaItems[i].mediaType == 'image' || mediaItems[i].mediaType == 'swf' || mediaItems[i].mediaType == 'video')
                 div.col-md-3.col-xs-4

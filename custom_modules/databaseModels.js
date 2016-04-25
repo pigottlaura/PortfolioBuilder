@@ -60,6 +60,10 @@ var databaseModels = {
             type: String,
             required: true
         },
+        indexPosition: {
+            type: Number,
+            default: 0
+        }
     })
 }
 

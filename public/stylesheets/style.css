@@ -62,10 +62,6 @@ button {
     text-align: center;
 }
 
-.swfContainer {
-    height: 50vh
-}
-
 figcaption {
     margin-top: 2%;
 }
@@ -73,6 +69,7 @@ figcaption {
 figure {
     margin-bottom: 6%;
     position: relative;
+    overflow: hidden;
 }
 
 figure > button {
@@ -82,7 +79,10 @@ figure > button {
     z-index: 1;
 }
 video {
-    width: 100%;
+    margin: 0, auto;
+    height: 100%;
+    text-align: center;
+    position: relative;
 }
 
 .formWarning {

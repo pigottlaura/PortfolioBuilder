@@ -3,8 +3,32 @@ jQuery(document).ready(function ($) {
     $(".tabs").tabs();
     resizeFigures();
     $(window).resize(function(){
+        $("figure").css("minHeight", "initial");
         resizeFigures();
     });
+    $( "#sortable" ).sortable({
+        stop: function( event, ui ) {
+            var mediaItemOrder = [];
+            
+            console.log("DROPPED");
+            $.each($("figure"), function(index){
+                console.log($(this).find("figcaption").text() + " is at index " + index);
+                mediaItemOrder.push({
+                    mediaId: $(this).find("figcaption").siblings("button").attr("id"),
+                    indexPosition: index
+                });
+            });
+            console.log(mediaItemOrder);
+            
+            $.post("/admin/changeMediaOrder", {newOrder: JSON.stringify(mediaItemOrder)});
+        }
+    });
+    $("#sortable figcaption").click(function(event){
+        // Explicitly returning focus to the figcaption elements when they are clicked on, as 
+        // the jQuery UI sortable() functionality seems to be taking the focus from these
+        $(event.target).focus();
+    });
+    //$( "#sortable" ).disableSelection();
     $("figcaption").blur(function(event){
         var mediaItemId = $(event.target).siblings("button").attr("id");
        $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text()});
@@ -155,5 +179,9 @@ function resizeFigures(){
         maxFigHeight = maxFigHeight > $(this).height() ? maxFigHeight : $(this).height();
     });
     $(".swfContainer").css("height", $("figure img").height());
-    $("figure").css("height", maxFigHeight);
+    $("figure").css("minHeight", maxFigHeight);
+    console.log("Figures RESIZED - maxFigHeight = " + maxFigHeight);
+    $("video").each(function(){
+        $(this).css("left",($(this).parent().width() - $(this).width()) / 2);
+    });
 }

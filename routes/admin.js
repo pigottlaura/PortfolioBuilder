@@ -18,7 +18,7 @@ router.get('/', function (req, res, next) {
         console.log("ADMIN - This user does not exist");
         res.redirect("/");
       } else {
-        MediaItem.find({ owner: users.username }).sort({ mediaType: 1, fileTitle: 1 }).exec(function (err, mediaItems) {
+        MediaItem.find({ owner: users.username }).sort({ mediaType: 1, indexPosition: 1, uploadedAt: -1 }).exec(function (err, mediaItems) {
           if (err) {
             console.log("ADMIN - Could not check if there are any media items - " + err);
             res.redirect("/");
@@ -108,6 +108,19 @@ router.post("/changeMediaTitle", function(req, res, next){
       console.log("ADMIN - Media item title updated - " + mediaItem.fileTitle);
     }
   });
+});
+
+router.post("/changeMediaOrder", function(req, res, next){
+  var newMediaOrder = JSON.parse(req.body.newOrder);
+  for(var i = 0; i < newMediaOrder.length; i++){
+    
+    MediaItem.update({"_id": ObjectId(newMediaOrder[i].mediaId)}, { $set: {indexPosition: newMediaOrder[i].indexPosition}}, function(err, docsEffected){
+      if(err){
+        console.log(err);
+      }
+    });
+  }
+  
 });
 
 module.exports = router;
