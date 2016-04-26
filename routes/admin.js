@@ -109,7 +109,7 @@ router.post("/changeMediaTitle", function (req, res, next) {
     if (err) {
       console.log("ADMIN - Unable to change media item title - " + err);
     } else {
-      console.log("ADMIN - Media item title updated - " + mediaItem.fileTitle);
+      console.log("ADMIN - Media item title updated");
     }
   });
 });

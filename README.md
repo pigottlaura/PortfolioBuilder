@@ -19,6 +19,7 @@ Available on: http://portfoliobuilder.azurewebsites.net/
     - Mongoose Middleware
         - Each time a new media item is saved, it's object id will be added to the portfolio of it's owner
         - If a media item is deleted, it's object id will also be deleted from the portfolio document of it's owner
+        - Created a custom sortMediaItems() function on the methods object of the portfolio schema, which sorts the media items of the document which is passed into it and returns the result to the callback
 - Login
     - Users can log in to create a new portfolio using their Google account. Using the passport-google-oauth module to generate this functionality.
     - Users can create their own accounts on the server, by providing their own username and password, while also being able to choose their portfolio url.
