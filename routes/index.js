@@ -18,7 +18,7 @@ router.post("/checkCredentialsAvailable", function (req, res, next) {
   var credentials = {
     usernameAvailable: false,
     portfolioURLAvailable: false,
-    url: websiteURL
+    url: websiteURL + "portfolio/"
   };
 
   User.findOne({ username: req.body.requestedUsername }, {}, function (err, user) {

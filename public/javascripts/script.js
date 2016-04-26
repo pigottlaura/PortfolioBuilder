@@ -76,8 +76,8 @@ jQuery(document).ready(function ($) {
                     $.post("/admin/changePortfolioURL", { newPortfolioURL: $("#currentPortfolioURL").text() });
                     originalPortfolioURL = $("#currentPortfolioURL").text();
                     $("#portfolioLink")
-                        .attr("href", "/portfolio/" + $("#currentPortfolioURL").text())
-                        .text(responseData.url + "/portfolio" + $("#currentPortfolioURL").text());
+                        .attr("href", responseData.url + $("#currentPortfolioURL").text())
+                        .text(responseData.url + $("#currentPortfolioURL").text());
                 } else {
                     $("#currentPortfolioURL").text(originalPortfolioURL);
                 }

@@ -24,7 +24,7 @@ router.get('/', function (req, res, next) {
         portfolio.sortMediaItems(portfolio, function (sortedMediaItems) {
           res.render("admin", {
             title: "Admin Section",
-            websiteURL: websiteURL,
+            websiteURL: websiteURL + "portfolio/",
             portfolioURL: portfolio.portfolioURL,
             user: portfolio.owner,
             mediaItems: sortedMediaItems
