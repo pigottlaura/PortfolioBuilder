@@ -20,6 +20,25 @@ router.get('/', function (req, res, next) {
         res.render("noportfolio", { title: "/ " + req.params.portfolioURL + " does not exist" });
       } else {
         console.log("This user has " + portfolio.pages.home.mediaItems.length + " media items");
+
+        portfolio.pages.home.mediaItems.sort(function (a, b) {
+          var returnVal = 0;
+          if (a.indexPosition > b.indexPosition) {
+            returnVal = 1;
+          } else if (a.indexPosition < b.indexPosition) {
+            returnVal = -1;
+          } else {
+            if (a.uploadedAt > b.uploadedAt) {
+              returnVal = -1;
+            } else if (a.uploadedAt < b.uploadedAt) {
+              returnVal = 1;
+            } else {
+              returnVal = 0;
+            }
+          }
+          return returnVal;
+        });
+
         res.render("admin", {
           title: "Admin Section",
           websiteURL: websiteURL,
@@ -59,7 +78,7 @@ router.post("/uploadMedia", function (req, res, next) {
             }
           });
         }
-        
+
         res.redirect("/admin");
       }
     }
