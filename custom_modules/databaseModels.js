@@ -30,6 +30,10 @@ var databaseModels = {
         }
     }),
     MediaItem: mongoose.model("MediaItem", {
+        _ownerId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        },
         file: {
             size: Number,
             path: String,
@@ -39,10 +43,6 @@ var databaseModels = {
             encoding: String,
             originalname: String,
             fieldname: String
-        },
-        owner: {
-            type: String,
-            required: true
         },
         uploadedAt: {
             type: Date,
@@ -59,10 +59,34 @@ var databaseModels = {
         filePath: {
             type: String,
             required: true
+        }
+    }),
+    Portfolio: mongoose.model("Portfolio", {
+        _ownerId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
         },
-        indexPosition: {
-            type: Number,
-            default: 0
+        pages: {
+            home: {
+                mediaItems: {
+                    mediaItem: {
+                        _mediaId: mongoose.Schema.Types.ObjectId,
+                        indexPosition: {
+                            type: Number,
+                            default: 0
+                        }
+                    }
+                }
+            },
+            contact: {
+                picture: String,
+                contactDetails: {
+                    name: String,
+                    email: String,
+                    phone: Number
+                }
+            },
+            other : [{nme :String, mediaItems: [mongoose.Schema.Types.ObjectId]}]
         }
     })
 }

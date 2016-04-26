@@ -4,6 +4,7 @@ var router = express.Router();
 var cryptoEncryption = require("../custom_modules/cryptoEncryption");
 var databaseModels = require("../custom_modules/databaseModels");
 var User = databaseModels.User;
+var Portfolio = databaseModels.Portfolio;
 
 
 /* GET home page. */
@@ -43,30 +44,28 @@ router.post("/checkCredentialsAvailable", function (req, res, next) {
 });
 
 router.post("/login", function (req, res, next) {
-    User.findOne({ username: req.body.username }, {}, function (err, users) {
-        if (err) {
-            console.log("INDEX - Could not check if this username exists - " + err);
-            res.render("login", { title: "Login", warning: "There was an unexpected error - please try again" });
+  User.findOne({ username: req.body.username }, {}, function (err, user) {
+    if (err) {
+      console.log("INDEX - Could not check if this username exists - " + err);
+      res.redirect("/");
+    } else {
+      if (user == null) {
+        console.log("INDEX - This user does not exist");
+        res.render("index", { title: "Login", warning: "This username does not exist" });
+      } else {
+        if (req.body.username.toLowerCase() == user.username && req.body.password == cryptoEncryption.decrypt(user.password)) {
+          req.session._userId = user._id;
+          
+          console.log("INDEX - correct username/password");
+          res.redirect("/admin");
         } else {
-            if (users == null) {
-                console.log("INDEX - This user does not exist");
-                res.render("login", { title: "Login", warning: "This username does not exist" });
-            } else {
-                if (req.body.username.toLowerCase() == users.username && req.body.password == cryptoEncryption.decrypt(users.password)) {
-                    req.session.username = req.body.username.toLowerCase();
-                    req.session.profilePicture = users.profilePicture;
-                    req.session.firstName = users.firstName;
-                    req.session.portfolioURL = users.portfolioURL;
-                    console.log("INDEX - correct username/password");
-                    res.redirect("/admin");
-                } else {
-                    console.log("INDEX - wrong username/password");
-                    res.render("index", { title: "Portfolio Builder", warning: "Wrong username/password" });
-                }
-
-            }
+          console.log("INDEX - wrong username/password");
+          res.render("index", { title: "Portfolio Builder", warning: "Wrong username/password" });
         }
-    });
+
+      }
+    }
+  });
 });
 
 router.post('/createAccount', function (req, res, next) {
@@ -85,10 +84,7 @@ router.post('/createAccount', function (req, res, next) {
           portfolioURL: req.body.portfolioURL
         });
 
-        req.session.username = newUser.username;
-        req.session.profilePicture = newUser.profilePicture;
-        req.session.firstName = newUser.firstName;
-        req.session.portfolioURL = newUser.portfolioURL;
+        req.session._userId = newUser._id;
 
         newUser.save(function (err, newUser) {
           if (err) {
@@ -98,6 +94,20 @@ router.post('/createAccount', function (req, res, next) {
           }
           res.redirect("/admin");
         });
+
+        var newPortfolio = new Portfolio({
+          _ownerId: newUser._id
+        });
+        newPortfolio.pages.contact.contactDetails.name = newUser.firstName + " " + newUser.lastName;
+
+        newPortfolio.save(function (err, newPortfolio) {
+          if (err) {
+            console.log("INDEX - Could not save new portfolio to the database - " + err);
+          } else {
+            console.log("INDEX - New portfolio successfully saved to the database");
+          }
+        });
+
       } else {
         console.log("INDEX - This username already exists");
         res.redirect("/");

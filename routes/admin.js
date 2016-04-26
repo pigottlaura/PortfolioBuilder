@@ -4,12 +4,13 @@ var databaseModels = require("../custom_modules/databaseModels");
 var ObjectId = require('mongodb').ObjectID;
 var MediaItem = databaseModels.MediaItem;
 var User = databaseModels.User;
+var Portfolio = databaseModels.Portfolio;
 var fs = require("fs");
 
 // Get main admin dashboard
 router.get('/', function (req, res, next) {
   console.log("Admin - in admin section");
-  User.findOne({ username: req.session.username }, {}, function (err, users) {
+  User.findOne({ "_id": req.session._userId }, {}, function (err, users) {
     if (err) {
       console.log("ADMIN - Could not check if this user exists - " + err);
       res.redirect("/");
@@ -18,7 +19,7 @@ router.get('/', function (req, res, next) {
         console.log("ADMIN - This user does not exist");
         res.redirect("/");
       } else {
-        MediaItem.find({ owner: users.username }).sort({ mediaType: 1, indexPosition: 1, uploadedAt: -1 }).exec(function (err, mediaItems) {
+        MediaItem.find({ _ownerId: users._id }).sort({ mediaType: 1, indexPosition: 1, uploadedAt: -1 }).exec(function (err, mediaItems) {
           if (err) {
             console.log("ADMIN - Could not check if there are any media items - " + err);
             res.redirect("/");
@@ -46,9 +47,9 @@ router.post("/uploadMedia", function (req, res, next) {
     console.log("Admin - file successfully uploaded");
     var newMediaItemTitle = req.body.mediaItemTitle.length > 0 ? req.body.mediaItemTitle : req.files[i].originalname;
     var newMediaItem = new MediaItem({
+      _ownerId: req.session._userId,
       file: req.files[i],
       mediaType: req.files[i].mediaType,
-      owner: req.session.username,
       filePath: "../" + req.files[i].path.split("public\\")[1],
       fileTitle: newMediaItemTitle
     });
@@ -61,13 +62,16 @@ router.post("/uploadMedia", function (req, res, next) {
     });
   }
   res.redirect("/admin");
+  Portfolio.findOne({ "_id": ObjectId(req.session._userId) }, function (err, portfolio) {
+    // SAVE NEW MEDIA ITEM TO USERS PORTFOLIO
+  });
 });
 
 // Change admin's portfolio URL
 router.post("/changePortfolioURL", function (req, res, next) {
   console.log("Admin - requested portfolioURL to be changed - " + req.body.newPortfolioURL);
   
-  User.update({ username: req.session.username }, { $set: { portfolioURL: req.body.newPortfolioURL.toLowerCase() } }, function (err, user) {
+  User.update({ "_id": req.session._userId }, { $set: { portfolioURL: req.body.newPortfolioURL.toLowerCase() } }, function (err, user) {
     if (err) {
       console.log("Admin - Could not check if this username exists - " + err);
     } else {

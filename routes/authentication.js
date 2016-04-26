@@ -9,7 +9,7 @@ var User = databaseModels.User;
 router.get("/admin", function (req, res, next) {
     // If the current session does not contain a username property, then
     // this user is not yet logged in
-    if (req.session.username == null) {
+    if (req.session._userId == null) {
         console.log("Auth - User not yet logged in");
         res.redirect("/");
     } else {
@@ -33,8 +33,8 @@ router.get('/authentication/google/callback', googlePassport.authenticate(
         failureRedirect: '/'
     }),
     function (req, res, next) {
-        req.session.username = req.user.googleId;
-        console.log(req.session.username);
+        req.session._userId = req.user._id;
+        console.log(req.session._userId);
         res.redirect('/admin');
     });
 

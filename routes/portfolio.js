@@ -14,7 +14,7 @@ router.get("/:portfolioURL", function(req, res, next) {
                 console.log("Index - This portfolio does not exist");
                 res.redirect("/");
             } else {
-                MediaItem.find({owner: users.username }).sort({ mediaType: 1, indexPosition: 1, uploadedAt: -1 }).exec(function(err, mediaItems) {
+                MediaItem.find({_ownerId: users._id }).sort({ mediaType: 1, indexPosition: 1, uploadedAt: -1 }).exec(function(err, mediaItems) {
                     if (err) {
                         console.log("Index - Could not check if there are any media items - " + err);
                         res.redirect("/");

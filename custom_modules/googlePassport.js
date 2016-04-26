@@ -7,6 +7,7 @@ var databaseModels = require("../custom_modules/databaseModels");
 // I can use it to query, add, update and remove documents from the User collection
 // within the MongoDB database
 var User = databaseModels.User;
+var Portfolio = databaseModels.Portfolio;
 
 // Requiring the passport module, so that I can set up the relevant modules, including
 // the Google OAuth2 one below, to allow for alternative methods of creating/logging in
@@ -33,19 +34,19 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: "/authentication/google/callback"
 },
-    function(accessToken, refreshToken, profile, done) {
-        /*
+    function (accessToken, refreshToken, profile, done) {
+        
         // Looping through the profile object that was returned from the google authorisation,
         // to see what properties are available to me
         for (var p in profile) {
             // Logging out every property of the profile object
-            console.log(profile[p]);
+            console.log(p + " = " + profile[p]);
         }
-        */
         
+
         // Checking to see if this user already exists i.e. if they have already created an account
         // on this app using this Google account        
-        User.findOne({ googleId: profile.id }, {}, function(err, user) {
+        User.findOne({ googleId: profile.id }, {}, function (err, user) {
             if (err) {
                 console.log("Cannot check if this Google users already exists - " + err);
                 return done(err);
@@ -53,23 +54,37 @@ passport.use(new GoogleStrategy({
                 if (user == null) {
                     console.log(profile.name + " is a new user");
                     var newUser = new User({
-                        username: profile.id,
                         firstName: profile.name.givenName,
                         lastName: profile.name.familyName,
                         googleId: profile.id,
                         profilePicture: profile._json.image.url,
                         portfolioURL: "GoogleUser-" + profile.id
                     });
-
-                    newUser.save(function(err, newUser) {
+                    
+                    newUser.save(function (err, newUser) {
                         if (err) {
-                            console.log("Index - Could not save new user to the database - " + err);
+                            console.log("Google - Could not save new user to the database - " + err);
                             return done(err);
                         } else {
-                            console.log("Index - New user successfully saved to the database");
+                            console.log("Google - New user successfully saved to the database");
                             return done(null, newUser);
                         }
                     });
+
+                    var newPortfolio = new Portfolio({
+                        _ownerId: newUser._id
+                    });
+                    
+                    newPortfolio.pages.contact.contactDetails.name = profile.name.givenName + " " + profile.name.familyName;
+
+                    newPortfolio.save(function (err, newPortfolio){
+                        if (err) {
+                            console.log("Google - Could not save new portfolio to the database - " + err);
+                        } else {
+                            console.log("Google - New portfolio successfully saved to the database");
+                        }
+                    });
+                    
                 } else {
                     console.log(profile.name + " is an existing user");
                     return done(null, user);
