@@ -77,7 +77,7 @@ jQuery(document).ready(function ($) {
                     originalPortfolioURL = $("#currentPortfolioURL").text();
                     $("#portfolioLink")
                         .attr("href", "/portfolio/" + $("#currentPortfolioURL").text())
-                        .text(responseData.url + $("#currentPortfolioURL").text());
+                        .text(responseData.url + "/portfolio" + $("#currentPortfolioURL").text());
                 } else {
                     $("#currentPortfolioURL").text(originalPortfolioURL);
                 }
