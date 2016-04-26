@@ -6,6 +6,7 @@ var MediaItem = databaseModels.MediaItem;
 var User = databaseModels.User;
 var Portfolio = databaseModels.Portfolio;
 var fs = require("fs");
+var websiteURL = process.env.WEBSITE_URL || "http://localhost:3000/";
 
 // Get main admin dashboard
 router.get('/', function (req, res, next) {
@@ -30,6 +31,7 @@ router.get('/', function (req, res, next) {
               console.log("This user has " + mediaItems.length + " media items");
               res.render("admin", {
                 title: "Admin Section",
+                url: websiteURL,
                 user: users,
                 mediaItems: mediaItems
               });
@@ -61,10 +63,21 @@ router.post("/uploadMedia", function (req, res, next) {
       }
     });
   }
-  res.redirect("/admin");
-  Portfolio.findOne({ "_id": ObjectId(req.session._userId) }, function (err, portfolio) {
-    // SAVE NEW MEDIA ITEM TO USERS PORTFOLIO
+  
+  Portfolio.findOne({ _ownerId: ObjectId(req.session._userId) }, function (err, portfolio) {
+    if(err){
+      console.log("ADMIN - Could not check if portfolio exists - " + err);
+    } else {
+      if(portfolio == null){
+        console.log(("ADMIN - This portfolio does not exist"));
+      } else {
+        portfolio.pages.home.mediaItems.push({_mediaId: newMediaItem._id});
+        console.log(("ADMIN - New Media item added to portfolio - " + newMediaItem._id));
+        console.log(portfolio.pages.home.mediaItems);
+      }
+    }
   });
+  res.redirect("/admin");
 });
 
 // Change admin's portfolio URL
@@ -121,6 +134,19 @@ router.post("/changeMediaOrder", function(req, res, next){
         console.log(err);
       }
     });
+    Portfolio.update({ _ownerId: ObjectId(req.session._userId) }, function (err, portfolio) {
+    if(err){
+      console.log("ADMIN - Could not check if portfolio exists - " + err);
+    } else {
+      if(portfolio == null){
+        console.log(("ADMIN - This portfolio does not exist"));
+      } else {
+        for(var i = 0; i < portfolio.pages.home.mediaItems.length; i++){
+          
+        }
+      }
+    }
+  });
   }
   
 });

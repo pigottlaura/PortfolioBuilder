@@ -77,7 +77,7 @@ jQuery(document).ready(function ($) {
                     originalPortfolioURL = $("#currentPortfolioURL").text();
                     $("#portfolioLink")
                         .attr("href", "/portfolio/" + $("#currentPortfolioURL").text())
-                        .text("http://localhost:3000/portfolio/" + $("#currentPortfolioURL").text());
+                        .text(responseData.url + $("#currentPortfolioURL").text());
                 } else {
                     $("#currentPortfolioURL").text(originalPortfolioURL);
                 }

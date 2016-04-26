@@ -6,6 +6,8 @@ var databaseModels = require("../custom_modules/databaseModels");
 var User = databaseModels.User;
 var Portfolio = databaseModels.Portfolio;
 
+var websiteURL = process.env.WEBSITE_URL || "http://localhost:3000/";
+
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -15,7 +17,8 @@ router.get('/', function (req, res, next) {
 router.post("/checkCredentialsAvailable", function (req, res, next) {
   var credentials = {
     usernameAvailable: true,
-    portfolioURLAvailable: true
+    portfolioURLAvailable: true,
+    url: websiteURL
   };
   console.log(req.body.requestedPortfolioURL);
 

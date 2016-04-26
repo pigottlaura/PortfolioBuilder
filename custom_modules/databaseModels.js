@@ -68,15 +68,18 @@ var databaseModels = {
         },
         pages: {
             home: {
-                mediaItems: {
-                    mediaItem: {
-                        _mediaId: mongoose.Schema.Types.ObjectId,
+                mediaItems: [
+                    {
+                        _mediaId: {
+                            type: mongoose.Schema.Types.ObjectId,
+                            required: true
+                        },
                         indexPosition: {
                             type: Number,
                             default: 0
                         }
                     }
-                }
+                ]
             },
             contact: {
                 picture: String,

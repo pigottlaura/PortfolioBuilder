@@ -6,7 +6,7 @@ block content
             h1= title
             h2 Welcome back #{user.firstName}
             p View your portfolio: 
-                a(id="portfolioLink" href="/portfolio/#{user.portfolioURL}" target="_blank") http://localhost:3000/portfolio/#{user.portfolioURL}
+                a(id="portfolioLink" href="#{url}portfolio/#{user.portfolioURL}" target="_blank") #{url}portfolio/#{user.portfolioURL}
         
         div.col-xs-2.center
             a(href="/logout")
