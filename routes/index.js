@@ -16,33 +16,28 @@ router.get('/', function (req, res, next) {
 
 router.post("/checkCredentialsAvailable", function (req, res, next) {
   var credentials = {
-    usernameAvailable: true,
-    portfolioURLAvailable: true,
+    usernameAvailable: false,
+    portfolioURLAvailable: false,
     url: websiteURL
   };
-  console.log(req.body.requestedPortfolioURL);
 
-  User.find({ $or: [{ username: req.body.requestedUsername }, { portfolioURL: req.body.requestedPortfolioURL }] }, {}, function (err, users) {
-    if (users.length > 0) {
-      users.forEach(function (user) {
-        if (user.username == req.body.requestedUsername) {
-          console.log("INDEX - Matched username");
-          credentials.usernameAvailable = false;
-        } else {
-          credentials.username = req.body.requestedUsername;
-        }
-
-        if (user.portfolioURL == req.body.requestedPortfolioURL) {
-          console.log("INDEX - Matched url");
-          credentials.portfolioURLAvailable = false;
-        } else {
-          credentials.portfolioURL = req.body.requestedPortfolioURL;
-        }
-      });
+  User.findOne({ username: req.body.requestedUsername }, {}, function (err, user) {
+    if (user == null) {
+      credentials.usernameAvailable = true;
+      credentials.username = req.body.requestedUsername;
     }
-    console.log("INDEX - Username available = " + credentials.usernameAvailable);
-    console.log("INDEX - URL available = " + credentials.portfolioURLAvailable);
-    res.json(credentials);
+
+    Portfolio.findOne({ portfolioURL: req.body.requestedPortfolioURL }, {}, function (err, portfolio) {
+      if (portfolio == null) {
+        credentials.portfolioURLAvailable = true;
+        credentials.portfolioURL = req.body.requestedPortfolioURL;
+
+        console.log("INDEX - Username available = " + credentials.usernameAvailable);
+        console.log("INDEX - URL available = " + credentials.portfolioURLAvailable);
+        res.json(credentials);
+      }
+    });
+    
   });
 });
 
@@ -58,7 +53,7 @@ router.post("/login", function (req, res, next) {
       } else {
         if (req.body.username.toLowerCase() == user.username && req.body.password == cryptoEncryption.decrypt(user.password)) {
           req.session._userId = user._id;
-          
+
           console.log("INDEX - correct username/password");
           res.redirect("/admin");
         } else {
@@ -99,7 +94,7 @@ router.post('/createAccount', function (req, res, next) {
         });
 
         var newPortfolio = new Portfolio({
-          _ownerId: newUser._id
+          owner: newUser._id
         });
         newPortfolio.pages.contact.contactDetails.name = newUser.firstName + " " + newUser.lastName;
 

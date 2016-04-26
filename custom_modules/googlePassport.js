@@ -57,8 +57,7 @@ passport.use(new GoogleStrategy({
                         firstName: profile.name.givenName,
                         lastName: profile.name.familyName,
                         googleId: profile.id,
-                        profilePicture: profile._json.image.url,
-                        portfolioURL: "GoogleUser-" + profile.id
+                        profilePicture: profile._json.image.url
                     });
                     
                     newUser.save(function (err, newUser) {
@@ -72,10 +71,16 @@ passport.use(new GoogleStrategy({
                     });
 
                     var newPortfolio = new Portfolio({
-                        _ownerId: newUser._id
+                        owner: newUser._id,
+                        portfolioURL: "GoogleUser-" + profile.id,
+                        pages: {
+                            contact: {
+                                contactDetails: {
+                                    name: profile.name.givenName + " " + profile.name.familyName
+                                }
+                            }
+                        }
                     });
-                    
-                    newPortfolio.pages.contact.contactDetails.name = profile.name.givenName + " " + profile.name.familyName;
 
                     newPortfolio.save(function (err, newPortfolio){
                         if (err) {
