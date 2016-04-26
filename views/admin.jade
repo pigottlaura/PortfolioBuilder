@@ -6,7 +6,7 @@ block content
             h1= title
             h2 Welcome back #{user.firstName}
             p View your portfolio: 
-                a(id="portfolioLink" href="#{url}portfolio/#{user.portfolioURL}" target="_blank") #{url}portfolio/#{user.portfolioURL}
+                a(id="portfolioLink" href="#{websiteURL}portfolio/#{portfolioURL}" target="_blank") #{websiteURL}portfolio/#{portfolioURL}
         
         div.col-xs-2.center
             a(href="/logout")
@@ -46,7 +46,7 @@ block content
                         div.col-xs-3
                             label URL:
                         div.col-xs-9
-                            p(id="currentPortfolioURL") #{user.portfolioURL}
+                            p(id="currentPortfolioURL") /#{portfolioURL}
                             span(id="portfolioURLStatusIcon" aria-hidden="true")
                     div.row
                         div.col-xs-4.col-xs-offset-4

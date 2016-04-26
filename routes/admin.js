@@ -11,32 +11,21 @@ var websiteURL = process.env.WEBSITE_URL || "http://localhost:3000/";
 // Get main admin dashboard
 router.get('/', function (req, res, next) {
   console.log("Admin - in admin section");
-  User.findOne({ "_id": req.session._userId }, {}, function (err, users) {
+  Portfolio.findOne({ owner: req.session._userId }).populate("pages.home.mediaItems owner").exec(function (err, portfolio) {
     if (err) {
-      console.log("ADMIN - Could not check if this user exists - " + err);
-      res.redirect("/");
+      console.log("Index - Could not check if this portfolio exists - " + err);
     } else {
-      if (users == null) {
-        console.log("ADMIN - This user does not exist");
-        res.redirect("/");
+      if (portfolio == null) {
+        console.log("Index - This portfolio does not exist");
+        res.render("noportfolio", { title: "/ " + req.params.portfolioURL + " does not exist" });
       } else {
-        MediaItem.find({ _ownerId: users._id }).sort({ mediaType: 1, indexPosition: 1, uploadedAt: -1 }).exec(function (err, mediaItems) {
-          if (err) {
-            console.log("ADMIN - Could not check if there are any media items - " + err);
-            res.redirect("/");
-          } else {
-            if (mediaItems == null) {
-              res.redirect("/");
-            } else {
-              console.log("This user has " + mediaItems.length + " media items");
-              res.render("admin", {
-                title: "Admin Section",
-                url: websiteURL,
-                user: users,
-                mediaItems: mediaItems
-              });
-            }
-          }
+        console.log("This user has " + portfolio.pages.home.mediaItems.length + " media items");
+        res.render("admin", {
+          title: "Admin Section",
+          websiteURL: websiteURL,
+          portfolioURL: portfolio.portfolioURL,
+          user: portfolio.owner,
+          mediaItems: portfolio.pages.home.mediaItems
         });
       }
     }
@@ -69,15 +58,9 @@ router.post("/uploadMedia", function (req, res, next) {
               console.log("Admin - Media item successfully saved to database");
             }
           });
-          portfolio.pages.home.mediaItems.push(newMediaItem._id);
-          portfolio.save(function (err) {
-            if (!err) console.log('Success!');
-          });
         }
-
+        
         res.redirect("/admin");
-        console.log(("ADMIN - New Media item added to portfolio - " + newMediaItem._id));
-        console.log(portfolio.pages.home.mediaItems);
       }
     }
   });
@@ -85,13 +68,13 @@ router.post("/uploadMedia", function (req, res, next) {
 
 // Change admin's portfolio URL
 router.post("/changePortfolioURL", function (req, res, next) {
-  console.log("Admin - requested portfolioURL to be changed - " + req.body.newPortfolioURL);
+  console.log("ADMIN - requested portfolioURL to be changed - " + req.body.newPortfolioURL);
 
-  User.update({ "_id": req.session._userId }, { $set: { portfolioURL: req.body.newPortfolioURL.toLowerCase() } }, function (err, user) {
+  Portfolio.update({ owner: req.session._userId }, { $set: { portfolioURL: req.body.newPortfolioURL.toLowerCase() } }, function (err, portfolio) {
     if (err) {
-      console.log("Admin - Could not check if this username exists - " + err);
+      console.log("ADMIN - Could not check if this portfolio exists - " + err);
     } else {
-      console.log("Admin - updated portfolio URL");
+      console.log("ADMIN - updated portfolio URL");
     }
   });
 });
@@ -131,27 +114,16 @@ router.post("/changeMediaTitle", function (req, res, next) {
 router.post("/changeMediaOrder", function (req, res, next) {
   var newMediaOrder = JSON.parse(req.body.newOrder);
   for (var i = 0; i < newMediaOrder.length; i++) {
+    console.log(newMediaOrder[i].indexPosition);
 
     MediaItem.update({ "_id": ObjectId(newMediaOrder[i].mediaId) }, { $set: { indexPosition: newMediaOrder[i].indexPosition } }, function (err, docsEffected) {
       if (err) {
         console.log(err);
-      }
-    });
-    Portfolio.update({ _ownerId: ObjectId(req.session._userId) }, function (err, portfolio) {
-      if (err) {
-        console.log("ADMIN - Could not check if portfolio exists - " + err);
       } else {
-        if (portfolio == null) {
-          console.log(("ADMIN - This portfolio does not exist"));
-        } else {
-          for (var i = 0; i < portfolio.pages.home.mediaItems.length; i++) {
-
-          }
-        }
+        console.log(docsEffected);
       }
     });
   }
-
 });
 
 module.exports = router;
