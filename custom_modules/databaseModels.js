@@ -59,6 +59,10 @@ var databaseModels = {
         filePath: {
             type: String,
             required: true
+        },
+        indexPosition: {
+            type: Number,
+            default: 0
         }
     }),
     Portfolio: mongoose.model("Portfolio", {
@@ -89,7 +93,7 @@ var databaseModels = {
                     phone: Number
                 }
             },
-            other : [{nme :String, mediaItems: [mongoose.Schema.Types.ObjectId]}]
+            other: [{ nme: String, mediaItems: [mongoose.Schema.Types.ObjectId] }]
         }
     })
 }
