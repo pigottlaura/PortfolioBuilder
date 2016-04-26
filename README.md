@@ -8,9 +8,17 @@ Available on: http://portfoliobuilder.azurewebsites.net/
     - Basis of app created using express-generator
     - Basis of website layout completed using a Bootstrap grid system
 - Database
-    - All users and media items are stored in a Mongo database (generated and run using the Mongoose module).
+    - All users, portfolios media items are stored in a Mongo database (generated and run using the Mongoose module).
     - The database connection is shared among multiple routes through a custom module (see below)
     - Running a both a local database (for development purposes) and a MongoLabs database remotely (for use when the app is running live on Azure)
+    - Population
+        - Using the portfolio document as the main point of quering the database
+        - The portfolio document contains the ObjectId of the owner, and an array of ObjectId's for the MediaItems which belong to it
+        - Each time the portfolio model is queries, using the populate() method to source the relevant documents using their ObjectId to reference them
+        - This appears to be much faster, and returns all the relevant data for the portfolio in one query
+    - Mongoose Middleware
+        - Each time a new media item is saved, it's object id will be added to the portfolio of it's owner
+        - If a media item is deleted, it's object id will also be deleted from the portfolio document of it's owner
 - Login
     - Users can log in to create a new portfolio using their Google account. Using the passport-google-oauth module to generate this functionality.
     - Users can create their own accounts on the server, by providing their own username and password, while also being able to choose their portfolio url.

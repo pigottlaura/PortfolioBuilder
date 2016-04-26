@@ -34,7 +34,7 @@ router.get('/', function (req, res, next) {
 
 // Upload media to admin
 router.post("/uploadMedia", function (req, res, next) {
-  Portfolio.findOne({ owner: ObjectId(req.session._userId) }, function (err, portfolio) {
+  Portfolio.findOne({ owner: req.session._userId }, function (err, portfolio) {
     if (err) {
       console.log("ADMIN - Could not check if portfolio exists - " + err);
     } else {
