@@ -5,51 +5,75 @@ block content
         div.col-xs-10
             h1= title
             h2 Welcome back #{user.firstName}
-            div.row
-                div.col-xs-12 View your portfolio:
-            div.row(id="currentPortfolioURL")
-                div.col-xs-8
-                    a(href="/portfolio/#{user.portfolioURL}" target="_blank") #{user.portfolioURL}
-                    form(action="/admin/changePortfolioURL" method="post")
-                        input(type="text" name="newPortfolioURL")
-                div.col-xs-2
-                    button Edit
-                div.col-xs-2
-                    button.save Save
+            p View your portfolio: 
+                a(id="portfolioLink" href="/portfolio/#{user.portfolioURL}" target="_blank") http://localhost:3000/portfolio/#{user.portfolioURL}
+        
         div.col-xs-2.center
             a(href="/logout")
                 button Log out
             br
             img(src="#{user.profilePicture}" alt="#{user.firstName}" id="profilePicture" class="img-circle")
-            a(href="/admin/settings/changeProfilePicture")
+            a(href="/admin/changeProfilePicture")
                 button Change Profile Picture
+            
     div.row
-        div.col-md-6
-            h3 Upload Media
-            form(id="uploadMedia" method="post" action="/admin/uploadMedia" enctype="multipart/form-data")
-                input(type="file" name="mediaItem" multiple)
-                label(for="mediaItemTitle") Title:
-                input(type="text" id="mediaItemTitle" name="mediaItemTitle")
-                input(type="submit" name="Upload")
-    div.row(id="sortable")
-        -for(var i = 0; i < mediaItems.length; i++)
-            if(mediaItems[i].mediaType == 'image' || mediaItems[i].mediaType == 'swf' || mediaItems[i].mediaType == 'video')
-                div.col-md-3.col-xs-4
-                    figure
-                        button(id="#{mediaItems[i]._id}" class="deleteMedia" title="Delete #{mediaItems[i].fileTitle}") x
-                        
-                        if(mediaItems[i].mediaType == 'image')
-                            img(src='#{mediaItems[i].filePath}' alt='Alt Text' class='thumbnail')
-                        else if(mediaItems[i].mediaType == 'swf')
-                            div.swfContainer
-                                object(classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%")
-                                    param(name='movie' value='#{mediaItems[i].filePath}')
-                                    param(name='quality' value='high')
-                                    param(name='scale' value='default')
-                                    embed(src='#{mediaItems[i].filePath}' quality="high" type='#{mediaItems[i].file.mimetype}' width='100%' height='100%' scale="default" pluginspage="http://www.macromedia.com/go/getflashplayer")
-                        else if(mediaItems[i].mediaType == "video")
-                            div.swfContainer
-                                video(controls)
-                                    source(src='#{mediaItems[i].filePath}' type='#{mediaItems[i].file.mimetype}' volume="0")
-                                        
-                        figcaption(contenteditable="true") #{mediaItems[i].fileTitle}
+        div.col-xs-4(id="adminOptions")
+            div.accordion
+                h3 Upload Media
+                div
+                    form(id="uploadMedia" method="post" action="/admin/uploadMedia" enctype="multipart/form-data")
+                        div.row
+                            div.col-xs-3
+                                label(for="mediaItemFile") File:
+                            div.col-xs-9
+                                input(type="file" name="mediaItem" multiple)
+                        div.row
+                            div.col-xs-3
+                                label(for="mediaItemTitle") Title:
+                            div.col-xs-9
+                                input(type="text" id="mediaItemTitle" name="mediaItemTitle")
+                        div.row
+                            div.col-xs-4.col-xs-offset-8
+                                input(type="submit" name="Upload" value="Upload")
+                h3 Pages
+                div
+                    ul(id="portfolioPages")
+                        li Home
+                    button(id="addPage") Add Page
+                h3 Settings
+                div
+                    div.row
+                        div.col-xs-3
+                            label URL:
+                        div.col-xs-9
+                            p(id="currentPortfolioURL") #{user.portfolioURL}
+                            span(id="portfolioURLStatusIcon" aria-hidden="true")
+                    div.row
+                        div.col-xs-4.col-xs-offset-4
+                            button(id="savePortfolioURL") Save
+                        div.col-xs-4
+                            button(id="editPortfolioURL") Edit
+                            button(id="cancelPortfolioURL") Cancel
+        div.col-xs-8
+            div(id="sortable")
+                -for(var i = 0; i < mediaItems.length; i++)
+                    if(mediaItems[i].mediaType == 'image' || mediaItems[i].mediaType == 'swf' || mediaItems[i].mediaType == 'video')
+                        div.col-md-3.col-xs-4
+                            figure
+                                button(id="#{mediaItems[i]._id}" class="deleteMedia" title="Delete #{mediaItems[i].fileTitle}") x
+                                
+                                if(mediaItems[i].mediaType == 'image')
+                                    img(src='#{mediaItems[i].filePath}' alt='Alt Text' class='thumbnail')
+                                else if(mediaItems[i].mediaType == 'swf')
+                                    div.swfContainer
+                                        object(classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%")
+                                            param(name='movie' value='#{mediaItems[i].filePath}')
+                                            param(name='quality' value='high')
+                                            param(name='scale' value='default')
+                                            embed(src='#{mediaItems[i].filePath}' quality="high" type='#{mediaItems[i].file.mimetype}' width='100%' height='100%' scale="default" pluginspage="http://www.macromedia.com/go/getflashplayer")
+                                else if(mediaItems[i].mediaType == "video")
+                                    div.swfContainer
+                                        video(controls)
+                                            source(src='#{mediaItems[i].filePath}' type='#{mediaItems[i].file.mimetype}' volume="0")
+                                                
+                                figcaption(contenteditable="true") #{mediaItems[i].fileTitle}

@@ -21,7 +21,7 @@ a {
     color: #770000;
 }
 
-#currentPortfolioURL form input, #currentPortfolioURL div:last-of-type button:last-of-type {
+#currentPortfolioURL form input, #savePortfolioURL, #cancelPortfolioURL {
     display: none;
     width: 100%;
 }
@@ -87,4 +87,24 @@ video {
 
 .formWarning {
     background-color: #FC9D9D;
+}
+
+input, select, button {
+    width: 100%;
+}
+.glyphicon {
+    position: absolute;
+    right: 8%;
+    top: 6%;
+}
+
+#adminOptions {
+    height: 70vh;
+}
+.ui-accordion-content {
+    padding: 1% !important;
+}
+
+.deleteMedia {
+    width: 15%;
 }

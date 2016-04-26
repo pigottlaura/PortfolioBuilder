@@ -16,6 +16,7 @@ router.post("/checkCredentialsAvailable", function (req, res, next) {
     usernameAvailable: true,
     portfolioURLAvailable: true
   };
+  console.log(req.body.requestedPortfolioURL);
 
   User.find({ $or: [{ username: req.body.requestedUsername }, { portfolioURL: req.body.requestedPortfolioURL }] }, {}, function (err, users) {
     if (users.length > 0) {

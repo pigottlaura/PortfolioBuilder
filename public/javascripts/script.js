@@ -1,18 +1,20 @@
 jQuery(document).ready(function ($) {
+    var originalPortfolioURL = $("#currentPortfolioURL").text();
     console.log("Document ready");
     $(".tabs").tabs();
     resizeFigures();
-    $(window).resize(function(){
+    $(window).resize(function () {
         $("figure").css("minHeight", "initial");
         resizeFigures();
     });
-    $( "#sortable" ).sortable({
+    $(".accordion").accordion();
+    $("#sortable").sortable({
         cancel: "figcaption",
-        stop: function( event, ui ) {
+        stop: function (event, ui) {
             var mediaItemOrder = [];
-            
+
             console.log("DROPPED");
-            $.each($("figure"), function(index){
+            $.each($("figure"), function (index) {
                 console.log($(this).find("figcaption").text() + " is at index " + index);
                 mediaItemOrder.push({
                     mediaId: $(this).find("figcaption").siblings("button").attr("id"),
@@ -20,74 +22,99 @@ jQuery(document).ready(function ($) {
                 });
             });
             console.log(mediaItemOrder);
-            
-            $.post("/admin/changeMediaOrder", {newOrder: JSON.stringify(mediaItemOrder)});
+
+            $.post("/admin/changeMediaOrder", { newOrder: JSON.stringify(mediaItemOrder) });
         }
     });
     //$( "#sortable" ).disableSelection();
-    $("figcaption").blur(function(event){
+    $("figcaption").blur(function (event) {
         var mediaItemId = $(event.target).siblings("button").attr("id");
-       $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text()});
-    }).keypress(function(event){
+        $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text() });
+    }).keypress(function (event) {
         console.log(event.which);
-        if(event.which == 13){
+        if (event.which == 13) {
             event.preventDefault();
             $(event.target).blur();
         }
     });
-    $(".deleteMedia").click(function(event){
+    $(".deleteMedia").click(function (event) {
         $.post("/admin/deleteMedia", { mediaId: event.target.id }, function (responseData) {
-            $(".row > div").find("button[id='"+ responseData.mediaId + "']").parent().parent().remove();
+            $(".row > div").find("button[id='" + responseData.mediaId + "']").parent().parent().remove();
         }, "json");
     });
-    $("#currentPortfolioURL").click(function (event) {
-        // Determining which button was clicked on, based on the text of the element
-        // which was clicked on
-        if ($(event.target).text() == "Edit") {
-            // The user wants to edit their current portfolioURL
-            
-            // Hiding the current link to the user's portfolio
-            $(this).find("a").hide();
-            
-            // Setting the value of the form input to be equal to the current value of the
-            // users portfolioURL. Then displaying this input (so the user can edit this value)
-            $(this).find("form input").val($(this).find("a").text()).show();
-            
-            // Changing the text of the element that was clicked on to be undo (i.e. reusing the
-            // same button for undo and edit, as they do not carry any additional information
-            // other than letting us know what was clicked on)
-            $(event.target).text("Undo");
-            
-            // Locating the save button within this div, and displaying it
-            $(this).find(".save").show();
-            
-        } else if ($(event.target).text() == "Undo") {
-            // The user wants to disgard the changes they just made to their portfolioURL
-            
-            // Clearing the value of the form input, and then hiding it, so that he user's changes
-            // will be disgarded
-            $(this).find("form input").val("").hide();
-            
-            // Changing the text of the element that was clicked on to be edit (i.e. reusing the
-            // same button for undo and edit, as they do not carry any additional information
-            // other than letting us know what was clicked on)
-            $(event.target).text("Edit");
-            
-            // Displayign the current link to the user's portfolio
-            $(this).find("a").show();
-                            
-            // Locating the save button within this div, and hiding it
-            $(this).find(".save").hide();
-            
-        } else if ($(event.target).text() == "Save") {
-            
-            // Calling the asynchronous checkCredentialsAvailable() method, passing it in the 
-            checkCredentialsAvailable(null, $(this).find("form input").val(), function(responseData){
-                if(responseData.portfolioURLAvailable){
-                    $("#currentPortfolioURL form").submit();
-                    $("#currentPortfolioURL a").text(responseData.portfolioURL);
+    $("#editPortfolioURL").click(function (event) {
+
+        $("#currentPortfolioURL")
+            .prop("contenteditable", "true")
+            .focus();
+
+        $("#portfolioURLStatusIcon").attr("class", "glyphicon glyphicon-ok-circle");
+
+        $(this).hide();
+        $("#cancelPortfolioURL").show();
+        $("#savePortfolioURL").show();
+
+    });
+    $("#cancelPortfolioURL").click(function (event) {
+
+        $("#currentPortfolioURL")
+            .removeAttr("contenteditable")
+            .blur()
+            .text(originalPortfolioURL);
+
+        $("#portfolioURLStatusIcon").removeAttr("class");
+
+        $(this).hide();
+        $("#editPortfolioURL").show();
+        $("#savePortfolioURL").hide();
+    });
+    $("#savePortfolioURL").click(function (event) {
+        if ($("#currentPortfolioURL").text() != originalPortfolioURL) {
+            var requestedURL = $("#currentPortfolioURL").text().toLowerCase();
+            checkCredentialsAvailable(null, requestedURL, function (responseData) {
+                if (responseData.portfolioURLAvailable) {
+                    $.post("/admin/changePortfolioURL", { newPortfolioURL: $("#currentPortfolioURL").text() });
+                    originalPortfolioURL = $("#currentPortfolioURL").text();
+                    $("#portfolioLink")
+                        .attr("href", "/portfolio/" + $("#currentPortfolioURL").text())
+                        .text("http://localhost:3000/portfolio/" + $("#currentPortfolioURL").text());
+                } else {
+                    $("#currentPortfolioURL").text(originalPortfolioURL);
                 }
-            }); 
+            });
+
+        }
+
+        $("#editPortfolioURL").show();
+        $("#cancelPortfolioURL").hide();
+        $("#savePortfolioURL").hide();
+        $("#currentPortfolioURL").removeAttr("contenteditable");
+        $("#portfolioURLStatusIcon").removeAttr("class");
+    });
+
+    $("#currentPortfolioURL").keyup(function (event) {
+
+        var requestedURL = $("#currentPortfolioURL").text().toLowerCase();
+        if ($(this).text() == originalPortfolioURL) {
+            $("#portfolioURLStatusIcon").attr("class", "glyphicon glyphicon-ok-circle");
+            console.log("NO CHANGE");
+        } else {
+            console.log("about to check");
+            checkCredentialsAvailable(null, requestedURL, function (responseData) {
+                console.log(responseData.portfolioURLAvailable);
+                if (responseData.portfolioURLAvailable) {
+                    $("#portfolioURLStatusIcon").attr("class", "glyphicon glyphicon-ok-circle");
+                } else {
+                    console.log("Portfolio URL not available");
+                    $("#portfolioURLStatusIcon").attr("class", "glyphicon glyphicon-ban-circle");
+                }
+            });
+        }
+    }).keypress(function(event){
+        if (event.which == 13) {
+            $("#savePortfolioURL").trigger("click");
+            event.preventDefault();
+            $(this).blur();
         }
     });
 
@@ -167,23 +194,23 @@ jQuery(document).ready(function ($) {
     // Takes in three parametres. The requested username, requested url, and the callback function to which
     // the response data should be returned when a response is received from the server
     function checkCredentialsAvailable(username, url, cb) {
-        $.post("/checkCredentialsAvailable", { requestedUsername: username, requestedPortfolioURL: url }, function (responseData) {
+        $.post("/checkCredentialsAvailable", { requestedUsername: username, requestedPortfolioURL: url }, function (serverResponse) {
 
             // Passing the response data back to the callback function
-            cb(responseData);
+            cb(serverResponse);
         }, "json");
     }
 });
 
-function resizeFigures(){
+function resizeFigures() {
     var maxFigHeight = 0;
-    $('figure').each(function() {
+    $('figure').each(function () {
         maxFigHeight = maxFigHeight > $(this).height() ? maxFigHeight : $(this).height();
     });
     $(".swfContainer").css("height", $("figure img").height());
     $("figure").css("minHeight", maxFigHeight);
-    console.log("Figures RESIZED - maxFigHeight = " + maxFigHeight);
-    $("video").each(function(){
-        $(this).css("left",($(this).parent().width() - $(this).width()) / 2);
+
+    $("video").each(function () {
+        $(this).css("left", ($(this).parent().width() - $(this).width()) / 2);
     });
 }
