@@ -9,6 +9,8 @@ jQuery(document).ready(function ($) {
     });
     $(".accordion").accordion();
     $("#sortable").sortable({
+        containment: "parent",
+        cursor: "move",
         cancel: "figcaption",
         stop: function (event, ui) {
             var mediaItemOrder = [];
@@ -26,7 +28,6 @@ jQuery(document).ready(function ($) {
             $.post("/admin/changeMediaOrder", { newOrder: JSON.stringify(mediaItemOrder) });
         }
     });
-    //$( "#sortable" ).disableSelection();
     $("figcaption").blur(function (event) {
         var mediaItemId = $(event.target).siblings("button").attr("id");
         $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text() });

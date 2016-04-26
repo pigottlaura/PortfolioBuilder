@@ -17,7 +17,7 @@ block content
                 button Change Profile Picture
             
     div.row
-        div.col-xs-4(id="adminOptions")
+        div.col-md-4.col-xs-12(id="adminOptions")
             div.accordion
                 h3 Upload Media
                 div
@@ -54,7 +54,7 @@ block content
                         div.col-xs-4
                             button(id="editPortfolioURL") Edit
                             button(id="cancelPortfolioURL") Cancel
-        div.col-xs-8
+        div.col-md-8.col-xs-12
             div(id="sortable")
                 -for(var i = 0; i < mediaItems.length; i++)
                     if(mediaItems[i].mediaType == 'image' || mediaItems[i].mediaType == 'swf' || mediaItems[i].mediaType == 'video')
