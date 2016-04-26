@@ -15,25 +15,10 @@ router.get("/:portfolioURL", function (req, res, next) {
                 res.render("noportfolio", { title: "/ " + req.params.portfolioURL + " does not exist" });
             } else {
                 console.log("INDEX - portfolio exists");
-                portfolio.pages.home.mediaItems.sort(function (a, b) {
-                    var returnVal = 0;
-                    if (a.indexPosition > b.indexPosition) {
-                        returnVal = 1;
-                    } else if (a.indexPosition < b.indexPosition) {
-                        returnVal = -1;
-                    } else {
-                        if (a.uploadedAt > b.uploadedAt) {
-                            returnVal = -1;
-                        } else if (a.uploadedAt < b.uploadedAt) {
-                            returnVal = 1;
-                        } else {
-                            returnVal = 0;
-                        }
-                    }
-                    return returnVal;
+                portfolio.sortMediaItems(portfolio, function (sortedMediaItems) {
+                    console.log("PORTFOLIO - media items sorted");
+                    res.render("portfolio", { title: "Welcome to " + portfolio.owner.firstName + "'s Portfolio", mediaItems: sortedMediaItems });
                 });
-                console.log(portfolio.pages.home.mediaItems);
-                res.render("portfolio", { title: "Welcome to " + portfolio.owner.firstName + "'s Portfolio", mediaItems: portfolio.pages.home.mediaItems });
             }
         }
     });

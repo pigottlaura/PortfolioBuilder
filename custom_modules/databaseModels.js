@@ -4,7 +4,7 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-var UserModel = mongoose.model("User", {
+var UserSchema = new Schema({
     username: String,
     password: String,
     googleId: String,
@@ -25,7 +25,7 @@ var UserModel = mongoose.model("User", {
     }
 });
 
-var PortfolioModel = mongoose.model("Portfolio", {
+var PortfolioSchema = new Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
@@ -50,6 +50,27 @@ var PortfolioModel = mongoose.model("Portfolio", {
         }
     }
 });
+
+PortfolioSchema.methods.sortMediaItems = function (portfolio, cb) {
+    portfolio.pages.home.mediaItems.sort(function (a, b) {
+        var returnVal = 0;
+        if (a.indexPosition > b.indexPosition) {
+            returnVal = 1;
+        } else if (a.indexPosition < b.indexPosition) {
+            returnVal = -1;
+        } else {
+            if (a.uploadedAt > b.uploadedAt) {
+                returnVal = -1;
+            } else if (a.uploadedAt < b.uploadedAt) {
+                returnVal = 1;
+            } else {
+                returnVal = 0;
+            }
+        }
+        return returnVal;
+    });
+    cb(portfolio.pages.home.mediaItems);
+};
 
 var MediaItemSchema = new Schema({
     owner: {
@@ -90,11 +111,11 @@ var MediaItemSchema = new Schema({
 
 MediaItemSchema.post('save', function (mediaItem) {
     var mediaItemId = mediaItem._id;
-    
+
     PortfolioModel.findOne({ owner: this.owner }, {}, function (err, portfolio) {
         portfolio.pages.home.mediaItems.push(mediaItemId);
         portfolio.save(function (err) {
-            if(err){
+            if (err) {
                 console.log("MODEL - could not add this media item to the users portfolio");
             } else {
                 console.log("MODEL - successfully saved media item to the users portfolio")
@@ -123,6 +144,8 @@ MediaItemSchema.pre('remove', function (next) {
     });
 });
 
+var UserModel = mongoose.model("User", UserSchema);
+var PortfolioModel = mongoose.model("Portfolio", PortfolioSchema);
 var MediaItemModel = mongoose.model("MediaItem", MediaItemSchema);
 
 // Creating an object, which contains all of the database models (templates for 

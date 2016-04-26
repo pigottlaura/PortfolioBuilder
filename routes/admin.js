@@ -21,30 +21,14 @@ router.get('/', function (req, res, next) {
       } else {
         console.log("This user has " + portfolio.pages.home.mediaItems.length + " media items");
 
-        portfolio.pages.home.mediaItems.sort(function (a, b) {
-          var returnVal = 0;
-          if (a.indexPosition > b.indexPosition) {
-            returnVal = 1;
-          } else if (a.indexPosition < b.indexPosition) {
-            returnVal = -1;
-          } else {
-            if (a.uploadedAt > b.uploadedAt) {
-              returnVal = -1;
-            } else if (a.uploadedAt < b.uploadedAt) {
-              returnVal = 1;
-            } else {
-              returnVal = 0;
-            }
-          }
-          return returnVal;
-        });
-
-        res.render("admin", {
-          title: "Admin Section",
-          websiteURL: websiteURL,
-          portfolioURL: portfolio.portfolioURL,
-          user: portfolio.owner,
-          mediaItems: portfolio.pages.home.mediaItems
+        portfolio.sortMediaItems(portfolio, function (sortedMediaItems) {
+          res.render("admin", {
+            title: "Admin Section",
+            websiteURL: websiteURL,
+            portfolioURL: portfolio.portfolioURL,
+            user: portfolio.owner,
+            mediaItems: sortedMediaItems
+          });
         });
       }
     }
