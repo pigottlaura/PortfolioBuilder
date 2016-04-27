@@ -220,7 +220,7 @@ function resizeFigures() {
         maxFigHeight = maxFigHeight > $(this).height() ? maxFigHeight : $(this).height();
     });
     $(".swfContainer").css("height", $("figure img").height());
-    $("figure").css("height", maxFigHeight);
+    $("figure").css("minHeight", maxFigHeight);
 
     $("video").each(function () {
         $(this).css("left", ($(this).parent().width() - $(this).width()) / 2);
