@@ -31,12 +31,25 @@ jQuery(document).ready(function ($) {
     $("figcaption").blur(function (event) {
         var mediaItemId = $(event.target).siblings("button").attr("id");
         $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text() });
-    }).keypress(function (event) {
+    });
+    
+    $("body *").not("textarea").keypress(function (event) {
         console.log(event.which);
         if (event.which == 13) {
             event.preventDefault();
             $(event.target).blur();
         }
+    });
+    $("#contact textarea").change(function(event){
+        $("#contact p").trigger("blur");
+    });
+    $("#contact p").blur(function (event) {
+        $.post("/admin/changeContactDetails", {
+            name: $("#contactName").text(),
+            email: $("#contactEmail").text(),
+            info: $("#contactInfo").val(),
+            phone: $("#contactPhone").text()
+        });
     });
     $(".deleteMedia").click(function (event) {
         $.post("/admin/deleteMedia", { mediaId: event.target.id }, function (responseData) {
@@ -114,8 +127,6 @@ jQuery(document).ready(function ($) {
     }).keypress(function(event){
         if (event.which == 13) {
             $("#savePortfolioURL").trigger("click");
-            event.preventDefault();
-            $(this).blur();
         }
     });
 
@@ -209,7 +220,7 @@ function resizeFigures() {
         maxFigHeight = maxFigHeight > $(this).height() ? maxFigHeight : $(this).height();
     });
     $(".swfContainer").css("height", $("figure img").height());
-    $("figure").css("minHeight", maxFigHeight);
+    $("figure").css("height", maxFigHeight);
 
     $("video").each(function () {
         $(this).css("left", ($(this).parent().width() - $(this).width()) / 2);

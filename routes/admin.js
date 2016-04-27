@@ -130,4 +130,43 @@ router.post("/changeMediaOrder", function (req, res, next) {
   }
 });
 
+router.post("/changeContactDetails", function (req, res, next) {
+  Portfolio.update({ owner: req.session._userId }, {
+    $set: { "pages.contact.contactDetails.name": req.body.name, "pages.contact.contactDetails.email": req.body.email, "pages.contact.contactDetails.phone": req.body.phone, "pages.contact.info": req.body.info } }, function (err, docsEffected) {
+    if (err) {
+      console.log("ADMIN - Could not update portfolio contact details - " + err);
+    } else {
+      console.log("ADMIN - Contact details successfully updated");
+      res.send();
+    }
+  });
+});
+
+router.post("/changeContactPicture", function (req, res, next) {
+  Portfolio.findOne({ owner: req.session._userId }, {}, function (err, portfolio) {
+    if (err) {
+    } else {
+      if (portfolio.pages.contact.picture) {
+        fs.unlink("./public/" + portfolio.pages.contact.picture, function (err) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("ADMIN - Contact Picture Deleted");
+          }
+        });
+      }
+      
+      portfolio.pages.contact.picture = req.files[0].path.split("public\\")[1];
+      portfolio.save(function(err, portfolio){
+        if(err){
+          console.log("ADMIN - could not save new contact picture");
+        } else {
+          console.log("ADMIN - new contact picture saved");
+          res.redirect("/admin");
+        }
+      });
+    }
+  });
+});
+
 module.exports = router;

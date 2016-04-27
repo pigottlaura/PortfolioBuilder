@@ -42,10 +42,11 @@ var PortfolioSchema = new Schema({
         },
         contact: {
             picture: String,
+            info: String,
             contactDetails: {
                 name: String,
                 email: String,
-                phone: Number
+                phone: String
             }
         }
     }

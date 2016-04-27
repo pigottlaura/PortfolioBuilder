@@ -89,7 +89,7 @@ video {
     background-color: #FC9D9D;
 }
 
-input, select, button {
+input, select, button, textarea {
     width: 100%;
 }
 .glyphicon {
@@ -113,4 +113,9 @@ input, select, button {
 }
 .tabs {
     min-height: 50vh;
+}
+
+img {
+    width: 100%;
+    height: auto;
 }

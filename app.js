@@ -37,7 +37,8 @@ var uploadsDirectories = [
     mainUploadDirectory + "image",
     mainUploadDirectory + "swf",
     mainUploadDirectory + "video",
-    mainUploadDirectory + "other"
+    mainUploadDirectory + "other",
+    mainUploadDirectory + "contactPicture"
 ];
 
 // Using the custom module I created to check that all of the folders required
@@ -78,7 +79,9 @@ var multerStorage = multer.diskStorage({
         file.mediaType = mimeType;
 
         // Deciding which folder to store the file in, depending on it's file type
-        if (mimeType == "image") {
+        if(file.fieldname == "contactPictureFile") {
+            pathName = mainUploadDirectory + "/contactPicture"
+        } else if (mimeType == "image") {
             // Setting the pathname so that multer knows where to store image files
             pathName = mainUploadDirectory + '/image';
         } else if (mimeType == "audio") {

@@ -55,6 +55,17 @@ block content
                         div.col-xs-4
                             button(id="editPortfolioURL") Edit
                             button(id="cancelPortfolioURL") Cancel
+                    hr
+                    form(id="changeContactPicture" method="post" action="/admin/changeContactPicture" enctype="multipart/form-data")
+                        div.row
+                            div.col-xs-3
+                                label(for="contactPictureFile") Contact Picture:
+                            div.col-xs-9
+                                input(type="file" name="contactPictureFile")
+                        div.row
+                            div.col-xs-4.col-xs-offset-8
+                                input(type="submit" name="Upload" value="Upload")
+                            
         div.col-md-8.col-xs-12
             div.tabs
                 ul
@@ -63,9 +74,11 @@ block content
                     li
                         a(href="#contact") Contact
                 div#home
-                    div(id="sortable")
-                        -for(var i = 0; i < mediaItems.length; i++)
-                            if(mediaItems[i].mediaType == 'image' || mediaItems[i].mediaType == 'swf' || mediaItems[i].mediaType == 'video')
+                    if mediaItems.length == 0
+                        p.center You do not have any media items
+                    else
+                        div(id="sortable")
+                            -for(var i = 0; i < mediaItems.length; i++)
                                 div.col-md-3.col-xs-4
                                     figure
                                         button(id="#{mediaItems[i]._id}" class="deleteMedia" title="Delete #{mediaItems[i].fileTitle}") x
@@ -86,6 +99,29 @@ block content
                                                         
                                         figcaption(contenteditable="true") #{mediaItems[i].fileTitle}
                 div#contact
-                    p #{contactPage.contactDetails.name}
-                    p
-                        a(href="mailto:#{contactPage.contactDetails.email}") #{contactPage.contactDetails.email}
+                    div.row
+                        div.col-xs-6
+                            div.row
+                                div.col-xs-3
+                                    label Name:
+                                div.col-xs-9
+                                    p(id="contactName" contenteditable="true") #{contactPage.contactDetails.name}
+                            div.row
+                                div.col-xs-3
+                                    label Email: 
+                                div.col-xs-9
+                                    p(id="contactEmail" contenteditable="true") #{contactPage.contactDetails.email}
+                            div.row
+                                div.col-xs-3
+                                    label Phone:
+                                div.col-xs-9
+                                    p(id="contactPhone" contenteditable="true") #{contactPage.contactDetails.phone}
+                            div.row
+                                div.col-xs-12
+                                    label Additional Information: 
+                            div.row
+                                div.col-xs-12
+                                    textarea(id="contactInfo" rows="4" contenteditable="true") #{contactPage.info}
+                        if contactPage.picture
+                            div.col-xs-6
+                                img(src="#{contactPage.picture}" alt="#{contactPage.contactDetails.name}")
