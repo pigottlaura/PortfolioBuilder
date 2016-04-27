@@ -76,7 +76,8 @@ passport.use(new GoogleStrategy({
                         pages: {
                             contact: {
                                 contactDetails: {
-                                    name: profile.name.givenName + " " + profile.name.familyName
+                                    name: profile.name.givenName + " " + profile.name.familyName,
+                                    email: profile.emails[0].value
                                 }
                             }
                         }

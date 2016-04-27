@@ -27,7 +27,8 @@ router.get('/', function (req, res, next) {
             websiteURL: websiteURL + "portfolio/",
             portfolioURL: portfolio.portfolioURL,
             user: portfolio.owner,
-            mediaItems: sortedMediaItems
+            mediaItems: sortedMediaItems,
+            contactPage: portfolio.pages.contact
           });
         });
       }
