@@ -33,7 +33,7 @@ jQuery(document).ready(function ($) {
         $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text() });
     });
     
-    $("body *").not("textarea").keypress(function (event) {
+    $("figcaption, p").keypress(function (event) {
         console.log(event.which);
         if (event.which == 13) {
             event.preventDefault();

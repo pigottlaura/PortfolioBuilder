@@ -51,19 +51,21 @@ block content
                         div.col-xs-9
                             a(href="mailto:#{contactPage.contactDetails.email}") #{contactPage.contactDetails.email}
                     if contactPage.contactDetails.phone
-                        div.row
-                            div.col-xs-3
-                                label Phone: 
-                            div.col-xs-9
-                                a(href="mailto:#{contactPage.contactDetails.phone}") #{contactPage.contactDetails.phone}
+                        if contactPage.contactDetails.phone.length > 0
+                            div.row
+                                div.col-xs-3
+                                    label Phone: 
+                                div.col-xs-9
+                                    a(href="mailto:#{contactPage.contactDetails.phone}") #{contactPage.contactDetails.phone}
                     if contactPage.info
-                        hr
-                        div.row
-                            div.col-xs-12
-                                label Additional Information: 
-                        div.row
-                            div.col-xs-12
-                                p #{contactPage.info}
+                        if contactPage.info.length > 0
+                            hr
+                            div.row
+                                div.col-xs-12
+                                    label Additional Information: 
+                            div.row
+                                div.col-xs-12
+                                    p #{contactPage.info}
                 if contactPage.picture
                     div.col-xs-6
                         img(src="../#{contactPage.picture}" alt="#{contactPage.contactDetails.name}")
