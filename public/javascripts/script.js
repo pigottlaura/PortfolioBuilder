@@ -7,11 +7,33 @@ jQuery(document).ready(function ($) {
         $("figure").css("minHeight", "initial");
         resizeFigures();
     });
+
+    $("#sortable figure").each(function (index) {
+        var mediaCategoryClass = "mediaCategory" + index;
+
+        $(this).find(".categoryOptions").append("<select class='mediaCategory " + mediaCategoryClass + "'></select>");
+
+        $("." + mediaCategoryClass).append("<option value='none' selected>-Category-</option>");
+
+        $(".category").each(function (index) {
+            $("." + mediaCategoryClass).append("<option value='" + $(this).text() + "'>" + $(this).text() + "</option>");
+            console.log($(".category").data("category"));
+            if ($(this).text() == $("." + mediaCategoryClass).parent().data("category")) {
+                console.log("")
+                $("." + mediaCategoryClass).val($(this).text());
+            }
+        });
+    });
+
+    $("#sortable figure select").change(function (event) {
+        $.post("/admin/changeMediaCategory", { mediaItem: $(event.target).parent().parent().parent().attr("class"), category: $(event.target).val() });
+    });
+
     $(".accordion").accordion();
     $("#sortable").sortable({
         containment: "parent",
         cursor: "move",
-        cancel: "figcaption",
+        cancel: "figcaption, select, option",
         stop: function (event, ui) {
             var mediaItemOrder = [];
 
@@ -32,15 +54,20 @@ jQuery(document).ready(function ($) {
         var mediaItemId = $(event.target).siblings("button").attr("id");
         $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text() });
     });
-    
-    $("figcaption, p").keypress(function (event) {
+
+    $("figcaption, p, input").keypress(function (event) {
         console.log(event.which);
         if (event.which == 13) {
+            if (event.target.id == "newCategory") {
+                $("#addCategory").trigger("click");
+            } else if (event.target.id == "currentPortfolioURL") {
+                $("#savePortfolioURL").trigger("click");
+            }
             event.preventDefault();
             $(event.target).blur();
         }
     });
-    $("#contact textarea").change(function(event){
+    $("#contact textarea").change(function (event) {
         $("#contact p").trigger("blur");
     });
     $("#contact p").blur(function (event) {
@@ -53,7 +80,7 @@ jQuery(document).ready(function ($) {
     });
     $(".deleteMedia").click(function (event) {
         $.post("/admin/deleteMedia", { mediaId: event.target.id }, function (responseData) {
-            $(".row > div").find("button[id='" + responseData.mediaId + "']").parent().parent().remove();
+            $(".row > div").find("button[id='" + responseData.mediaId + "']").parent().parent().parent().parent().remove();
         }, "json");
     });
     $("#editPortfolioURL").click(function (event) {
@@ -124,10 +151,6 @@ jQuery(document).ready(function ($) {
                 }
             });
         }
-    }).keypress(function(event){
-        if (event.which == 13) {
-            $("#savePortfolioURL").trigger("click");
-        }
     });
 
     $("#createAccount input").change(function () {
@@ -158,6 +181,36 @@ jQuery(document).ready(function ($) {
                 $("#portfolioURLStatusIcon").attr("class", "glyphicon glyphicon-ban-circle");
             }
         });
+    });
+
+    $("#addCategory").click(function (event) {
+        $.post("/admin/addNewCategory", { newCategory: $("#newCategory").val() }, function (serverResponse) {
+            $("#categories").append("<div class='row'><div class='col-xs-10'>" + serverResponse.newCategory + "</div><div class='col-xs-2'><button class='deleteCategory' id='" + serverResponse.newCategory + "'>x</button></div>");
+            $("#newCategory").val("").focus();
+
+            $(".mediaCategory").each(function (index) {
+                $(this).append("<option value='" + serverResponse.newCategory + "'>" + serverResponse.newCategory + "</option>");
+                if($(this).parent().data("category") == serverResponse.newCategory){
+                    $(this).val(serverResponse.newCategory);
+                }
+            });
+            console.log("New category added");
+        }, "json");
+    });
+
+    // Dynamically generated element were not being detected by .click(). using on() instead
+    $("#categories").on("click", ".deleteCategory", function (event) {
+        $.post("/admin/deleteCategory", { deleteCategory: $(event.target).attr("id") }, function (serverResponse) {
+            $(".mediaCategory option").each(function (index) {
+                console.log("option = " + $(this).text() + "; deleted = " + serverResponse.deletedCategory);
+                if($(this).text() == serverResponse.deletedCategory){
+                    $(this).removeAttr("selected").remove();
+                    $(this).parent().val('none');
+                    console.log("removed option");
+                }
+            });
+            $("#" + serverResponse.deletedCategory).parent().parent().remove();
+        }, "json");
     });
 
     $("#createAccount").submit(function (event) {
@@ -213,7 +266,6 @@ jQuery(document).ready(function ($) {
         }, "json");
     }
 });
-
 function resizeFigures() {
     var maxFigHeight = 0;
     $('figure').each(function () {

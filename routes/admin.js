@@ -28,7 +28,8 @@ router.get('/', function (req, res, next) {
             portfolioURL: portfolio.portfolioURL,
             user: portfolio.owner,
             mediaItems: sortedMediaItems,
-            contactPage: portfolio.pages.contact
+            contactPage: portfolio.pages.contact,
+            categories: portfolio.pages.home.categories
           });
         });
       }
@@ -132,7 +133,8 @@ router.post("/changeMediaOrder", function (req, res, next) {
 
 router.post("/changeContactDetails", function (req, res, next) {
   Portfolio.update({ owner: req.session._userId }, {
-    $set: { "pages.contact.contactDetails.name": req.body.name, "pages.contact.contactDetails.email": req.body.email, "pages.contact.contactDetails.phone": req.body.phone, "pages.contact.info": req.body.info } }, function (err, docsEffected) {
+    $set: { "pages.contact.contactDetails.name": req.body.name, "pages.contact.contactDetails.email": req.body.email, "pages.contact.contactDetails.phone": req.body.phone, "pages.contact.info": req.body.info }
+  }, function (err, docsEffected) {
     if (err) {
       console.log("ADMIN - Could not update portfolio contact details - " + err);
     } else {
@@ -155,16 +157,73 @@ router.post("/changeContactPicture", function (req, res, next) {
           }
         });
       }
-      
+
       portfolio.pages.contact.picture = req.files[0].path.split("public\\")[1];
-      portfolio.save(function(err, portfolio){
-        if(err){
+      portfolio.save(function (err, portfolio) {
+        if (err) {
           console.log("ADMIN - could not save new contact picture");
         } else {
           console.log("ADMIN - new contact picture saved");
           res.redirect("/admin");
         }
       });
+    }
+  });
+});
+
+router.post("/addNewCategory", function (req, res, next) {
+
+  var newCategory = req.body.newCategory;
+
+  Portfolio.findOne({ owner: req.session._userId }, {}, function (err, portfolio) {
+    if (err) {
+
+    } else {
+      portfolio.pages.home.categories.push(newCategory);
+      portfolio.save(function (err, portfolio) {
+        if (err) {
+          console.log("ADMIN - could not save new category to database");
+        } else {
+          console.log("ADMIN - new category saved to database");
+          res.send({ newCategory: newCategory })
+        }
+      });
+    }
+  });
+});
+
+router.post("/deleteCategory", function (req, res, next) {
+
+  var deleteCategory = req.body.deleteCategory;
+
+  Portfolio.findOne({ owner: req.session._userId }, {}, function (err, portfolio) {
+    if (err) {
+
+    } else {
+      for (var i = 0; i < portfolio.pages.home.categories.length; i++) {
+        if (portfolio.pages.home.categories[i] == deleteCategory){
+          portfolio.pages.home.categories.splice(i, 1);
+          portfolio.save(function (err, portfolio) {
+            if (err) {
+              console.log("ADMIN - could not delete category from database");
+            } else {
+              console.log("ADMIN - category deleted from database");
+              res.send({ deletedCategory: deleteCategory })
+            }
+          });
+        }
+      }
+    }
+  });
+});
+
+router.post("/changeMediaCategory", function (req, res, next) {
+  MediaItem.update({ owner: req.session._userId, "_id": ObjectId(req.body.mediaItem) }, { $set: { category: req.body.category} }, function (err, docsEffected) {
+    if (err) {
+      console.log("ADMIN - Could not update media item category - " + err);
+    } else {
+      console.log("ADMIN - media item's category successfully updated");
+      res.send();
     }
   });
 });

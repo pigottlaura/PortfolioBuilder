@@ -35,12 +35,23 @@ block content
                         div.row
                             div.col-xs-4.col-xs-offset-8
                                 input(type="submit" name="Upload" value="Upload")
-                h3 Pages
+                h3 Categories
                 div
-                    ul(id="portfolioPages")
-                        li Home
-                        li Contact
-                    button(id="addPage") Add Page
+                    div.row
+                        div.col-xs-12(id="categories")
+                            if categories
+                                if categories.length > 0
+                                    -for(var i = 0; i < categories.length; i++)
+                                        div.row
+                                            div.col-xs-10(class="category") #{categories[i]}
+                                            div.col-xs-2
+                                                button(class="deleteCategory" id="#{categories[i]}") x
+                    div.row
+                        div.col-xs-3
+                            label New Category:
+                        div.col-xs-9
+                            input(id="newCategory")
+                    button(id="addCategory") Save
                 h3 Settings
                 div
                     div.row
@@ -80,8 +91,11 @@ block content
                         div(id="sortable")
                             -for(var i = 0; i < mediaItems.length; i++)
                                 div.col-md-3.col-xs-4
-                                    figure
-                                        button(id="#{mediaItems[i]._id}" class="deleteMedia" title="Delete #{mediaItems[i].fileTitle}") x
+                                    figure(class="#{mediaItems[i]._id}")
+                                        div.row
+                                            div.col-xs-9(class="categoryOptions" data-category="#{mediaItems[i].category}")
+                                            div.col-xs-3
+                                                button(id="#{mediaItems[i]._id}" class="deleteMedia" title="Delete #{mediaItems[i].fileTitle}") x
                                         
                                         if(mediaItems[i].mediaType == 'image')
                                             img(src='#{mediaItems[i].filePath}' alt='Alt Text' class='thumbnail')
@@ -96,7 +110,7 @@ block content
                                             div.swfContainer
                                                 video(controls)
                                                     source(src='#{mediaItems[i].filePath}' type='#{mediaItems[i].file.mimetype}' volume="0")
-                                                        
+                                                                
                                         figcaption(contenteditable="true") #{mediaItems[i].fileTitle}
                 div#contact
                     div.row

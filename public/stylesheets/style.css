@@ -72,10 +72,11 @@ figure {
     overflow: hidden;
 }
 
+figure div {
+    padding: 0 !important;
+}
+
 figure > button {
-    position: absolute;
-    right: 0;
-    top: 0;
     z-index: 1;
 }
 video {
@@ -105,9 +106,6 @@ input, select, button, textarea {
     padding: 1% !important;
 }
 
-.deleteMedia {
-    width: 15%;
-}
 #sortable {
     overflow: auto;
 }

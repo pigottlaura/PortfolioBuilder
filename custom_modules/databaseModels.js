@@ -38,7 +38,8 @@ var PortfolioSchema = new Schema({
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'MediaItem'
                 }
-            ]
+            ],
+            categories: [String]
         },
         contact: {
             picture: String,
@@ -107,6 +108,10 @@ var MediaItemSchema = new Schema({
     indexPosition: {
         type: Number,
         default: 0
+    },
+    category: {
+        type: String,
+        default: "none"
     }
 });
 
