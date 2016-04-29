@@ -98,8 +98,10 @@ jQuery(document).ready(function ($) {
     });
     
     $(".deleteMedia").click(function (event) {
+        $(event.target).removeClass("glyphicon-trash").addClass("glyphicon-hourglass").unbind("click");
+        
         $.post("/admin/deleteMedia", { mediaId: event.target.id }, function (responseData) {
-            $(".row > div").find("button[id='" + responseData.mediaId + "']").parent().parent().parent().parent().remove();
+            $(".row > div").find("span[id='" + responseData.mediaId + "']").parent().parent().parent().parent().remove();
         }, "json");
     });
     

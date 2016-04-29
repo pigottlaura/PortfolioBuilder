@@ -99,7 +99,7 @@ block content
                                         div.row
                                             div.col-xs-9(class="categoryOptions" data-category="#{mediaItems[i].category}")
                                             div.col-xs-3
-                                                button(id="#{mediaItems[i]._id}" class="deleteMedia" title="Delete #{mediaItems[i].fileTitle}") x
+                                                span(class="deleteMedia glyphicon glyphicon-trash" aria-hidden="true" id="#{mediaItems[i]._id}" class="deleteMedia" title="Delete #{mediaItems[i].fileTitle}")
                                         
                                         if(mediaItems[i].mediaType == 'image')
                                             img(src='#{mediaItems[i].filePath}' alt='Alt Text' class='thumbnail')
