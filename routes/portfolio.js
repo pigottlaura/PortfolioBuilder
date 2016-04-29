@@ -20,7 +20,8 @@ router.get("/:portfolioURL", function (req, res, next) {
                     res.render("portfolio", {
                         title: "Welcome to " + portfolio.owner.firstName + "'s Portfolio",
                         mediaItems: sortedMediaItems,
-                        contactPage: portfolio.pages.contact
+                        contactPage: portfolio.pages.contact,
+                        categories: portfolio.pages.home.categories
                     });
                 });
             }

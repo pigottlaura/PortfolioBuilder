@@ -12,31 +12,39 @@ block content
             li
                 a(href="#contact") Contact
         div#home
-            div.row   
-                if mediaItems.length == 0
-                    h3 This user does not yet have any media items uploaded
-                        br
-                        |See their contact page for further details, or call back soon :)
-                else
-                    -for(var i = 0; i < mediaItems.length; i++)
-                        div.col-md-4.col-xs-12
-                            figure
-                                if(mediaItems[i].mediaType == 'image')
-                                    a(class='' href='#{mediaItems[i].filePath}' data-lightbox='image-set' data-title='#{mediaItems[i].fileTitle}')
-                                        img(src='#{mediaItems[i].filePath}' alt='Alt Text' class='thumbnail')
-                                else if(mediaItems[i].mediaType == 'swf')
-                                    div.swfContainer
-                                        object(classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%")
-                                            param(name='movie' value='#{mediaItems[i].filePath}')
-                                            param(name='quality' value='high')
-                                            param(name='scale' value='default')
-                                            embed(src='#{mediaItems[i].filePath}' quality="high" type='#{mediaItems[i].file.mimetype}' width='100%' height='100%' scale="default" pluginspage="http://www.macromedia.com/go/getflashplayer")
-                                else if(mediaItems[i].mediaType == "video")
-                                    div.swfContainer
-                                        video(controls)
-                                            source(src='#{mediaItems[i].filePath}' type='#{mediaItems[i].file.mimetype}' volume="0")
-                                                
-                                figcaption #{mediaItems[i].fileTitle}
+            if mediaItems.length == 0
+                h3 This user does not yet have any media items uploaded
+                    br
+                    |See their contact page for further details, or call back soon :)
+            else
+                div.row 
+                    div.col-md-4.col-xs-12
+                        if categories
+                            if categories.length > 0
+                                select(id="portfolioCategory")
+                                    option(class="category" value="all") -All Categories-
+                                    -for(var i = 0; i < categories.length; i++)
+                                        option(class="category" value="#{categories[i]}") #{categories[i]}
+                div.row 
+                -for(var i = 0; i < mediaItems.length; i++)
+                    div.col-md-4.col-xs-12
+                        figure(data-category="#{mediaItems[i].category}")
+                            if(mediaItems[i].mediaType == 'image')
+                                a(class='' href='#{mediaItems[i].filePath}' data-lightbox='image-set' data-title='#{mediaItems[i].fileTitle}')
+                                    img(src='#{mediaItems[i].filePath}' alt='Alt Text' class='thumbnail')
+                            else if(mediaItems[i].mediaType == 'swf')
+                                div.swfContainer
+                                    object(classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%")
+                                        param(name='movie' value='#{mediaItems[i].filePath}')
+                                        param(name='quality' value='high')
+                                        param(name='scale' value='default')
+                                        embed(src='#{mediaItems[i].filePath}' quality="high" type='#{mediaItems[i].file.mimetype}' width='100%' height='100%' scale="default" pluginspage="http://www.macromedia.com/go/getflashplayer")
+                            else if(mediaItems[i].mediaType == "video")
+                                div.swfContainer
+                                    video(controls)
+                                        source(src='#{mediaItems[i].filePath}' type='#{mediaItems[i].file.mimetype}' volume="0")
+                                            
+                            figcaption #{mediaItems[i].fileTitle}
         div#contact
             div.row
                 div.col-xs-6

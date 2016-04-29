@@ -8,6 +8,22 @@ jQuery(document).ready(function ($) {
         resizeFigures();
     });
 
+    $("#portfolioCategory").change(function (event) {
+        $("figure").each(function (event) {
+            if ($("#portfolioCategory").val() == "all") {
+                $(this).parent().show();
+            } else {
+                if ($(this).data("category") == $("#portfolioCategory").val()) {
+                    $(this).parent().show();
+                    console.log("IN category");
+                } else {
+                    $(this).parent().hide();
+                    console.log("OUT of category");
+                }
+            }
+
+        });
+    });
     $("#sortable figure").each(function (index) {
         var mediaCategoryClass = "mediaCategory" + index;
 
@@ -26,7 +42,7 @@ jQuery(document).ready(function ($) {
     });
 
     $("#sortable figure select").change(function (event) {
-        $.post("/admin/changeMediaCategory", { mediaItem: $(event.target).parent().parent().parent().attr("class"), category: $(event.target).val() });
+        $.post("/admin/changeMediaCategory", { mediaItem: $(event.target).parent().parent().parent().attr("id"), category: $(event.target).val() });
     });
 
     $(".accordion").accordion();
@@ -41,7 +57,7 @@ jQuery(document).ready(function ($) {
             $.each($("figure"), function (index) {
                 console.log($(this).find("figcaption").text() + " is at index " + index);
                 mediaItemOrder.push({
-                    mediaId: $(this).find("figcaption").siblings("button").attr("id"),
+                    mediaId: $(this).attr("id"),
                     indexPosition: index
                 });
             });
@@ -190,7 +206,7 @@ jQuery(document).ready(function ($) {
 
             $(".mediaCategory").each(function (index) {
                 $(this).append("<option value='" + serverResponse.newCategory + "'>" + serverResponse.newCategory + "</option>");
-                if($(this).parent().data("category") == serverResponse.newCategory){
+                if ($(this).parent().data("category") == serverResponse.newCategory) {
                     $(this).val(serverResponse.newCategory);
                 }
             });
@@ -203,7 +219,7 @@ jQuery(document).ready(function ($) {
         $.post("/admin/deleteCategory", { deleteCategory: $(event.target).attr("id") }, function (serverResponse) {
             $(".mediaCategory option").each(function (index) {
                 console.log("option = " + $(this).text() + "; deleted = " + serverResponse.deletedCategory);
-                if($(this).text() == serverResponse.deletedCategory){
+                if ($(this).text() == serverResponse.deletedCategory) {
                     $(this).removeAttr("selected").remove();
                     $(this).parent().val('none');
                     console.log("removed option");

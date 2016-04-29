@@ -111,6 +111,7 @@ input, select, button, textarea {
 }
 .tabs {
     min-height: 50vh;
+    overflow-y: auto;
 }
 
 img {

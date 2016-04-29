@@ -91,7 +91,7 @@ block content
                         div(id="sortable")
                             -for(var i = 0; i < mediaItems.length; i++)
                                 div.col-md-3.col-xs-4
-                                    figure(class="#{mediaItems[i]._id}")
+                                    figure(id="#{mediaItems[i]._id}")
                                         div.row
                                             div.col-xs-9(class="categoryOptions" data-category="#{mediaItems[i].category}")
                                             div.col-xs-3

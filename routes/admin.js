@@ -118,6 +118,8 @@ router.post("/changeMediaTitle", function (req, res, next) {
 
 router.post("/changeMediaOrder", function (req, res, next) {
   var newMediaOrder = JSON.parse(req.body.newOrder);
+  
+  console.log(newMediaOrder);
   for (var i = 0; i < newMediaOrder.length; i++) {
     console.log(newMediaOrder[i].indexPosition);
 
@@ -128,7 +130,7 @@ router.post("/changeMediaOrder", function (req, res, next) {
         console.log(docsEffected);
       }
     });
-  }
+  } res.send();
 });
 
 router.post("/changeContactDetails", function (req, res, next) {
