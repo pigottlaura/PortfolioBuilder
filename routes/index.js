@@ -11,7 +11,13 @@ var websiteURL = process.env.WEBSITE_URL || "http://localhost:3000/";
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
+  if (req.session._userId == null) {
+    console.log("INDEX - this user is not yet logged in");
     res.render('index', { title: "Portfolio Builder" });
+  } else {
+    console.log("INDEX - this user is already logged in");
+    res.redirect("/admin");
+  }
 });
 
 router.post("/checkCredentialsAvailable", function (req, res, next) {
