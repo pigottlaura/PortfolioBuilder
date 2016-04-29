@@ -2,6 +2,8 @@ jQuery(document).ready(function ($) {
     // Storing the current value of the portfolio URL, so that if the user edits it later on, and
     // wants to undo this action, it's original value can be restored
     var originalPortfolioURL = $("#currentPortfolioURL").text();
+    
+    $(".accordion").accordion();
 
     // Using the jQuery UI sortable() function, to make the contents of the div which contains the 
     // users media items sortable i.e. they can be reordered by dragging and dropping. Setting the

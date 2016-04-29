@@ -1,22 +1,42 @@
 jQuery(document).ready(function ($) {
-    console.log("Document ready");
+    console.log("Main JS script loaded");
 
+    // Calling the jQuery UI tabs() method, to create tabbed portions of the pages i.e.
+    // on the login screen, and in the admin panel
     $(".tabs").tabs();
-    $(".accordion").accordion();
 
+    // Calling the resizeFigures() method, as defined below. The purpose of this method is to
+    // combat the issues with resizing of embedded objects (such as swfs and videos). As I wanted
+    // to make each of these elements responsive (along with any other media elements on the page).
+    // Each video and swf is wrapped in a container, and set to scale to the container's size. In order
+    // to ensure that this container matches with the other figures on the screen, using this function
+    // to find the largest figure, and then resizing all other figures and containers to match this.
     resizeFigures();
+    
+    // Everytime the window is resized, calling the same resizeFigures() method so that the figures
+    // will be recalculated and the containers sized appropriatley
     $(window).resize(function () {
+        // Resetting each figure's minHeight to it's initial value, so that when the resizeFigures() funciton
+        // runs, it is not basing it's new height value on the current dimensions of the figures
         $("figure").css("minHeight", "initial");
         resizeFigures();
     });
 });
 
+// This function is called each time the page is reloaded, or the window is resized, to ensure that varying
+// types of content are all sized the same i.e. images, video and swfs
 function resizeFigures() {
+    // Creating a temporary variable to store the largest height of the figures currently
     var maxFigHeight = 0;
+    
+    // Looping through each figure on the page, to find the current largest height
     $('figure').each(function () {
+        // Using a ternary operator to test this figure's height against the current maximum figure height
+        // detected. If this figure is taller, then updating maxFigHeight to reflect this, otherwise setting
+        // maxFigHeight to equal it's current value
         maxFigHeight = maxFigHeight > $(this).height() ? maxFigHeight : $(this).height();
     });
-    $(".swfContainer").css("height", $("figure img").height());
+    $(".objectContainer").css("height", $("figure img").height());
     $("figure").css("minHeight", maxFigHeight);
 
     $("video").each(function () {

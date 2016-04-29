@@ -11,64 +11,75 @@ var websiteURL = process.env.WEBSITE_URL || "http://localhost:3000/";
 // Get main admin dashboard
 router.get('/', function (req, res, next) {
   console.log("Admin - in admin section");
-  Portfolio.findOne({ owner: req.session._userId }).populate("pages.home.mediaItems owner").exec(function (err, portfolio) {
-    if (err) {
-      console.log("Index - Could not check if this portfolio exists - " + err);
-    } else {
-      if (portfolio == null) {
-        console.log("Index - This portfolio does not exist");
-        res.render("noportfolio", { title: "/ " + req.params.portfolioURL + " does not exist" });
+  if (req.session.portfolio == null) {
+    console.log("ADMIN - User does not have portfolio on session");
+    Portfolio.findOne({ owner: req.session._userId }).populate("pages.home.mediaItems owner").exec(function (err, portfolio) {
+      if (err) {
+        console.log("Index - Could not check if this portfolio exists - " + err);
       } else {
-        console.log("This user has " + portfolio.pages.home.mediaItems.length + " media items");
+        if (portfolio == null) {
+          console.log("Index - This portfolio does not exist");
+          res.render("noportfolio", { title: "/ " + req.params.portfolioURL + " does not exist" });
+        } else {
+          console.log("This user has " + portfolio.pages.home.mediaItems.length + " media items");
 
-        portfolio.sortMediaItems(portfolio, function (sortedMediaItems) {
-          res.render("admin", {
-            title: "Admin Section",
-            websiteURL: websiteURL + "portfolio/",
-            portfolioURL: portfolio.portfolioURL,
-            user: portfolio.owner,
-            mediaItems: sortedMediaItems,
-            contactPage: portfolio.pages.contact,
-            categories: portfolio.pages.home.categories
+          portfolio.sortMediaItems(portfolio, function (sortedMediaItems) {
+            req.session.portfolio = portfolio;
+            req.session.sortedMediaItems = sortedMediaItems;
+
+            console.log("ADMIN - User portfolio added to session - redirecting to admin");
+            res.redirect("/admin");
           });
-        });
+
+        }
       }
-    }
-  });
+    });
+  } else {
+    console.log("ADMIN - User has portfolio on session - rendering");
+    res.render("admin", {
+      title: "Admin Section",
+      websiteURL: websiteURL + "portfolio/",
+      portfolioURL: req.session.portfolio.portfolioURL,
+      user: req.session.portfolio.owner,
+      mediaItems: req.session.sortedMediaItems,
+      contactPage: req.session.portfolio.pages.contact,
+      categories: req.session.portfolio.pages.home.categories
+    });
+  }
 });
 
 // Upload media to admin
 router.post("/uploadMedia", function (req, res, next) {
-  Portfolio.findOne({ owner: req.session._userId }, function (err, portfolio) {
-    if (err) {
-      console.log("ADMIN - Could not check if portfolio exists - " + err);
-    } else {
-      if (portfolio == null) {
-        console.log(("ADMIN - This portfolio does not exist"));
+  var owner = req.session._userId;
+  var newMediaItems = [];
+
+  for (var i = 0; i < req.files.length; i++) {
+    console.log("ADMIN - file successfully uploaded");
+    var newMediaItemTitle = req.body.mediaItemTitle.length > 0 ? req.body.mediaItemTitle : req.files[i].originalname;
+    var newMediaItem = new MediaItem({
+      owner: req.session._userId,
+      file: req.files[i],
+      mediaType: req.files[i].mediaType,
+      filePath: "../" + req.files[i].path.split("public\\")[1],
+      fileTitle: newMediaItemTitle
+    });
+
+    req.session.sortedMediaItems.unshift(newMediaItem);
+    newMediaItems.push(newMediaItem);
+  }
+
+  console.log("ADMIN - Redirecting user back to admin panel");
+  res.redirect("/admin");
+
+  for (var i = 0; i < newMediaItems.length; i++) {
+    newMediaItems[i].save(function (err, newMediaItem) {
+      if (err) {
+        console.log("ADMIN - Could not save media item to database - " + err);
       } else {
-        for (var i = 0; i < req.files.length; i++) {
-          console.log("Admin - file successfully uploaded");
-          var newMediaItemTitle = req.body.mediaItemTitle.length > 0 ? req.body.mediaItemTitle : req.files[i].originalname;
-          var newMediaItem = new MediaItem({
-            owner: req.session._userId,
-            file: req.files[i],
-            mediaType: req.files[i].mediaType,
-            filePath: "../" + req.files[i].path.split("public\\")[1],
-            fileTitle: newMediaItemTitle
-          });
-          newMediaItem.save(function (err, newMediaItem) {
-            if (err) {
-              console.log("Admin - Could not save media item to database - " + err);
-            } else {
-              console.log("Admin - Media item successfully saved to database");
-            }
-            
-            res.redirect("/admin");
-          });
-        }
+        console.log("ADMIN - Media item successfully saved to database");
       }
-    }
-  });
+    });
+  }
 });
 
 // Change admin's portfolio URL
@@ -85,6 +96,18 @@ router.post("/changePortfolioURL", function (req, res, next) {
 });
 
 router.post("/deleteMedia", function (req, res, next) {
+
+  console.log("ADMIN - delete media request received");
+
+  for (var i = 0; i < req.session.sortedMediaItems.length; i++) {
+    if (ObjectId(req.body.mediaId).equals(req.session.sortedMediaItems[i]._id)) {
+      req.session.sortedMediaItems.splice(i, 1);
+      break;
+    }
+  }
+  console.log("ADMIN - media item removed from session - returning user to admin panel");
+  res.json({ mediaId: req.body.mediaId });
+
   MediaItem.findOne({ "_id": ObjectId(req.body.mediaId) }, function (err, mediaItem) {
     if (err) {
       console.log("ADMIN-Cannot find file to delete - " + err);
@@ -99,7 +122,6 @@ router.post("/deleteMedia", function (req, res, next) {
         }
       });
       mediaItem.remove();
-      res.json({ mediaId: mediaItem._id });
     }
   });
 });
@@ -107,6 +129,16 @@ router.post("/deleteMedia", function (req, res, next) {
 router.post("/changeMediaTitle", function (req, res, next) {
   console.log("ID = " + req.body.mediaId);
   console.log("NEW TITLE - " + req.body.newTitle);
+
+  for (var i = 0; i < req.session.sortedMediaItems.length; i++) {
+    if (ObjectId(req.body.mediaId).equals(req.session.sortedMediaItems[i]._id)) {
+      req.session.sortedMediaItems[i].fileTitle = req.body.newTitle;
+      break;
+    }
+  }
+  console.log("ADMIN - media item title changed on session - returning user to admin panel");
+  res.send();
+
   MediaItem.update({ "_id": ObjectId(req.body.mediaId) }, { $set: { fileTitle: req.body.newTitle } }, function (err, mediaItem) {
     if (err) {
       console.log("ADMIN - Unable to change media item title - " + err);
@@ -119,18 +151,25 @@ router.post("/changeMediaTitle", function (req, res, next) {
 router.post("/changeMediaOrder", function (req, res, next) {
   var newMediaOrder = JSON.parse(req.body.newOrder);
   
-  console.log(newMediaOrder);
-  for (var i = 0; i < newMediaOrder.length; i++) {
-    console.log(newMediaOrder[i].indexPosition);
+  for (var n = 0; n < newMediaOrder.length; n++) {
 
-    MediaItem.update({ "_id": ObjectId(newMediaOrder[i].mediaId) }, { $set: { indexPosition: newMediaOrder[i].indexPosition } }, function (err, docsEffected) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(docsEffected);
+    for (var s = 0; s < req.session.sortedMediaItems.length; s++) {
+      if (ObjectId(newMediaOrder[n].mediaId).equals(req.session.sortedMediaItems[s]._id)) {
+        req.session.sortedMediaItems[s].indexPosition = newMediaOrder[n].indexPosition;
+        break;
+      }
+    }
+  }
+  console.log("ADMIN - media item order changed on session - returning user to admin panel");
+  res.send();
+
+  for (var i = 0; i < newMediaOrder.length; i++) {
+    MediaItem.update({ "_id": ObjectId(newMediaOrder[i].mediaId) }, { $set: { indexPosition: newMediaOrder[i].indexPosition } }, function(err, docsEffected){
+      if(err){
+        console.log("ADMIN - Could not update media item position updated in database - " + err);
       }
     });
-  } res.send();
+  }
 });
 
 router.post("/changeContactDetails", function (req, res, next) {
@@ -203,7 +242,7 @@ router.post("/deleteCategory", function (req, res, next) {
 
     } else {
       for (var i = 0; i < portfolio.pages.home.categories.length; i++) {
-        if (portfolio.pages.home.categories[i] == deleteCategory){
+        if (portfolio.pages.home.categories[i] == deleteCategory) {
           portfolio.pages.home.categories.splice(i, 1);
           portfolio.save(function (err, portfolio) {
             if (err) {
@@ -220,7 +259,7 @@ router.post("/deleteCategory", function (req, res, next) {
 });
 
 router.post("/changeMediaCategory", function (req, res, next) {
-  MediaItem.update({ owner: req.session._userId, "_id": ObjectId(req.body.mediaItem) }, { $set: { category: req.body.category} }, function (err, docsEffected) {
+  MediaItem.update({ owner: req.session._userId, "_id": ObjectId(req.body.mediaItem) }, { $set: { category: req.body.category } }, function (err, docsEffected) {
     if (err) {
       console.log("ADMIN - Could not update media item category - " + err);
     } else {
