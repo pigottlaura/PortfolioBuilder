@@ -97,6 +97,10 @@ jQuery(document).ready(function ($) {
         });
     });
     
+    $("#contactPicture").click(function(event){
+       $("#settings").trigger("click"); 
+    });
+    
     $(".deleteMedia").click(function (event) {
         $(event.target).removeClass("glyphicon-trash").addClass("glyphicon-hourglass").unbind("click");
         

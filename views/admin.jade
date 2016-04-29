@@ -11,12 +11,10 @@ block content
                 a(id="portfolioLink" href="#{websiteURL}#{portfolioURL}" target="_blank") #{websiteURL}#{portfolioURL}
         
         div.col-xs-2.center
+            img(src="#{user.profilePicture}" alt="#{user.firstName}" id="profilePicture" class="img-circle")
+            br
             a(href="/logout")
                 button Log out
-            br
-            img(src="#{user.profilePicture}" alt="#{user.firstName}" id="profilePicture" class="img-circle")
-            a(href="/admin/changeProfilePicture")
-                button Change Profile Picture
             
     div.row
         div.col-md-4.col-xs-12(id="adminOptions")
@@ -56,7 +54,7 @@ block content
                         div.row
                             div.col-xs-4.col-xs-offset-8
                                 button(id="addCategory") Add
-                h3 Settings
+                h3(id="settings") Settings
                 div
                     div.row
                         div.col-xs-3
@@ -142,4 +140,4 @@ block content
                                     textarea(id="contactInfo" rows="4" contenteditable="true") #{contactPage.info}
                         if contactPage.picture
                             div.col-xs-6
-                                img(src="#{contactPage.picture}" alt="#{contactPage.contactDetails.name}")
+                                img(id="contactPicture" src="#{contactPage.picture}" alt="#{contactPage.contactDetails.name}")
