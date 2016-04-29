@@ -19,7 +19,8 @@ var UserSchema = new Schema({
     profilePicture: {
         type: String,
         default: "../images/profilePicture.jpg"
-    }, dateJoined: {
+    },
+    dateJoined: {
         type: Date,
         default: Date.now
     }

@@ -31,13 +31,14 @@ router.post("/checkCredentialsAvailable", function (req, res, next) {
       if (portfolio == null) {
         credentials.portfolioURLAvailable = true;
         credentials.portfolioURL = req.body.requestedPortfolioURL;
-
-        console.log("INDEX - Username available = " + credentials.usernameAvailable);
-        console.log("INDEX - URL available = " + credentials.portfolioURLAvailable);
-        res.json(credentials);
       }
+
+      console.log("INDEX - Username available = " + credentials.usernameAvailable);
+      console.log("INDEX - URL available = " + credentials.portfolioURLAvailable);
+
+      res.json(credentials);
     });
-    
+
   });
 });
 
@@ -67,6 +68,7 @@ router.post("/login", function (req, res, next) {
 });
 
 router.post('/createAccount', function (req, res, next) {
+  console.log(req.body.portfolioURL);
   User.findOne({ username: req.body.username }, {}, function (err, users) {
     if (err) {
       console.log("INDEX - Could not check if this username exists - " + err);
@@ -78,8 +80,7 @@ router.post('/createAccount', function (req, res, next) {
           username: req.body.username.toLowerCase(),
           password: cryptoEncryption.encrypt(req.body.password),
           firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          portfolioURL: req.body.portfolioURL
+          lastName: req.body.lastName
         });
 
         req.session._userId = newUser._id;
@@ -94,7 +95,15 @@ router.post('/createAccount', function (req, res, next) {
         });
 
         var newPortfolio = new Portfolio({
-          owner: newUser._id
+          owner: newUser._id,
+          portfolioURL: req.body.portfolioURL,
+          pages: {
+            contact: {
+              contactDetails: {
+                name: req.body.firstName + " " + req.body.lastName
+              }
+            }
+          }
         });
         newPortfolio.pages.contact.contactDetails.name = newUser.firstName + " " + newUser.lastName;
 
