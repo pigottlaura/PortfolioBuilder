@@ -11,7 +11,12 @@ var websiteURL = process.env.WEBSITE_URL || "http://localhost:3000/";
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render('index', { title: "Portfolio Builder" });
+  if(req.session._userId = null){
+    res.render('index', { title: "Portfolio Builder" });
+  } else {
+    res.redirect("/admin");
+  }
+  
 });
 
 router.post("/checkCredentialsAvailable", function (req, res, next) {
