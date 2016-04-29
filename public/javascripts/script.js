@@ -22,6 +22,8 @@ function resizeFigures() {
     $("video").each(function () {
         $(this).css("left", ($(this).parent().width() - $(this).width()) / 2);
     });
+    
+    console.log("Figures resized");
 }
 
 // Creating an asynchronous function to check if the credentials a user has supplied are available.

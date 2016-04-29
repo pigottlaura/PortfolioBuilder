@@ -62,10 +62,10 @@ router.post("/uploadMedia", function (req, res, next) {
             } else {
               console.log("Admin - Media item successfully saved to database");
             }
+            
+            res.redirect("/admin");
           });
         }
-
-        res.redirect("/admin");
       }
     }
   });
