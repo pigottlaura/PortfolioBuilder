@@ -96,10 +96,10 @@ router.post("/deleteMedia", function (req, res, next) {
           console.log(err);
         } else {
           console.log("ADMIN - File Deleted");
-          res.json({ mediaId: mediaItem._id });
-          mediaItem.remove();
         }
       });
+      mediaItem.remove();
+      res.json({ mediaId: mediaItem._id });
     }
   });
 });
