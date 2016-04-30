@@ -128,13 +128,54 @@ label span {
     
 /* To match with MD of bootstrap CSS */
 @media screen and (max-width: 991px) {
-    body {
-        padding: 0;
+    .container-fluid, div {
+        padding: 0 !important;
+    }
+    body, .ui-tabs-panel {
+        padding: 0 2% !important;
     }
     .center-contents {
         display: block;
     }
     .center-vertical {
         position: relative;
+    }
+    .ui-tabs-nav {
+        height: 10vh;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index: 1;
+    }
+    .ui-tabs-nav * {
+        display: inline-block;
+        text-align: center;
+        vertical-align: center;
+        display: block;
+        width: 48%;
+        height: 100%;
+    }
+    .ui-tabs-nav a {
+        margin-top: 3.5%;
+        width: 100%;
+    }
+    
+    body * {
+        font-size: 2.5vw;
+    }
+
+    h1 {
+        font-size: 3.4vw;
+        text-align: center;
+    }
+    h2 {
+        font-size: 3.1vw;
+    }
+    h3 {
+        font-size: 2.8vw;
+    }
+
+    h1, h2 {
+        font-weight: 700;
     }
 }
