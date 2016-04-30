@@ -186,7 +186,14 @@ router.post("/changeContactDetails", function (req, res, next) {
 });
 
 router.post("/changeContactPicture", function (req, res, next) {
-  Portfolio.findOne({ owner: req.session._userId }, {}, function (err, portfolio) {
+  var newPictureFilePath = req.files[0].path.split("public\\")[1];
+  var owner = req.session._userId;
+  
+  req.session.portfolio.pages.contact.picture = newPictureFilePath;
+  
+  res.redirect("/admin");
+  
+  Portfolio.findOne({ owner: owner }, {}, function (err, portfolio) {
     if (err) {
     } else {
       if (portfolio.pages.contact.picture) {
@@ -199,13 +206,12 @@ router.post("/changeContactPicture", function (req, res, next) {
         });
       }
 
-      portfolio.pages.contact.picture = req.files[0].path.split("public\\")[1];
+      portfolio.pages.contact.picture = newPictureFilePath;
       portfolio.save(function (err, portfolio) {
         if (err) {
           console.log("ADMIN - could not save new contact picture");
         } else {
           console.log("ADMIN - new contact picture saved");
-          res.redirect("/admin");
         }
       });
     }

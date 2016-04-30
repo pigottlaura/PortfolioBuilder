@@ -3,11 +3,18 @@ jQuery(document).ready(function ($) {
     // wants to undo this action, it's original value can be restored
     var originalPortfolioURL = $("#currentPortfolioURL").text();
 
-    $(".accordion").accordion();
+    var openOptionsOnTab = 0;
 
-    $(".accordion").on("accordionactivate", function (event, ui) {
-        $("form input").not("[type='submit']").removeClass("formWarning");
+    var cookieData = getCookieData($("#adminOptionsAccordion").attr("id"));
+
+    if (cookieData.exists) {
+        openOptionsOnTab = parseInt(cookieData.value);
+    }
+    
+    $("#adminOptionsAccordion").accordion({
+        active: openOptionsOnTab
     });
+
     // Using the jQuery UI sortable() function, to make the contents of the div which contains the 
     // users media items sortable i.e. they can be reordered by dragging and dropping. Setting the
     // containment to 'parent' so that these elements cannot be dragged outside the box. Setting the
@@ -224,10 +231,16 @@ jQuery(document).ready(function ($) {
 
     $("#uploadMedia, #changeContactPicture").submit(function (event) {
         var allowSubmit = false
-        if ($(this).find("input[type='file']").val().length > 0) {
+        if ($(event.target).find("input[type='file']").val().length > 0) {
             allowSubmit = true;
+            
+            if($(event.target).attr("id") == "changeContactPicture"){
+                document.cookie = "adminPagesTabs=1";
+            } else if($(event.target).attr("id") == "uploadMedia"){
+                document.cookie = "adminPagesTabs=0";
+            }
         } else {
-            $(this).find("input[type='file']").addClass("formWarning");
+            $(event.target).find("input[type='file']").addClass("formWarning");
             console.log("No file specified");
         }
 

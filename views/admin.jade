@@ -18,7 +18,7 @@ block content
             
     div.row
         div.col-md-4.col-xs-12(id="adminOptions")
-            div.accordion
+            div.accordion(id="adminOptionsAccordion")
                 h3 Upload Media
                 div
                     form(id="uploadMedia" method="post" action="/admin/uploadMedia" enctype="multipart/form-data")
@@ -80,7 +80,7 @@ block content
                                 input(type="submit" name="Upload" value="Upload")
                             
         div.col-md-8.col-xs-12
-            div.tabs
+            div.tabs(id="adminPagesTabs")
                 ul
                     li
                         a(href="#home") Home

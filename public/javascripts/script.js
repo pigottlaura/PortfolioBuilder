@@ -4,6 +4,24 @@ jQuery(document).ready(function ($) {
     // Calling the jQuery UI tabs() method, to create tabbed portions of the pages i.e.
     // on the login screen, and in the admin panel
     $(".tabs").tabs();
+    
+    $(".accordion").each(function (index) {
+        var cookieData = getCookieData($(this).attr("id"));
+
+        if (cookieData.exists == false) {
+            document.cookie = $(this).attr("id") + "=" + $(this).accordion("option", "active");
+        }
+    });
+
+    $(".tabs").each(function (index) {
+        var cookieData = getCookieData($(this).attr("id"));
+
+        if (cookieData.exists) {
+            $(this).tabs("option", "active", cookieData.value);
+        } else {
+            document.cookie = $(this).attr("id") + "=" + $(this).tabs("option", "active");
+        }
+    });
 
     // Calling the resizeFigures() method, as defined below. The purpose of this method is to
     // combat the issues with resizing of embedded objects (such as swfs and videos). As I wanted
@@ -22,7 +40,17 @@ jQuery(document).ready(function ($) {
         resizeFigures();
     });
 
+    $(".accordion").on("accordionactivate", function (event, ui) {
+        $("form input").not("[type='submit']").removeClass("formWarning");
+
+        document.cookie = $(event.target).attr("id") + "=" + $(event.target).accordion("option", "active"); + ";path=/";
+    });
+
     $(".tabs").on("tabsactivate", function (event, ui) {
+        console.log("Changing " + $(event.target).attr("id") + " to " + $(event.target).tabs("option", "active"));
+
+        document.cookie = $(event.target).attr("id") + "=" + $(event.target).tabs("option", "active"); + ";path=/";
+
         $("form input").not("[type='submit']").removeClass("formWarning");
     });
 });
@@ -61,4 +89,27 @@ function checkCredentialsAvailable(username, url, cb) {
         // Passing the response data back to the callback function
         cb(serverResponse);
     }, "json");
+}
+
+
+function getCookieData(findCookie) {
+    // Creating an array that stores all of the cookies of the session as seperate 
+    // elements. Using .replace() to remove all spaces from this string of data, and 
+    // the .split() method to set the points at which the string of cookies needs 
+    // to be seperated i.e. after each ;
+    var allCookies = document.cookie.replace(/ /g, "").split(";");
+    var cookieData = {
+        exists: false,
+        value: ""
+    }
+
+    for (var i = 0; i < allCookies.length; i++) {
+        if (allCookies[i].split("=")[0] == findCookie) {
+            cookieData.exists = true;
+            cookieData.value = allCookies[i].split("=")[1];
+            console.log(findCookie + " exists = " + cookieData);
+        }
+    }
+
+    return cookieData;
 }

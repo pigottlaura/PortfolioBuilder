@@ -1,5 +1,22 @@
 jQuery(document).ready(function ($) {
-    console.log("Document Ready");
+    console.log("Login script loaded");
+    
+    // Creating an array that stores all of the cookies of the session as seperate 
+    // elements. Using .replace() to remove all spaces from this string of data, and 
+    // the .split() method to set the points at which the string of cookies needs 
+    // to be seperated i.e. after each ;
+    var allCookies = document.cookie.replace(/ /g, "").split(";");
+    
+    // Looping through the array of cookie name value pairs
+    for(var i = 0; i < allCookies.length; i++){
+        var cookieValue = allCookies[i].split("=")[1];
+        
+        if(allCookies[i].indexOf("#createOrLoginAccount") == 0){
+            console.log("changing index of create/login to " + cookieValue);
+            $("#createOrLoginAccount").tabs("option","active", cookieValue);
+        }
+    }
+    
     $("#createAccount").find("input[name='username'], input[name='portfolioURL']").change(function () {
 
         $("input[name='username'], input[name='portfolioURL']").val(function () {
