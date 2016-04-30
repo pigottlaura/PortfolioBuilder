@@ -2,9 +2,12 @@ jQuery(document).ready(function ($) {
     // Storing the current value of the portfolio URL, so that if the user edits it later on, and
     // wants to undo this action, it's original value can be restored
     var originalPortfolioURL = $("#currentPortfolioURL").text();
-    
+
     $(".accordion").accordion();
 
+    $(".accordion").on("accordionactivate", function (event, ui) {
+        $("form input").not("[type='submit']").removeClass("formWarning");
+    });
     // Using the jQuery UI sortable() function, to make the contents of the div which contains the 
     // users media items sortable i.e. they can be reordered by dragging and dropping. Setting the
     // containment to 'parent' so that these elements cannot be dragged outside the box. Setting the
@@ -17,16 +20,16 @@ jQuery(document).ready(function ($) {
         cursor: "move",
         cancel: "figcaption, select, option",
         stop: function (event, ui) {
-            
+
             // Creating a temporary array to store the id's and index positions of each of the media
             // items (figures) on the page, so that they can be passed to the server as one stringified
             // JSON object
             var mediaItemOrder = [];
-            
+
             // Looping through each of the figures (media items) on the page
             $.each($("figure"), function (index) {
                 //console.log($(this).find("figcaption").text() + " is at index " + index);
-                
+
                 // Pushing the media id and index position of this figure into the temporary array
                 // created above, so that it can be sent, along with the rest of the media item's 
                 // positions, to the server to be stored, so that the new order of these media items
@@ -37,7 +40,7 @@ jQuery(document).ready(function ($) {
                     indexPosition: index
                 });
             });
-            
+
             // Sending an AJAX POST request to the server, passing in the new order of the media items
             // (as stored in the temporary variable above). Stringifying these, so the array can be parsed
             // as JSON on the server side. This POST request will receive a response from the server, but as
@@ -46,7 +49,7 @@ jQuery(document).ready(function ($) {
             $.post("/admin/changeMediaOrder", { newOrder: JSON.stringify(mediaItemOrder) });
         }
     });
-    
+
     $("#sortable figure").each(function (index) {
         var mediaCategoryClass = "mediaCategory" + index;
 
@@ -67,7 +70,7 @@ jQuery(document).ready(function ($) {
     $("#sortable figure select").change(function (event) {
         $.post("/admin/changeMediaCategory", { mediaItem: $(event.target).parent().parent().parent().attr("id"), category: $(event.target).val() });
     });
-    
+
     $("figcaption").blur(function (event) {
         var mediaItemId = $(event.target).parent().attr("id");
         $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text() });
@@ -85,11 +88,11 @@ jQuery(document).ready(function ($) {
             $(event.target).blur();
         }
     });
-    
+
     $("#contact textarea").change(function (event) {
         $("#contact p").trigger("blur");
     });
-    
+
     $("#contact p").blur(function (event) {
         $.post("/admin/changeContactDetails", {
             name: $("#contactName").text(),
@@ -98,19 +101,19 @@ jQuery(document).ready(function ($) {
             phone: $("#contactPhone").text()
         });
     });
-    
-    $("#contactPicture").click(function(event){
-       $("#settings").trigger("click"); 
+
+    $("#contactPicture").click(function (event) {
+        $("#settings").trigger("click");
     });
-    
+
     $(".deleteMedia").click(function (event) {
         $(event.target).removeClass("glyphicon-trash").addClass("glyphicon-hourglass").unbind("click");
-        
+
         $.post("/admin/deleteMedia", { mediaId: event.target.id }, function (responseData) {
             $(".row > div").find("span[id='" + responseData.mediaId + "']").parent().parent().parent().parent().remove();
         }, "json");
     });
-    
+
     $("#editPortfolioURL").click(function (event) {
 
         $("#currentPortfolioURL")
@@ -124,7 +127,7 @@ jQuery(document).ready(function ($) {
         $("#savePortfolioURL").show();
 
     });
-    
+
     $("#cancelPortfolioURL").click(function (event) {
 
         $("#currentPortfolioURL")
@@ -138,7 +141,7 @@ jQuery(document).ready(function ($) {
         $("#editPortfolioURL").show();
         $("#savePortfolioURL").hide();
     });
-    
+
     $("#savePortfolioURL").click(function (event) {
         if ($("#currentPortfolioURL").text() != originalPortfolioURL) {
             var requestedURL = $("#currentPortfolioURL").text().toLowerCase();
@@ -172,7 +175,7 @@ jQuery(document).ready(function ($) {
             console.log("about to check");
             checkCredentialsAvailable(null, requestedURL, function (responseData) {
                 console.log(responseData.portfolioURLAvailable);
-                
+
                 if (responseData.portfolioURLAvailable) {
                     $("#portfolioURLStatusIcon").attr("class", "glyphicon glyphicon-ok-circle");
                 } else {
@@ -182,7 +185,7 @@ jQuery(document).ready(function ($) {
             });
         }
     });
-    
+
     $("#addCategory").click(function (event) {
         $.post("/admin/addNewCategory", { newCategory: $("#newCategory").val() }, function (serverResponse) {
             $("#categories").append("<div class='row'><div class='col-xs-10'>" + serverResponse.newCategory + "</div><div class='col-xs-2'><button class='deleteCategory' id='" + serverResponse.newCategory + "'>x</button></div>");
@@ -211,5 +214,23 @@ jQuery(document).ready(function ($) {
             });
             $("#" + serverResponse.deletedCategory).parent().parent().remove();
         }, "json");
+    });
+
+    $("input[type='file']").change(function (event) {
+        if ($(event.target).val().length > 0) {
+            $(event.target).removeClass("formWarning");
+        }
+    });
+
+    $("#uploadMedia, #changeContactPicture").submit(function (event) {
+        var allowSubmit = false
+        if ($(this).find("input[type='file']").val().length > 0) {
+            allowSubmit = true;
+        } else {
+            $(this).find("input[type='file']").addClass("formWarning");
+            console.log("No file specified");
+        }
+
+        return allowSubmit;
     });
 });

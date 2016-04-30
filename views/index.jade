@@ -68,19 +68,19 @@ block content
                     if warning
                         p(class="warning") #{warning}
                         
-                    form(id="adminLogin" method="post" action="/login").full-contents
+                    form(id="loginAccount" method="post" action="/login").full-contents
                         div.row
                             div.col-xs-8
                                 div.row
                                     div.col-md-6.col-sm-12
-                                        label(for="username") Username:
+                                        label(for="loginUsername") Username:
                                     div.col-md-6.col-sm-12
-                                        input(type="text" name="username")
+                                        input(type="text" name="loginUsername")
                                 div.row
                                     div.col-md-6.col-sm-12
-                                        label(for="password") Password:
+                                        label(for="loginPassword") Password:
                                     div.col-md-6.col-sm-12
-                                        input(type="password" name="password")
+                                        input(type="password" name="loginPassword")
                                 div.row
                                     div.col-xs-12
                                         input(type="submit" name="Login")

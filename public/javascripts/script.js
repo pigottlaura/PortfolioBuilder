@@ -12,7 +12,7 @@ jQuery(document).ready(function ($) {
     // to ensure that this container matches with the other figures on the screen, using this function
     // to find the largest figure, and then resizing all other figures and containers to match this.
     resizeFigures();
-    
+
     // Everytime the window is resized, calling the same resizeFigures() method so that the figures
     // will be recalculated and the containers sized appropriatley
     $(window).resize(function () {
@@ -21,6 +21,10 @@ jQuery(document).ready(function ($) {
         $("figure").css("minHeight", "initial");
         resizeFigures();
     });
+
+    $(".tabs").on("tabsactivate", function (event, ui) {
+        $("form input").not("[type='submit']").removeClass("formWarning");
+    });
 });
 
 // This function is called each time the page is reloaded, or the window is resized, to ensure that varying
@@ -28,7 +32,7 @@ jQuery(document).ready(function ($) {
 function resizeFigures() {
     // Creating a temporary variable to store the largest height of the figures currently
     var maxFigHeight = 0;
-    
+
     // Looping through each figure on the page, to find the current largest height
     $('figure').each(function () {
         // Using a ternary operator to test this figure's height against the current maximum figure height
@@ -42,7 +46,7 @@ function resizeFigures() {
     $("video").each(function () {
         $(this).css("left", ($(this).parent().width() - $(this).width()) / 2);
     });
-    
+
     console.log("Figures resized");
 }
 
