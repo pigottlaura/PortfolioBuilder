@@ -118,3 +118,7 @@ img {
     width: 100%;
     height: auto;
 }
+    
+/* To match with MD of bootstrap CSS */
+@media screen and (max-width: 991px) {
+}

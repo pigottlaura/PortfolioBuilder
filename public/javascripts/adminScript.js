@@ -69,7 +69,7 @@ jQuery(document).ready(function ($) {
     });
     
     $("figcaption").blur(function (event) {
-        var mediaItemId = $(event.target).siblings("button").attr("id");
+        var mediaItemId = $(event.target).parent().attr("id");
         $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text() });
     });
 

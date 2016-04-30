@@ -37,7 +37,7 @@ function resizeFigures() {
         maxFigHeight = maxFigHeight > $(this).height() ? maxFigHeight : $(this).height();
     });
     $(".objectContainer").css("height", $("figure img").height());
-    $("figure").css("minHeight", maxFigHeight);
+    $("figure").css("height", maxFigHeight * 1.02);
 
     $("video").each(function () {
         $(this).css("left", ($(this).parent().width() - $(this).width()) / 2);
