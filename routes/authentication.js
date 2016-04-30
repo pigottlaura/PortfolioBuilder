@@ -16,7 +16,8 @@ router.get('/authentication/google', googlePassport.authenticate(
 router.get('/authentication/google/callback', googlePassport.authenticate(
     'google',
     {
-        failureRedirect: '/'
+        failureRedirect: '/',
+        session: false
     }),
     function (req, res, next) {
         req.session._userId = req.user._id;

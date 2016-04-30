@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var multer = require('multer');
 var mongoose = require('mongoose');
 var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 
 // Custom Modules
 var checkDirectories = require('./custom_modules/checkDirectories');
@@ -57,7 +58,7 @@ var portfolio = require('./routes/portfolio');
 
 var app = express();
 
-var multerFileFilter = function(req, file, cb) {
+var multerFileFilter = function (req, file, cb) {
     if (req.session._userId == null) {
         console.log("MULTER FILTER - No user is currently logged in. Rejecting this file upload");
         cb(null, false);
@@ -91,7 +92,7 @@ var multerStorage = multer.diskStorage({
         // pathName back so that multer knows where to store the file
         var pathName;
 
-        
+
         // Deciding which folder to store the file in, depending on it's file type
         if (file.fieldname == "contactPictureFile") {
             pathName = mainUploadDirectory + "/contactPicture"
@@ -104,7 +105,7 @@ var multerStorage = multer.diskStorage({
         }
 
         console.log("MULTER STORAGE - " + pathName);
-        
+
         // Using the destination function's callback to pass the required pathname back
         // so that multer knows where to store this file
         cb(null, pathName);
@@ -130,25 +131,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+var mongoStore = new MongoStore({
+    mongooseConnection: db
+});
+
 app.use(session({
     secret: 'sessionSecret',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    store: mongoStore,
+    unset: "destroy"
 }));
-app.use(googlePassport.initialize());
-app.use(googlePassport.session());
-
-googlePassport.serializeUser(function (user, done) {
-    console.log("SERIALIZING USER");
-    done(null, user);
-});
-
-googlePassport.deserializeUser(function (id, done) {
-    User.findById(id, function (err, user) {
-        console.log("DESERIALIZING USER");
-        done(err, user);
-    });
-});
 
 app.use("/", multerUpload.any());
 

@@ -7,7 +7,7 @@ var mongoose = require('mongoose');
 // (which will only be available when the app is running on Azure, as this environment
 // variable has not been set locally) or the local database (which will be used for
 // local testing)
-var connectionString = process.env.CUSTOMCONNSTR_PortfolioBuilderMongo || "localhost:27017/PortfolioBuilder";
+var connectionString = process.env.CUSTOMCONNSTR_PortfolioBuilderMongo || "mongodb://localhost:27017/PortfolioBuilder";
 
 // Creating a connection to the database, using the connection string specified above
 mongoose.connect(connectionString);
