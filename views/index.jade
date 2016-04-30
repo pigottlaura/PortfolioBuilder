@@ -16,9 +16,7 @@ block content
                     li
                         a(href="#loginTab") Login
                 div#createAccountTab
-                    div.row
-                        div.col-xs-12
-                            h3 Create a new Portfolio
+                    h3 Create a new Portfolio
                     div.row
                         div.col-sm-8.col-xs-12
                             form(id="createAccount" method="post" action="/createAccount").full-contents
@@ -56,22 +54,23 @@ block content
                                         input(type="text" name="portfolioURL")
                                         span(id="portfolioURLStatusIcon" aria-hidden="true")
                                 div.row
-                                    div.col-xs-12
-                                        input(type="submit" name="Create Portfolio")
-                        div.col-sm-4.col-xs-12.center-contents
-                            span.center-vertical
-                                | or sign up with your Google Account
-                                br
-                                a(href="/admin/authentication/google")
-                                    button(type="button" class="btn btn-default") Sign In with Google
+                                    div.col-md-offset-6.col-md-6.col-xs-12
+                                        input(type="submit" value="Create Portfolio")
+                        div.col-sm-4.col-xs-12
+                                div.row
+                                    div.col-sm-12.col-xs-offset-1.col-xs-10.center or sign up with your Google Account
+                                div.row
+                                    div.col-sm-12.col-xs-offset-1.col-xs-10
+                                        a(href="/admin/authentication/google")
+                                            button(type="button" class="btn btn-default btn-primary") Sign In with Google
                 div#loginTab
                     h3 Login
-                    if warning
-                        p(class="warning") #{warning}
-                        
-                    form(id="loginAccount" method="post" action="/login").full-contents
-                        div.row
-                            div.col-xs-8
+                    div.row
+                        div.col-sm-8.col-xs-12
+                            if warning
+                                p(class="warning") #{warning}
+                                
+                            form(id="loginAccount" method="post" action="/login").full-contents
                                 div.row
                                     div.col-md-6.col-sm-12
                                         label(for="loginUsername") Username:
@@ -83,11 +82,12 @@ block content
                                     div.col-md-6.col-sm-12
                                         input(type="password" name="loginPassword")
                                 div.row
-                                    div.col-xs-12
-                                        input(type="submit" name="Login")
-                            div.col-sm-4.col-xs-12.center-contents
-                                span.center-vertical
-                                    | or sign in with your Google Account
-                                    br
+                                    div.col-md-offset-6.col-md-6.col-xs-12
+                                        input(type="submit" value="Login")
+                        div.col-sm-4.col-xs-12
+                            div.row
+                                div.col-sm-12.col-xs-offset-1.col-xs-10.center or sign in with your Google Account
+                            div.row
+                                div.col-sm-12.col-xs-offset-1.col-xs-10
                                     a(href="/admin/authentication/google")
-                                        button(type="button" class="btn btn-default") Sign In with Google
+                                        button(type="button" class="btn btn-default btn-primary") Sign In with Google

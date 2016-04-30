@@ -31,13 +31,14 @@ a {
     position: relative;
     text-align: center;
     vertical-align: middle;
-    height: 40vh;
+    height: 100%;
 }
 .center-vertical {
     position: absolute;
-    top: 50%;
+    top: 25%;
     left: 15%;
 }
+
 .full-contents input, .full-contents label {
     width: 100%;
 }
@@ -52,6 +53,9 @@ button {
     width: 100%;
     height: auto;
     max-width: 50px;
+}
+html {
+    overflow-y: scroll;
 }
 
 .right {
@@ -98,7 +102,6 @@ input, select, button, textarea {
     right: 8%;
     top: 6%;
 }
-
 #adminOptions {
     height: 70vh;
 }
@@ -125,4 +128,10 @@ label span {
     
 /* To match with MD of bootstrap CSS */
 @media screen and (max-width: 991px) {
+    .center-contents {
+        display: block;
+    }
+    .center-vertical {
+        position: relative;
+    }
 }
