@@ -13,7 +13,7 @@ var MongoStore = require('connect-mongo')(session);
 
 // Custom Modules
 var checkDirectories = require('./custom_modules/checkDirectories');
-var db = require("./custom_modules/database");
+var databaseConnection = require("./custom_modules/database");
 
 var databaseModels = require("./custom_modules/databaseModels");
 var User = databaseModels.User;
@@ -133,7 +133,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 var mongoStore = new MongoStore({
-    mongooseConnection: db
+    mongooseConnection: databaseConnection
 });
 
 app.use(session({

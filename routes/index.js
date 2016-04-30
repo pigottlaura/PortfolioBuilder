@@ -13,7 +13,7 @@ var websiteURL = process.env.WEBSITE_URL || "http://localhost:3000/";
 router.get('/', function (req, res, next) {
   if (req.session._userId == null) {
     console.log("INDEX - this user is not yet logged in");
-    res.render('index', { title: "Portfolio Builder" });
+    res.render('index', { title: "Portfolio Builder", websiteURL: websiteURL + "portfolio/" });
   } else {
     console.log("INDEX - this user is already logged in");
     res.redirect("/admin");
