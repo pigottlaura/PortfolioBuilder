@@ -128,6 +128,9 @@ label span {
     
 /* To match with MD of bootstrap CSS */
 @media screen and (max-width: 991px) {
+    body {
+        padding: 0;
+    }
     .center-contents {
         display: block;
     }
