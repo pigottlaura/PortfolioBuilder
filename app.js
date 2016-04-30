@@ -37,7 +37,6 @@ var uploadsDirectories = [
     mainUploadDirectory + "image",
     mainUploadDirectory + "swf",
     mainUploadDirectory + "video",
-    mainUploadDirectory + "other",
     mainUploadDirectory + "contactPicture"
 ];
 
@@ -58,57 +57,65 @@ var portfolio = require('./routes/portfolio');
 
 var app = express();
 
-var multerStorage = multer.diskStorage({
-    destination: function(req, file, cb) {
-      console.log("Database is - " + db.readyState);
-        // Getting the file type of this file by splitting the mimetype (e.g. image/jpg) at
-        // the "/" and then taking the first half of this new array of strings i.e. image
-        var mimeType = file.mimetype.split("/")[0];
-        
-        var fileType = file.mimetype.split("/")[1];
+var multerFileFilter = function(req, file, cb) {
+    if (req.session._userId == null) {
+        console.log("MULTER FILTER - No user is currently logged in. Rejecting this file upload");
+        cb(null, false);
+    } else {
+        console.log("MULTER FILTER - This user is currently logged in. Accepting this file upload");
+
+        // Getting the media type of this file by splitting the mimetype (e.g. image) at
+        // the "/" and then taking the first half of this new array of strings i.e. image.
+        // Storing the second half of this string, i.e. file type (e.g. jpg)
+        file.mediaType = file.mimetype.split("/")[0];
+        file.fileType = file.mimetype.split("/")[1] == "x-shockwave-flash" ? "swf" : file.mimetype.split("/")[1];
 
         // Logging out the file type to the console (testing purposes)
-        console.log("This file is an " + mimeType + " file. More specifically, a " + fileType + " file.");
+        console.log("MULTER FILTER - This file is a " + file.mediaType + " file. More specifically, a " + file.fileType + " file.");
 
+        if (file.mediaType == "image" || file.mediaType == "audio" || file.mediaType == "video" || file.fileType == "swf") {
+            console.log("MULTER FILTER - This is a supported filetype for this application - accepting this file");
+            cb(null, true);
+        } else {
+            console.log("MULTER FILTER This is not a supported filetype for this application - rejecting this file");
+            cb(null, false);
+        }
+    }
+}
+
+var multerStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
         // Creating a pathName variable, to store the path to the directory that this file
         // should be stored in (this will be decided based on the filetype). This variable
         // will then be passed to the destination function's callback, to pass the required
         // pathName back so that multer knows where to store the file
         var pathName;
-        
-        file.mediaType = mimeType;
 
+        
         // Deciding which folder to store the file in, depending on it's file type
-        if(file.fieldname == "contactPictureFile") {
+        if (file.fieldname == "contactPictureFile") {
             pathName = mainUploadDirectory + "/contactPicture"
-        } else if (mimeType == "image") {
-            // Setting the pathname so that multer knows where to store image files
-            pathName = mainUploadDirectory + '/image';
-        } else if (mimeType == "audio") {
-            // Setting the pathname so that multer knows where to store audio files
-            pathName = mainUploadDirectory + '/audio';
-        } else if(mimeType == "application" && fileType == "x-shockwave-flash") {
+        } else if (file.fileType == "swf") {
             // Setting the pathname so that multer knows where to store swf files
             pathName = mainUploadDirectory + '/swf';
-            file.mediaType = "swf";
-        } else if(mimeType == "video") {
-            // Setting the pathname so that multer knows where to store video files
-            pathName = mainUploadDirectory + '/video';
         } else {
-            // Setting the pathname so that multer knows where to store all other files
-            pathName = mainUploadDirectory + '/other';
+            // Setting the pathname so that multer knows where to store all other video, audio and image files
+            pathName = mainUploadDirectory + "/" + file.mediaType;
         }
 
+        console.log("MULTER STORAGE - " + pathName);
+        
         // Using the destination function's callback to pass the required pathname back
         // so that multer knows where to store this file
         cb(null, pathName);
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, Date.now() + "_" + file.originalname);
     }
 });
 
 var multerUpload = multer({
+    fileFilter: multerFileFilter,
     storage: multerStorage
 });
 
@@ -131,13 +138,13 @@ app.use(session({
 app.use(googlePassport.initialize());
 app.use(googlePassport.session());
 
-googlePassport.serializeUser(function(user, done) {
+googlePassport.serializeUser(function (user, done) {
     console.log("SERIALIZING USER");
     done(null, user);
 });
 
-googlePassport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
+googlePassport.deserializeUser(function (id, done) {
+    User.findById(id, function (err, user) {
         console.log("DESERIALIZING USER");
         done(err, user);
     });
@@ -153,14 +160,14 @@ app.use("/portfolio", portfolio);
 // can not get into the admin secion.
 // Passing all requests for authentication (which will only be called in Google callback
 // functions, when a user is logging in with their account)
-app.use("/", authentication);
-// I a request has made it through the above, then the user must be logged in, and can
+app.all("*", authentication);
+// If a request has made it through the above, then the user must be logged in, and can
 // be granted access to the admin section
 app.use('/admin', admin);
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
@@ -171,7 +178,7 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
+    app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -182,7 +189,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,

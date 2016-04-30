@@ -10,7 +10,7 @@ var websiteURL = process.env.WEBSITE_URL || "http://localhost:3000/";
 
 // Get main admin dashboard
 router.get('/', function (req, res, next) {
-  console.log("Admin - in admin section");
+  console.log("ADMIN - in admin section");
   if (req.session.portfolio == null) {
     console.log("ADMIN - User does not have portfolio on session");
     Portfolio.findOne({ owner: req.session._userId }).populate("pages.home.mediaItems owner").exec(function (err, portfolio) {
