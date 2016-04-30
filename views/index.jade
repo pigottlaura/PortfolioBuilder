@@ -7,17 +7,17 @@ block content
         div.col-md-12
             h1= title
     div.row
-        div.col-md-8.col-sm-12
+        div.col-md-10.col-sm-12
             div.tabs(id="createOrLoginAccount")
                 ul
                     li
                         a(href="#createAccountTab") Create New
                     li
                         a(href="#loginTab") Login
-                div#createAccountTab
-                    h3 Create a new Portfolio
+                div#createAccountTab.relative
                     div.row
                         div.col-sm-8.col-xs-12
+                            h3 Create a new Portfolio
                             form(id="createAccount" method="post" action="/createAccount").full-contents
                                 div.row
                                     div.col-md-6.col-sm-12
@@ -54,18 +54,18 @@ block content
                                         span(id="portfolioURLStatusIcon" aria-hidden="true")
                                 div.row
                                     div.col-md-offset-6.col-md-6.col-xs-12
-                                        input(type="submit" value="Create Portfolio")
-                        div.col-sm-4.col-xs-12
-                                div.row
+                                        input(type="submit" value="Create Portfolio" class="btn btn-success submitButton")
+                        div.col-sm-4.col-xs-12.googleButton
+                                div.row.mobileHide
                                     div.col-sm-12.col-xs-offset-1.col-xs-10.center or sign up with your Google Account
                                 div.row
                                     div.col-sm-12.col-xs-offset-1.col-xs-10
                                         a(href="/admin/authentication/google")
-                                            button(type="button" class="btn btn-default btn-primary") Sign In with Google
-                div#loginTab
-                    h3 Login
+                                            button(type="button" class="btn btn-default btn-primary") Sign Up with Google
+                div#loginTab.relative
                     div.row
                         div.col-sm-8.col-xs-12
+                            h3 Login to your portfolio
                             if warning
                                 p(class="warning") #{warning}
                                 
@@ -82,9 +82,9 @@ block content
                                         input(type="password" name="loginPassword")
                                 div.row
                                     div.col-md-offset-6.col-md-6.col-xs-12
-                                        input(type="submit" value="Login")
-                        div.col-sm-4.col-xs-12
-                            div.row
+                                        input(type="submit" value="Login" class="btn btn-success submitButton")
+                        div.col-sm-4.col-xs-12.googleButton
+                            div.row.mobileHide
                                 div.col-sm-12.col-xs-offset-1.col-xs-10.center or sign in with your Google Account
                             div.row
                                 div.col-sm-12.col-xs-offset-1.col-xs-10

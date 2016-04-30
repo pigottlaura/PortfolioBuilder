@@ -141,11 +141,10 @@ label span {
         position: relative;
     }
     .ui-tabs-nav {
+        margin-top: 10%;
         height: 10vh;
-        position: fixed;
         bottom: 0;
         width: 100%;
-        z-index: 1;
     }
     .ui-tabs-nav * {
         display: inline-block;
@@ -154,28 +153,50 @@ label span {
         display: block;
         width: 48%;
         height: 100%;
+        font-size: 4vw;
     }
     .ui-tabs-nav a {
-        margin-top: 3.5%;
+        margin-top: 0;
         width: 100%;
     }
     
     body * {
-        font-size: 2.5vw;
+        font-size: 3.6vw;
     }
 
     h1 {
-        font-size: 3.4vw;
-        text-align: center;
+        font-size: 4.5vw;
     }
     h2 {
-        font-size: 3.1vw;
+        font-size: 4.2vw;
     }
     h3 {
-        font-size: 2.8vw;
+        font-size: 3.9vw;
     }
 
     h1, h2 {
         font-weight: 700;
+    }
+    .relative {
+        position: relative;
+        padding-top: 8vh !important;
+    }
+    .submitButton {
+        padding: 4% 0;
+    }
+    #createOrLoginAccount input {
+        margin-bottom: 2vh;
+    }
+    .googleButton {
+        position: absolute;
+        top: 2vh;
+        right: 0;
+        width: 50vw;
+    }
+    .googleButton button {
+        padding: 6% 1% !important;
+    }
+    .mobileHide {
+        display: none;
     }
 }
