@@ -155,12 +155,13 @@ app.use("/", multerUpload.any());
 
 app.use('/', routes);
 app.use("/portfolio", portfolio);
-// Passing all requests for login, to be checked against the users in the database.
+
 // Passing all requests for admin, to ensure that user which is not logged in
 // can not get into the admin secion.
 // Passing all requests for authentication (which will only be called in Google callback
 // functions, when a user is logging in with their account)
-app.all("*", authentication);
+app.use("/admin", authentication);
+
 // If a request has made it through the above, then the user must be logged in, and can
 // be granted access to the admin section
 app.use('/admin', admin);
