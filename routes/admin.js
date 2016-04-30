@@ -22,14 +22,11 @@ router.get('/', function (req, res, next) {
           res.render("noportfolio", { title: "/ " + req.params.portfolioURL + " does not exist" });
         } else {
           console.log("This user has " + portfolio.pages.home.mediaItems.length + " media items");
+          req.session.portfolio = portfolio;
+          req.session.sortedMediaItems = databaseModels.sortMediaItems(portfolio.pages.home.mediaItems);
 
-          portfolio.sortMediaItems(portfolio, function (sortedMediaItems) {
-            req.session.portfolio = portfolio;
-            req.session.sortedMediaItems = sortedMediaItems;
-
-            console.log("ADMIN - User portfolio added to session - redirecting to admin");
-            res.redirect("/admin");
-          });
+          console.log("ADMIN - User portfolio added to session - redirecting to admin");
+          res.redirect("/admin");
 
         }
       }
@@ -150,22 +147,25 @@ router.post("/changeMediaTitle", function (req, res, next) {
 
 router.post("/changeMediaOrder", function (req, res, next) {
   var newMediaOrder = JSON.parse(req.body.newOrder);
-  
+
   for (var n = 0; n < newMediaOrder.length; n++) {
 
     for (var s = 0; s < req.session.sortedMediaItems.length; s++) {
       if (ObjectId(newMediaOrder[n].mediaId).equals(req.session.sortedMediaItems[s]._id)) {
         req.session.sortedMediaItems[s].indexPosition = newMediaOrder[n].indexPosition;
+        console.log(req.session.sortedMediaItems[s]._id + " is now at index " + req.session.sortedMediaItems[s].indexPosition);
         break;
       }
     }
   }
+  
+  req.session.sortedMediaItems = databaseModels.sortMediaItems(req.session.sortedMediaItems);
   console.log("ADMIN - media item order changed on session - returning user to admin panel");
   res.send();
 
   for (var i = 0; i < newMediaOrder.length; i++) {
-    MediaItem.update({ "_id": ObjectId(newMediaOrder[i].mediaId) }, { $set: { indexPosition: newMediaOrder[i].indexPosition } }, function(err, docsEffected){
-      if(err){
+    MediaItem.update({ "_id": ObjectId(newMediaOrder[i].mediaId) }, { $set: { indexPosition: newMediaOrder[i].indexPosition } }, function (err, docsEffected) {
+      if (err) {
         console.log("ADMIN - Could not update media item position updated in database - " + err);
       }
     });
@@ -173,14 +173,25 @@ router.post("/changeMediaOrder", function (req, res, next) {
 });
 
 router.post("/changeContactDetails", function (req, res, next) {
+  var newName = req.body.name;
+  var newEmail = req.body.email;
+  var newPhone = req.body.phone;
+  var newInfo = req.body.info;
+
+  req.session.portfolio.pages.contact.info = newInfo;
+  req.session.portfolio.pages.contact.contactDetails.name = newName;
+  req.session.portfolio.pages.contact.contactDetails.email = newEmail;
+  req.session.portfolio.pages.contact.contactDetails.phone = newPhone;
+
+  res.send();
+
   Portfolio.update({ owner: req.session._userId }, {
-    $set: { "pages.contact.contactDetails.name": req.body.name, "pages.contact.contactDetails.email": req.body.email, "pages.contact.contactDetails.phone": req.body.phone, "pages.contact.info": req.body.info }
+    $set: { "pages.contact.contactDetails.name": newName, "pages.contact.contactDetails.email": newEmail, "pages.contact.contactDetails.phone": newPhone, "pages.contact.info": newInfo }
   }, function (err, docsEffected) {
     if (err) {
       console.log("ADMIN - Could not update portfolio contact details - " + err);
     } else {
       console.log("ADMIN - Contact details successfully updated");
-      res.send();
     }
   });
 });
@@ -188,11 +199,11 @@ router.post("/changeContactDetails", function (req, res, next) {
 router.post("/changeContactPicture", function (req, res, next) {
   var newPictureFilePath = req.files[0].path.split("public\\")[1];
   var owner = req.session._userId;
-  
+
   req.session.portfolio.pages.contact.picture = newPictureFilePath;
-  
+
   res.redirect("/admin");
-  
+
   Portfolio.findOne({ owner: owner }, {}, function (err, portfolio) {
     if (err) {
     } else {

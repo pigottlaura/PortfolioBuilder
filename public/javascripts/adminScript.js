@@ -9,6 +9,8 @@ jQuery(document).ready(function ($) {
 
     if (cookieData.exists) {
         openOptionsOnTab = parseInt(cookieData.value);
+    } else {
+        document.cookie = "adminOptionsAccordion=0";
     }
     
     $("#adminOptionsAccordion").accordion({

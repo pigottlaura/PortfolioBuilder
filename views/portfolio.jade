@@ -51,16 +51,20 @@ block content
         div#contact
             div.row
                 div.col-xs-6
-                    div.row
-                        div.col-xs-3
-                            label Name:
-                        div.col-xs-9
-                            p #{contactPage.contactDetails.name}
-                    div.row
-                        div.col-xs-3
-                            label Email: 
-                        div.col-xs-9
-                            a(href="mailto:#{contactPage.contactDetails.email}") #{contactPage.contactDetails.email}
+                    if contactPage.contactDetails.name
+                        if contactPage.contactDetails.name.length > 0
+                            div.row
+                                div.col-xs-3
+                                    label Name:
+                                div.col-xs-9
+                                    p #{contactPage.contactDetails.name}
+                    if contactPage.contactDetails.email
+                        if contactPage.contactDetails.email.length > 0
+                            div.row
+                                div.col-xs-3
+                                    label Email: 
+                                div.col-xs-9
+                                    a(href="mailto:#{contactPage.contactDetails.email}") #{contactPage.contactDetails.email}
                     if contactPage.contactDetails.phone
                         if contactPage.contactDetails.phone.length > 0
                             div.row

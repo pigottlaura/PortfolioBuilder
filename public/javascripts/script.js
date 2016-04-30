@@ -4,14 +4,6 @@ jQuery(document).ready(function ($) {
     // Calling the jQuery UI tabs() method, to create tabbed portions of the pages i.e.
     // on the login screen, and in the admin panel
     $(".tabs").tabs();
-    
-    $(".accordion").each(function (index) {
-        var cookieData = getCookieData($(this).attr("id"));
-
-        if (cookieData.exists == false) {
-            document.cookie = $(this).attr("id") + "=" + $(this).accordion("option", "active");
-        }
-    });
 
     $(".tabs").each(function (index) {
         var cookieData = getCookieData($(this).attr("id"));
@@ -34,9 +26,6 @@ jQuery(document).ready(function ($) {
     // Everytime the window is resized, calling the same resizeFigures() method so that the figures
     // will be recalculated and the containers sized appropriatley
     $(window).resize(function () {
-        // Resetting each figure's minHeight to it's initial value, so that when the resizeFigures() funciton
-        // runs, it is not basing it's new height value on the current dimensions of the figures
-        $("figure").css("minHeight", "initial");
         resizeFigures();
     });
 
@@ -47,6 +36,7 @@ jQuery(document).ready(function ($) {
     });
 
     $(".tabs").on("tabsactivate", function (event, ui) {
+        resizeFigures();
         console.log("Changing " + $(event.target).attr("id") + " to " + $(event.target).tabs("option", "active"));
 
         document.cookie = $(event.target).attr("id") + "=" + $(event.target).tabs("option", "active"); + ";path=/";
@@ -58,6 +48,11 @@ jQuery(document).ready(function ($) {
 // This function is called each time the page is reloaded, or the window is resized, to ensure that varying
 // types of content are all sized the same i.e. images, video and swfs
 function resizeFigures() {
+
+    // Resetting each figure's minHeight to it's initial value, so that when the resizeFigures() funciton
+    // runs, it is not basing it's new height value on the current dimensions of the figures
+    $("figure").css("minHeight", "initial");
+
     // Creating a temporary variable to store the largest height of the figures currently
     var maxFigHeight = 0;
 
@@ -69,7 +64,7 @@ function resizeFigures() {
         maxFigHeight = maxFigHeight > $(this).height() ? maxFigHeight : $(this).height();
     });
     $(".objectContainer").css("height", $("figure img").height());
-    $("figure").css("height", maxFigHeight * 1.02);
+    $("figure").css("minHeight", maxFigHeight * 1.02);
 
     $("video").each(function () {
         $(this).css("left", ($(this).parent().width() - $(this).width()) / 2);
