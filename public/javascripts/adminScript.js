@@ -398,10 +398,6 @@ jQuery(document).ready(function ($) {
 
         // Checking that the new category has a value before allowing it to be sent to the server
         if($("#newCategory").val().length > 0){
-            
-            // Temporarily disabling this button, so that users can't accidentally send multiple requests to the server
-            // while waiting for the first to go through
-            $("#addCategory").attr("disabled", "disabled");
 
             // Sending an AJAX request to the server with the name of the new category
             $.post("/admin/addNewCategory", { newCategory: $("#newCategory").val() }, function (serverResponse) {
@@ -437,6 +433,10 @@ jQuery(document).ready(function ($) {
                     }
                 });
             }, "json");
+            
+            // Temporarily disabling this button, so that users can't accidentally send multiple requests to the server
+            // while waiting for the first to go through
+            $("#addCategory").attr("disabled", "disabled");
         }
     });
 
