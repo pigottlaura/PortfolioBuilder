@@ -105,7 +105,7 @@ jQuery(document).ready(function ($) {
             // Checking if the name of this category matches with the select options parent element's data-category attribute
             // i.e. if this is the category of the current figure (which would have been added to the parent's data attribute
             // while rendering on the server)
-            if ($(this).text() == $("." + mediaCategoryClass).parent().data("category")) {
+            if ($(this).text() == $("." + mediaCategoryClass).parent().attr("data-category")) {
 
                 // Since this is the category of this figure, setting the value of this new select element to be 
                 // equal to it (i.e. to reflect the media item's current category)
@@ -133,7 +133,13 @@ jQuery(document).ready(function ($) {
         // Every time a change occurs on a select element (i.e. a change of category) sending an AJAX POST request
         // to the server, with the id of the media item, and the new category to which it has been assigned. No data
         // is needed from the response, so not setting a callback for this request
-        $.post("/admin/changeMediaCategory", { mediaItem: $(event.target).parent().parent().parent().attr("id"), category: $(event.target).val() });
+        $.post("/admin/changeMediaCategory", { mediaItem: $(event.target).parent().parent().parent().attr("id"), category: $(event.target).val() }, function (serverResponse) {
+
+            // Updating the data attribute of the select option container for this media item, to reflect the new category
+            // for this media item
+            $("figure[id='" + serverResponse.changedMediaId + "']").find(".mediaCategory").parent().attr("data-category", serverResponse.changedCategory);
+
+        });
     });
 
     // Each time a figcaption looses focus, triggering an AJAX post request to the server (i.e. to change that
@@ -425,7 +431,8 @@ jQuery(document).ready(function ($) {
                     // Checking if the name of this category matches with the select options parent element's data-category attribute
                     // i.e. if this is the category of the current figure (which would have been added to the parent's data attribute
                     // while rendering on the server)                
-                    if ($(this).parent().data("category") == serverResponse.newCategory) {
+                    console.log($(this).parent().attr("data-category") + "-      -" + serverResponse.newCategory);
+                    if ($(this).parent().attr("data-category") == serverResponse.newCategory) {
 
                         // Since this is the category of this figure, setting the value of this select element to be 
                         // equal to it (i.e. to reflect the media item's current category)
@@ -447,7 +454,7 @@ jQuery(document).ready(function ($) {
 
         // Sending an AJAX request to the server, with the id of the delete button that was clicked (which will be
         // equal to the name of that category)
-        $.post("/admin/deleteCategory", { deleteCategory: $(event.target).data("deletecategory") }, function (serverResponse) {
+        $.post("/admin/deleteCategory", { deleteCategory: $(event.target).attr("data-deletecategory") }, function (serverResponse) {
 
             console.log("del response from db - " + serverResponse.deletedCategory);
             // Looping through the select elements of media item, so that this category can be removed from their
@@ -477,7 +484,7 @@ jQuery(document).ready(function ($) {
             // on the category that the server has just deleted, incase responses come back in the wrong order)
             $("#categories").find("[data-deletecategory='" + serverResponse.deletedCategory + "']").parent().parent().remove();
         }, "json");
-        
+
         // Swapping the deleteCategory button's icon from a trash can to an hour glass, so that if there is a time
         // delay, the user will know that the request is in progress. Also unbinding the click event from this button
         // so that only one delete request will be sent to the server (i.e. they cannot click it again)

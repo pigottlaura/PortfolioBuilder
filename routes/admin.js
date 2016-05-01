@@ -44,9 +44,9 @@ router.post("/uploadMedia", function (req, res, next) {
 
   for (var i = 0; i < req.files.length; i++) {
     console.log("ADMIN - file successfully uploaded");
-    
+
     var newMediaItemTitle = req.body.mediaItemTitle.length > 0 ? req.body.mediaItemTitle : req.files[i].originalname;
-    
+
     var newMediaItem = new MediaItem({
       owner: req.session._userId,
       file: req.files[i],
@@ -66,8 +66,8 @@ router.post("/uploadMedia", function (req, res, next) {
       } else {
         console.log("ADMIN - Media item successfully saved to database");
         totalFilesSaved++;
-        
-        if(totalFilesSaved == newMediaItems.length){
+
+        if (totalFilesSaved == newMediaItems.length) {
           console.log("ADMIN - All media items saved. Returning to admin panel");
           res.redirect("/admin");
         }
@@ -136,8 +136,8 @@ router.post("/changeMediaOrder", function (req, res, next) {
       } else {
         console.log("ADMIN - Media item position successfully updated in the database");
         totalFilesSaved++;
-        
-        if(totalFilesSaved == newMediaOrder.length){
+
+        if (totalFilesSaved == newMediaOrder.length) {
           console.log("ADMIN - All media items order updated in the database");
         }
       }
@@ -189,7 +189,7 @@ router.post("/changeContactPicture", function (req, res, next) {
 
 router.post("/addNewCategory", function (req, res, next) {
   var newCategory = req.body.newCategory;
-  
+
   Portfolio.findOne({ owner: req.session._userId }, {}, function (err, portfolio) {
     if (err) {
 
@@ -232,12 +232,17 @@ router.post("/deleteCategory", function (req, res, next) {
 });
 
 router.post("/changeMediaCategory", function (req, res, next) {
-  MediaItem.update({ owner: req.session._userId, "_id": ObjectId(req.body.mediaItem) }, { $set: { category: req.body.category } }, function (err, docsEffected) {
+  var mediaId = req.body.mediaItem;
+  var changeToCategory = req.body.category;
+  MediaItem.update({ owner: req.session._userId, "_id": ObjectId(mediaId) }, { $set: { category: changeToCategory } }, function (err, docsEffected) {
     if (err) {
       console.log("ADMIN - Could not update media item category - " + err);
     } else {
       console.log("ADMIN - media item's category successfully updated");
-      res.send();
+      res.json({
+        changedMediaId: mediaId,
+        changedCategory: changeToCategory
+      });
     }
   });
 });

@@ -57,7 +57,7 @@ function resizeFigures() {
 
     // Creating a temporary variable to store the largest height of the figures currently
     var maxFigHeight = 0;
-    
+
     var maxImgHeight = 0;
 
     // Looping through each figure on the page, to find the current largest height
@@ -68,7 +68,7 @@ function resizeFigures() {
         maxFigHeight = maxFigHeight > $(this).height() ? maxFigHeight : $(this).height();
         maxImgHeight = maxImgHeight > $(this).find("img").outerHeight() ? maxImgHeight : $(this).find("img").outerHeight();
     });
-    
+
     $("figure").css("minHeight", maxFigHeight * 1.02);
     $(".objectContainer, video, object").css("height", maxImgHeight);
 
