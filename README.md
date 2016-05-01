@@ -1,7 +1,7 @@
 # Portfolio Builder
 ## Log in and create an online portfolio in minutes
 
-Assignment-02 for the Server Side Programming module, as part of the Creative Mulitimedia B.Sc (hons) degree course in Limerick Institute of Technology, Clonmel.
+Assignment-02 for the Server Side Programming module, as part of the Creative Multimedia B.Sc. (hons) degree course in Limerick Institute of Technology, Clonmel.
 Available on: http://portfoliobuilder.azurewebsites.net/
 
 ### Project Specifications
@@ -16,7 +16,7 @@ Available on: http://portfoliobuilder.azurewebsites.net/
     - jQuery UI
     - Lightbox
     - Bootstrap
-- Modules (not including their dependancies)
+- Modules (not including their dependencies)
     - express
     - express-session
     - connect-mongo
@@ -34,25 +34,29 @@ Available on: http://portfoliobuilder.azurewebsites.net/
 - Database
     - All users, portfolios and media items are stored in a Mongo database (generated and run using the Mongoose module)
     - The database connection is shared among multiple routes through a custom module (see database.js)
-    - Running a both a local database (for development purposes) and a MongoLabs database remotely (for use when the app is running live on Azure)
+    - Running both a local database (for development purposes) and a MongoLabs database remotely (for use when the app is running live on Azure)
     - Using population (similar to an SQL table JOIN)
-        - The Portfolio document is the main point for quering the database
+        - The Portfolio document is the main point for querying the database
         - Each Portfolio contains the ObjectId of the owner, and an array of ObjectId's for the MediaItems which belong to it
         - Each time the Portfolio model is queries, using the populate() method to source the relevant documents using their ObjectId to reference them
         - This appears to be much faster, and returns all the relevant data for the portfolio in one query
     - Database Models
         - User
+            - User documents contain details such as username, password, GoogleId etc.
         - Portfolio
+            - Portfolio documents contain a reference to the ObjectId of the owner (User), as well as an array of ObjectId's which reference the media items which belong to it (MediaItem)
         - MediaItem
+            - MediaItem documents contain all details relating to the file (path, mime type, size etc.) as well as the index position of the media item in the portfolio, and the category in which it exists.
+            - MediaItems also contain a reference to the ObjectId of their owner (User)
     - Mongoose Middleware
         - e.g. .pre("remove") and post("save")
         - Makes it possible for me to perform a cascade delete of all media items from Portfolio, before they are deleted
-        - Each time a new media item is saved, it's object id will be added to the Portfolio of it's owner
-        - If a media item is deleted, it's object id will also be deleted from the Portfolio document of it's owner
+        - Each time a new media item is saved, its object id will be added to the Portfolio of its owner
+        - If a media item is deleted, its object id will also be deleted from the Portfolio document of its owner
         - Created a custom sortMediaItems() function on the methods object of the Portfolio schema, which sorts the media items of the document which is passed into it and returns the result to the callback
 - Accounts
     - Users can log in to create a new portfolio using their Google account. Using the passport-google-oauth module to generate this functionality.
-    - Users can create their own accounts on the server, by providing their own username and password, while also being able to choose their portfolio url at signup
+    - Users can create their own accounts on the server, by providing their own username and password, while also being able to choose their portfolio URL at signup
         - Any password stored in the database are encrypted using AES-256-CTR
     - When users are filling out the log in form, using an AJAX request to the server to check if the username and/or portfolioURL are available. Giving feedback to the user (i.e. to let them know if these credentials are available) through the use of glyphicons to the right of the relevant input fields
 - Sessions
@@ -64,12 +68,12 @@ Available on: http://portfoliobuilder.azurewebsites.net/
     - If no user session exists, then no area of the admin section can be accessed (through any HTTP request method)
     - Users that attempt to access the "/admin" section without being logged in will be redirected back to the home page
 - Media Uploads
-    - Media files can be uploaded to the server, using the multer module to parse the file data
+    - Media files can be uploaded to the server, using the Multer module to parse the file data
     - Server-side, supporting multiple files in the one upload. This has been restricted to one file per upload on the client-side, due to delays incurred when the app is running on Azure
         - To re-enable multiple uploads, the "multiple" attribute would need to be added onto the "#uploadMedia" input element in the admin view
     - Filtering the media uploads
         - A user session has to exist when an upload occurs or the file will be rejected
-        - Only accepting files with a mimetype beginning with "image/" or "video/". Also accepting mimetypes of "application/x-shockwave-flash", but storing these as fileType "swf"
+        - Only accepting files with a mime type beginning with "image/" or "video/". Also accepting mime types of "application/x-shockwave-flash", but storing these as fileType "swf"
         - Media items are stored in different directories based their mime or file type i.e. images are stored in the public 'media_uploads/images' directory etc.
 - Dynamic Pages
     - No HTML is stored on the server
@@ -77,7 +81,7 @@ Available on: http://portfoliobuilder.azurewebsites.net/
     - Data is sourced from the relevant portfolio, and rendered using the appropriate views i.e. portfolio.jade
 - Portfolio pages
     - Rows of user images are displayed using a grid system
-    - Images are clickable/expandable throught the use of LightBox2. Currently only images are viewable in this format
+    - Images are clickable/expandable through the use of LightBox2. Currently only images are viewable in this format
     - All images can be scrolled through from within the one lightbox session
     - All media items can be filtered by category (if the owner has assigned categories to the media items)
     - There are two "pages" on a portfolio site - "Home" and "Contact"
@@ -85,19 +89,19 @@ Available on: http://portfoliobuilder.azurewebsites.net/
     - Displaying the user's Google profile picture, or default profile picture
     - Allowing the user to upload media items, with the option to give them a title
     - Media items can be reordered by dragging and dropping them around in the admin panel. Each time the media items order changes, an AJAX request is sent to the server to store their new index positions
-    - Media item titles can be updated directly on the figcaptions, and through AJAX request to the server, will be updated as soon as the title looses the focus of the user
+    - Media item titles can be updated directly on the figcaptions, and through AJAX request to the server, will be updated as soon as the title loses the focus of the user
     - Media items can be deleted by clicking the trash icon which appears in their top right corner
     - Categories can be created through the admin panel, and can then be assigned to media items through the select elements which exist at the top of each figure
 - Custom Portfolio URLS
-    - Users can change their portoflio URL at any time
-    - Accounts created though Google authentication are assigned default urls to begin with, while users that create account on the server can specify their url before creating their account
+    - Users can change their portfolio URL at any time
+    - Accounts created though Google authentication are assigned default URLs to begin with, while users that create account on the server can specify their URL before creating their account
     - Icons in the input field/s inform the user if the request URL is available or not (see AJAX below)
 - AJAX Requests
     - My main aim was to reduce the number of times a user's admin panel would need to be reloaded during a session
         - To try and reduce the wait time for users
         - To reduce the load on the server
         - To ensure that the admin panel, and the final portfolio, are kept in sync with one another. i.e. when a change is made in the admin panel, it will be available the next time someone loads the user's portfolio - no need to instruct the app to save or update the site
-    - When creating a account, or customising a portfolio URL, AJAX requests are sent to the server to see if the username and/or url are available
+    - When creating an account, or customising a portfolio URL, AJAX requests are sent to the server to see if the username and/or URL are available
         - If these login credentials are not available (i.e. they have already been taken by someone else) the user will not be allowed to submit the form to the server
     - When a media item's title is updated (in the Admin panel) an AJAX request is sent to the server to update that media item in the database
     - When media items are re-ordered (in the Admin panel) an AJAX request is sent to the server with the index position and media id of all elements involved, so that their documents can be updated
@@ -105,7 +109,7 @@ Available on: http://portfoliobuilder.azurewebsites.net/
     - All forms are validated before they are allowed to submit to the server
         - File upload forms have to contain at least one file
         - Create account / login forms require all their fields to be provided before they can be submitted
-        - Highlighting required fields in red, if a user trys to submit without providing the appropriate data
+        - Highlighting required fields in red, if a user tries to submit without providing the appropriate data
 - Client Side JavaScript
     - script.js
         - Included in every page of the app
@@ -113,17 +117,17 @@ Available on: http://portfoliobuilder.azurewebsites.net/
         - Contains global functions such as
             - checkCredentialsAvailable(username, url, cb)
                 - Sends AJAX request to the server to check if credentials are available
-                - Returns the JSON data from the server to the caller using the callback parametre
+                - Returns the JSON data from the server to the caller using the callback parameter
             - getCookieData(findCookie)
                 - Takes in the name of a cookie
                 - Locates it on the document cookie object
-                - Returns whether or not the cookie already exists, as well as it's current value
+                - Returns whether or not the cookie already exists, as well as its current value
             - resizeFigures()
                 - Called every time the page is reloaded, resized or new elements are added
                 - In order to ensure all objects, videos and images are the same size, using this method to resize all figures based on the largest figure on screen
-                - If a media item's title becomes longer than one line, then all figures will resize to accomodate this
+                - If a media item's title becomes longer than one line, then all figures will resize to accommodate this
     - loginScript.js
-        - Handles form validation for users login or creating accounts
+        - Handles form validation for user's login or creating accounts
     - adminScript.js
         - Required for the admin page when a user is logged in
         - Handles the majority of AJAX request to the server (excluding the checking if credentials are available, as this is handled in the main script.js file)
@@ -134,6 +138,6 @@ Available on: http://portfoliobuilder.azurewebsites.net/
 - Custom Modules
     - checkDirectories - An array of directory paths can be passed to this custom module, to check if they exist and create them if they do not. Utilises the file system module.
     - databaseModels - An object which contains all of the database models for the app i.e. User and Media items, so that they can be used for querying, adding, deleting and updating users throughout routes.
-    - googlePassport - This module generates the basic setup for implementing Google passport, such as setting up the passport strategy (using keys generated from my Google Developer account - stored in environment variables for security purposes), the funciton called to autheticate a user's login with Google (once the callback has been received by the server). This function is triggered in the authentication.js route.
+    - googlePassport - This module generates the basic setup for implementing Google passport, such as setting up the passport strategy (using keys generated from my Google Developer account - stored in environment variables for security purposes), the function called to authenticate a user's login with Google (once the callback has been received by the server). This function is triggered in the authentication.js route.
     - cryptoEncryption - An object containing two functions, one to encrypt text, and one to decrypt it. Using sample code from https://github.com/chris-rock/node-crypto-examples/blob/master/crypto-ctr.js as the basis of the encryption with Node.js's built in Crypto module.
     - database.js - The exports of the module contains the connection to the mongo database, which is set up and connected within this module. The purpose of this module is to allow multiple routes of the app to share the one database connection
