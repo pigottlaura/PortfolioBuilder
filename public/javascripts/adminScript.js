@@ -302,18 +302,18 @@ jQuery(document).ready(function ($) {
 
                     // Sending an AJAX request to the server, with the requested url (as sourced from the 
                     // response data, to ensure that it hasn't changed since we last checked if it was available)
-                    $.post("/admin/changePortfolioURL", { newPortfolioURL: responseData.requestedURL });
+                    $.post("/admin/changePortfolioURL", { newPortfolioURL: responseData.portfolioURL });
 
                     // Setting the global originalPortfolioURL to be equal the the requested url, so that the
                     // next time the user makes a change to it, we can test it against its new current value
-                    originalPortfolioURL = responseData.requestedURL;
+                    originalPortfolioURL = responseData.portfolioURL;
 
                     // Updating the link to the user's portfolio (at the top of the admin screen) to link to the 
                     // new portfolio url (preceeded by the website's url, which is also passed back in the response
                     // i.e. so that the link will look correct regardless of whether the app is running locally or remotely)
                     $("#portfolioLink")
-                        .attr("href", responseData.url + responseData.requestedURL)
-                        .text(responseData.url + responseData.requestedURL);
+                        .attr("href", responseData.url + responseData.portfolioURL)
+                        .text(responseData.url + responseData.portfolioURL);
                 } else {
 
                     // As these credentials are not available, resetting the url input to be equal to it's previous value
