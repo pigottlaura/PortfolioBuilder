@@ -70,28 +70,65 @@ var PortfolioSchema = new Schema({
 });
 
 // Adding a function to the methods object of the Portfolio schema, so that all instances
-// of models of this schema can call the sortMediaItems method upon themselves, and hae
+// of models of this schema can call the sortMediaItems method upon themselves, and have the
+// contents of their media items sorted first by indexPosition, and then by the date/time they
+// were uploaded (i.e. so that the specified order of the owner is reflected, and newer items 
+// appear first by default)
 PortfolioSchema.methods.sortMediaItems = function (cb) {
+
+    // Calling the JS sort() method on the media items of the portfolio document which called the
+    // method. Passing in a custom sort function, which takes in a and b i.e. will take in two
+    // media items at a time, to determine which way to move them in the array (based on the result
+    // returned)
     this.pages.home.mediaItems.sort(function (a, b) {
+        // Creating a temporary variable to store the value that will be returned from this method.
+        // This will either be 0 (no change), -1 (move back) or 1 (move forward)
         var returnVal = 0;
+
         if (a.indexPosition > b.indexPosition) {
+            // If the indexPostion of the first media item, is greater than the index position of the second
+            // media item, then the first media item needs to move forward
             returnVal = 1;
         } else if (a.indexPosition < b.indexPosition) {
+
+            // Else if the index position of the first media item is less than the index position of the second
+            // media item, then the first media item needs to move backward
             returnVal = -1;
         } else {
+            // Otherwise, these two media items have the same index position, and so we will need to look at their
+            // upload dates to decided which (if any) way they need to be sorted. NOTE - It would not be uncommon
+            // for multiple media items to have the same index position, but it would usually only be "0", as when
+            // media items are uploaded, this is their default, and if the user doesn't sort the media items between
+            // uploads, then there may be multiple items with the same index.
+
             if (a.uploadedAt > b.uploadedAt) {
+
+                // If the upload date of the first item is greater than the upload date of the second item, then the first
+                // item is newer and hence should be moved backward
                 returnVal = -1;
             } else if (a.uploadedAt < b.uploadedAt) {
+
+                // Else if the upload date of the first item is less than the upload date of the second item, then the second
+                // item is newer, and the first one needs to move forward
                 returnVal = 1;
-            } else {
-                returnVal = 0;
             }
         }
+
+        // Returing the result of this method, so that the relevant media items can be sorted accordingly
         return returnVal;
     });
+
+    // Once the sorting has completed, calling the callback passed in earlier, to notify the route that this
+    // process has completed (no need to pass back any data, as it was the array within the database which was
+    // sorted)
     cb();
 };
 
+
+// Creating the media item schema, from which all media item documents will be based upon. Documents based on the
+// model of this schema will contain all of the properties listed below. Again, referencing the owner of this media
+// item by their ObjectId, so that if I ever need to get information on them, I can use .populate() on the query to
+// the media items collection, to return the owner document aswell (much like an SQL table JOIN) 
 var MediaItemSchema = new Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
@@ -133,28 +170,55 @@ var MediaItemSchema = new Schema({
     }
 });
 
+// Adding middleware to the media item schema, so that all instances of the models created from this schema
+// will inherit these. Immediatley after a media item is saved to the database, this middleware will be envoked,
+// so as to ensure it's ID is also added to the portfolio of the owner which uploaded it. This middleware takes in 
+// no req, res or next parameters, as it occurs after the event has occurred.
 MediaItemSchema.post('save', function (mediaItem) {
-    var mediaItemId = mediaItem._id;
 
+    // Finding the portfolio document which belongs to the user that uploaded this media item, by accessing
+    // it's owner property.
     PortfolioModel.findOne({ owner: this.owner }, {}, function (err, portfolio) {
-        portfolio.pages.home.mediaItems.push(mediaItemId);
-        portfolio.save(function (err) {
-            if (err) {
-                console.log("MODEL - could not add this media item to the users portfolio");
-            } else {
-                console.log("MODEL - successfully saved media item to the users portfolio")
-            }
-        });
+        if (err) {
+            console.log("MODELS - Could not find the portfolio of this user");
+        } else {
+            // Adding the id of this media item to the media items array of this users portfolio
+            portfolio.pages.home.mediaItems.push(mediaItem._id);
+
+            // Resaving this portfolio to the database, with it's updated media items array
+            portfolio.save(function (err) {
+                if (err) {
+                    console.log("MODEL - could not add this media item to the users portfolio");
+                } else {
+                    console.log("MODEL - successfully saved media item to the users portfolio")
+                }
+            });
+        }
     });
 });
 
+// Adding middleware to the media item schema, so that all instances of the models created from this schema
+// will inherit these. This method occurs just before a media items is removed from the database. The purpose
+// of this is that I want to remove the id of this media item from the array of media items in the portfolio, so
+// that the next time the page is loaded, the server does not look for this media item
 MediaItemSchema.pre('remove', function (next) {
-    var _deleteId = this._id;
 
+    // Finding the portfolio document which belongs to the user that uploaded this media item, by accessing
+    // it's owner property.
     PortfolioModel.findOne({ owner: this.owner }, {}, function (err, portfolio) {
+        
+        // Looping through all of the media items of this owner's portfolio, to find the one that was just deleted
         for (var i = 0; i < portfolio.pages.home.mediaItems.length; i++) {
-            if (portfolio.pages.home.mediaItems[i].equals(_deleteId)) {
+            
+            // Checking if the current media item id is equal to the id of the media item that is about to be 
+            // removed from the database
+            if (portfolio.pages.home.mediaItems[i].equals(this._id)) {
+                
+                // Found the id of the media item that is being deleted. Removing it from the mediaItems array
+                // of the portfolio by splicing it at it's index and overwritting one
                 portfolio.pages.home.mediaItems.splice(i, 1);
+                
+                // Resaving this portfolio to the database, with it's updated media items array
                 portfolio.save(function (err) {
                     if (err) {
                         console.log("MODELS - could not remove media item from portfolio - " + err);
@@ -164,10 +228,14 @@ MediaItemSchema.pre('remove', function (next) {
                 });
             }
         }
+        
+        // Calling the next() method of the middleware, as passed in above, so that the router
+        // can continue dealing with the request in other routes
         next();
     });
 });
 
+// Generating models for each of the schemas created above
 var UserModel = mongoose.model("User", UserSchema);
 var PortfolioModel = mongoose.model("Portfolio", PortfolioSchema);
 var MediaItemModel = mongoose.model("MediaItem", MediaItemSchema);
@@ -175,7 +243,9 @@ var MediaItemModel = mongoose.model("MediaItem", MediaItemSchema);
 // Creating an object, which contains all of the database models (templates for 
 // documents in the database) so that it can be used as the module export, and
 // so any route that requires this module can then access these modules directly
-// from the object that is returned to them.
+// from the object that is returned to them. These models can then be used to generate
+// new documents instances, or to query the relevant collections to add, update, remove 
+// and view the data within them.
 var databaseModels = {
     User: UserModel,
     MediaItem: MediaItemModel,

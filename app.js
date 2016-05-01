@@ -17,7 +17,6 @@ var databaseConnection = require("./custom_modules/database");
 
 var databaseModels = require("./custom_modules/databaseModels");
 var User = databaseModels.User;
-var googlePassport = require("./custom_modules/googlePassport");
 
 
 // Specifying the root path of the uploads directories, so that it
