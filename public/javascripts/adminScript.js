@@ -322,13 +322,6 @@ jQuery(document).ready(function ($) {
                         .attr("href", responseData.url + responseData.portfolioURL)
                         .text(responseData.url + responseData.portfolioURL);
 
-                    // Removing the hour glass beside the portfolio link
-                    $("#portfolioLinkStatus").removeClass("glyphicon-hourglass");
-
-                    // Removing all classes from the status icon, as it no longer needs to display feedback on whether this url
-                    // is available or not
-                    $("#portfolioURLStatusIcon").removeAttr("class");
-
                     // Enabling the edit button, so the user can edit the url again
                     $("#editPortfolioURL").removeAttr("disabled");
                 } else {
@@ -336,6 +329,13 @@ jQuery(document).ready(function ($) {
                     // As these credentials are not available, resetting the url input to be equal to it's previous value
                     $("#currentPortfolioURL").text(originalPortfolioURL);
                 }
+
+                // Removing the hour glass beside the portfolio link
+                $("#portfolioLinkStatus").removeClass("glyphicon-hourglass");
+
+                // Removing all classes from the status icon, as it no longer needs to display feedback on whether this url
+                // is available or not
+                $("#portfolioURLStatusIcon").removeAttr("class");
             });
 
         }
