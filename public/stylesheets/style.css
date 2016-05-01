@@ -232,4 +232,7 @@ label span {
     video {
         left: 0 !important;
     }
+    form input {
+        padding: 6vw 2vw;
+    }
 }

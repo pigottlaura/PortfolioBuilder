@@ -4,11 +4,11 @@ block content
     script(src="/javascripts/adminScript.js")
     
     div.row
-        div.col-xs-10
+        div.col-xs-8
             h1= title
             h2 Welcome back #{user.firstName}
         
-        div.col-xs-2.center
+        div.col-sm-2.col-sm-offset-2.col-xs-4.center
             img(src="#{user.profilePicture}" alt="#{user.firstName}" id="profilePicture" class="img-circle")
             br
             a(href="/logout")

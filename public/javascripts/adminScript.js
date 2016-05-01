@@ -85,6 +85,7 @@ jQuery(document).ready(function ($) {
     $("#sortable figure select").click(function (event) {
         if($(event.target).find("option").length <= 1){
             $("#categorySettings").trigger("click");
+            location.href = "#categorySettings";
         }
     });
     $("#sortable figure select").change(function (event) {
