@@ -1,5 +1,9 @@
 jQuery(document).ready(function ($) {
     console.log("Main JS script loaded");
+    
+    // Hiding all videos, objects and containers until they are fully loaded, as they are slow to 
+    // load and hence are the wrong size for a few seconds
+    $("figure video, figure object, .objectContainer").hide();
 
     // Calling the jQuery UI tabs() method, to create tabbed portions of the pages i.e.
     // on the login screen, and in the admin panel
@@ -61,8 +65,8 @@ function resizeFigures() {
 
     // Resetting each figure's minHeight to it's initial value, so that when the resizeFigures() funciton
     // runs, it is not basing it's new height value on the current dimensions of the figures
-    $("figure").css("minHeight", $("figure img").parent().height());
-    $("figure video, figure object, .objectContainer").css("height", $("figure img").height());
+    $("figure").css("minHeight", "initial");
+    $("figure video, figure object, .objectContainer").css("height", $("figure img").height()).show();
 
     // Creating a temporary variable to store the largest height of the figures currently
     var maxFigHeight = 0;
