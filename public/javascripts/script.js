@@ -53,7 +53,7 @@ function resizeFigures() {
     // Resetting each figure's minHeight to it's initial value, so that when the resizeFigures() funciton
     // runs, it is not basing it's new height value on the current dimensions of the figures
     $("figure").css("minHeight", "initial");
-    $("figure video, figure object, .objectContainer").css("height", 0);
+    $("figure video, figure object, .objectContainer").css("height", $("figure img").height());
 
     // Creating a temporary variable to store the largest height of the figures currently
     var maxFigHeight = 0;
