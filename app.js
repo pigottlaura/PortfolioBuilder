@@ -108,7 +108,7 @@ var multerStorage = multer.diskStorage({
 
         console.log("MULTER STORAGE - " + pathName);
 
-        req.setTimeout(15000, function (err) {
+        req.setTimeout(30000, function (err) {
             console.log("MULTER - Server timed out " + err);
         });
 

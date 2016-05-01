@@ -472,7 +472,7 @@ jQuery(document).ready(function ($) {
             // Unbinding the click event from this form, so that the user cannot accidentally submit
             // it twice while it is still being processed (this will reset once the file has been uploaded
             // as the page will be refreshed)
-            $(this).unbind("click");
+            $(event.target).unbind("click");
 
             // Checking which form triggered the event
             if ($(event.target).attr("id") == "changeContactPicture") {
