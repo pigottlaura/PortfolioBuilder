@@ -16,7 +16,7 @@ block content
                 a(href="#contact") Contact
         div#home
             if mediaItems.length == 0
-                h3 This user does not yet have any media items uploaded
+                h3.noMediaItems This user does not yet have any media items uploaded
                     br
                     |See their contact page for further details, or call back soon :)
             else
@@ -50,7 +50,7 @@ block content
                             figcaption #{mediaItems[i].fileTitle}
         div#contact
             div.row
-                div.col-xs-6
+                div.col-sm-6.col-xs-12
                     if contactPage.contactDetails.name
                         if contactPage.contactDetails.name.length > 0
                             div.row
@@ -82,5 +82,5 @@ block content
                                 div.col-xs-12
                                     p #{contactPage.info}
                 if contactPage.picture
-                    div.col-xs-6
+                    div.col-sm-6.col-xs-12
                         img(src="../#{contactPage.picture}" alt="#{contactPage.contactDetails.name}")

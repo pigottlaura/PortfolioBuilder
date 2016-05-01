@@ -3,6 +3,10 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+.mobileShow {
+    display: none;
+}
+
 a {
   color: #00B7FF;
 }
@@ -103,14 +107,15 @@ input, select, button, textarea {
     top: 6%;
 }
 #adminOptions {
-    height: 70vh;
+    min-height: 70vh;
 }
 .ui-accordion-content {
     padding: 1% !important;
 }
 
-#sortable {
-    overflow: auto;
+#sortable, #home, #adminPagesTabs {
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .tabs {
     min-height: 50vh;
@@ -121,13 +126,28 @@ img {
     width: 100%;
     height: auto;
 }
-
+hr {
+    border-top: 4px solid #ddd !important;
+    margin-bottom: 6vh;
+    width: 80%;
+}
 label span {
     font-weight: normal;
+}
+
+.flashUnavailable{
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+    z-index: -2;
 }
     
 /* To match with MD of bootstrap CSS */
 @media screen and (max-width: 991px) {
+    .mobileShow {
+        display: block;
+    }
     .container-fluid, div {
         padding: 0 !important;
     }
@@ -142,7 +162,7 @@ label span {
     }
     .ui-tabs-nav {
         margin-top: 10%;
-        height: 10vh;
+        height: 14vw;
         bottom: 0;
         width: 100%;
     }
@@ -194,9 +214,22 @@ label span {
         width: 50vw;
     }
     .googleButton button {
-        padding: 6% 1% !important;
+        padding: 5vw 1vh !important;
     }
     .mobileHide {
         display: none;
+    }
+    figure {
+        margin: 4vw 0 !important;
+    }
+    #adminOptions {
+        margin-bottom: 9vw;
+        min-height: inherit;
+    }
+    .noMediaItems {
+        margin-top: 12vh;
+    }
+    video {
+        left: 0 !important;
     }
 }

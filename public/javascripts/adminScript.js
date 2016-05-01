@@ -14,7 +14,12 @@ jQuery(document).ready(function ($) {
     }
     
     $("#adminOptionsAccordion").accordion({
-        active: openOptionsOnTab
+        active: openOptionsOnTab,
+        heightStyle: "content"
+    });
+    
+    $("#triggerUploadMedia").click(function(event){
+        $("#uploadMediaSettings").trigger("click");
     });
 
     // Using the jQuery UI sortable() function, to make the contents of the div which contains the 
@@ -25,10 +30,12 @@ jQuery(document).ready(function ($) {
     // category dropdown or the options within it, as this should not be detected as a dragging event
     // but as a click.
     $("#sortable").sortable({
-        containment: "parent",
+        grid: [ 1, 1 ],
         cursor: "move",
         cancel: "figcaption, select, option",
         stop: function (event, ui) {
+            
+            resizeFigures();
 
             // Creating a temporary array to store the id's and index positions of each of the media
             // items (figures) on the page, so that they can be passed to the server as one stringified
@@ -70,12 +77,16 @@ jQuery(document).ready(function ($) {
             $("." + mediaCategoryClass).append("<option value='" + $(this).text() + "'>" + $(this).text() + "</option>");
             console.log($(".category").data("category"));
             if ($(this).text() == $("." + mediaCategoryClass).parent().data("category")) {
-                console.log("")
                 $("." + mediaCategoryClass).val($(this).text());
             }
         });
     });
 
+    $("#sortable figure select").click(function (event) {
+        if($(event.target).find("option").length <= 1){
+            $("#categorySettings").trigger("click");
+        }
+    });
     $("#sortable figure select").change(function (event) {
         $.post("/admin/changeMediaCategory", { mediaItem: $(event.target).parent().parent().parent().attr("id"), category: $(event.target).val() });
     });
@@ -83,6 +94,7 @@ jQuery(document).ready(function ($) {
     $("figcaption").blur(function (event) {
         var mediaItemId = $(event.target).parent().attr("id");
         $.post("/admin/changeMediaTitle", { mediaId: mediaItemId, newTitle: $(event.target).text() });
+        resizeFigures();
     });
 
     $("figcaption, p, input").keypress(function (event) {
@@ -112,7 +124,7 @@ jQuery(document).ready(function ($) {
     });
 
     $("#contactPicture").click(function (event) {
-        $("#settings").trigger("click");
+        $("#contactPictureSettings").trigger("click");
     });
 
     $(".deleteMedia").click(function (event) {
@@ -225,18 +237,14 @@ jQuery(document).ready(function ($) {
         }, "json");
     });
 
-    $("input[type='file']").change(function (event) {
-        if ($(event.target).val().length > 0) {
-            $(event.target).removeClass("formWarning");
-        }
-    });
-
     $("#uploadMedia, #changeContactPicture").submit(function (event) {
         var allowSubmit = false
         if ($(event.target).find("input[type='file']").val().length > 0) {
             allowSubmit = true;
             
             if($(event.target).attr("id") == "changeContactPicture"){
+                $(".contactPictureUpload").addClass("glyphicon-hourglass");
+                $(this).unbind("click");
                 document.cookie = "adminPagesTabs=1";
             } else if($(event.target).attr("id") == "uploadMedia"){
                 document.cookie = "adminPagesTabs=0";

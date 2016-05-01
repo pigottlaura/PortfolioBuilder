@@ -83,6 +83,8 @@ router.post("/uploadMedia", function (req, res, next) {
 router.post("/changePortfolioURL", function (req, res, next) {
   console.log("ADMIN - requested portfolioURL to be changed - " + req.body.newPortfolioURL);
 
+  req.session.portfolio.portfolioURL = req.body.newPortfolioURL;
+
   Portfolio.update({ owner: req.session._userId }, { $set: { portfolioURL: req.body.newPortfolioURL.toLowerCase() } }, function (err, portfolio) {
     if (err) {
       console.log("ADMIN - Could not check if this portfolio exists - " + err);
@@ -124,8 +126,6 @@ router.post("/deleteMedia", function (req, res, next) {
 });
 
 router.post("/changeMediaTitle", function (req, res, next) {
-  console.log("ID = " + req.body.mediaId);
-  console.log("NEW TITLE - " + req.body.newTitle);
 
   for (var i = 0; i < req.session.sortedMediaItems.length; i++) {
     if (ObjectId(req.body.mediaId).equals(req.session.sortedMediaItems[i]._id)) {
@@ -133,7 +133,7 @@ router.post("/changeMediaTitle", function (req, res, next) {
       break;
     }
   }
-  console.log("ADMIN - media item title changed on session - returning user to admin panel");
+
   res.send();
 
   MediaItem.update({ "_id": ObjectId(req.body.mediaId) }, { $set: { fileTitle: req.body.newTitle } }, function (err, mediaItem) {
@@ -158,7 +158,7 @@ router.post("/changeMediaOrder", function (req, res, next) {
       }
     }
   }
-  
+
   req.session.sortedMediaItems = databaseModels.sortMediaItems(req.session.sortedMediaItems);
   console.log("ADMIN - media item order changed on session - returning user to admin panel");
   res.send();
@@ -233,6 +233,10 @@ router.post("/addNewCategory", function (req, res, next) {
 
   var newCategory = req.body.newCategory;
 
+  req.session.portfolio.pages.home.categories.push(newCategory);
+
+  res.send({ newCategory: newCategory });
+
   Portfolio.findOne({ owner: req.session._userId }, {}, function (err, portfolio) {
     if (err) {
 
@@ -243,7 +247,6 @@ router.post("/addNewCategory", function (req, res, next) {
           console.log("ADMIN - could not save new category to database");
         } else {
           console.log("ADMIN - new category saved to database");
-          res.send({ newCategory: newCategory })
         }
       });
     }
@@ -253,6 +256,13 @@ router.post("/addNewCategory", function (req, res, next) {
 router.post("/deleteCategory", function (req, res, next) {
 
   var deleteCategory = req.body.deleteCategory;
+  
+  for(var i = 0; i < req.session.portfolio.pages.home.categories.length; i++){
+    if(req.session.portfolio.pages.home.categories[i] == deleteCategory){
+      req.session.portfolio.pages.home.categories.splice(i, 1);
+    }
+  }
+  res.send({ deletedCategory: deleteCategory })
 
   Portfolio.findOne({ owner: req.session._userId }, {}, function (err, portfolio) {
     if (err) {
@@ -266,7 +276,6 @@ router.post("/deleteCategory", function (req, res, next) {
               console.log("ADMIN - could not delete category from database");
             } else {
               console.log("ADMIN - category deleted from database");
-              res.send({ deletedCategory: deleteCategory })
             }
           });
         }
@@ -276,12 +285,23 @@ router.post("/deleteCategory", function (req, res, next) {
 });
 
 router.post("/changeMediaCategory", function (req, res, next) {
+  var mediaItem = req.body.mediaItem;
+  var category = req.body.category;
+  
+  for(var i = 0; i < req.session.sortedMediaItems.length; i++){
+    if(mediaItem == req.session.sortedMediaItems[i]._id){
+      req.session.sortedMediaItems[i].category = category;
+      console.log("ADMIN - Media item category updated on session");
+    }
+  }
+  
+  res.send();
+  
   MediaItem.update({ owner: req.session._userId, "_id": ObjectId(req.body.mediaItem) }, { $set: { category: req.body.category } }, function (err, docsEffected) {
     if (err) {
       console.log("ADMIN - Could not update media item category - " + err);
     } else {
       console.log("ADMIN - media item's category successfully updated");
-      res.send();
     }
   });
 });

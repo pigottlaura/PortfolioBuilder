@@ -69,7 +69,11 @@ var multerFileFilter = function (req, file, cb) {
         // the "/" and then taking the first half of this new array of strings i.e. image.
         // Storing the second half of this string, i.e. file type (e.g. jpg)
         file.mediaType = file.mimetype.split("/")[0];
-        file.fileType = file.mimetype.split("/")[1] == "x-shockwave-flash" ? "swf" : file.mimetype.split("/")[1];
+        file.fileType = file.mimetype.split("/")[1];
+        
+        if(file.fileType == "x-shockwave-flash"){
+            file.mediaType = file.fileType = "swf";
+        }
 
         // Logging out the file type to the console (testing purposes)
         console.log("MULTER FILTER - This file is a " + file.mediaType + " file. More specifically, a " + file.fileType + " file.");

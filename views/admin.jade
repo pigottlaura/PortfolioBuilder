@@ -7,19 +7,21 @@ block content
         div.col-xs-10
             h1= title
             h2 Welcome back #{user.firstName}
-            p View your portfolio: 
-                a(id="portfolioLink" href="#{websiteURL}#{portfolioURL}" target="_blank") #{websiteURL}#{portfolioURL}
         
         div.col-xs-2.center
             img(src="#{user.profilePicture}" alt="#{user.firstName}" id="profilePicture" class="img-circle")
             br
             a(href="/logout")
                 button Log out
+    div.row
+        div.col-md-12
+            p View your portfolio: 
+                a(id="portfolioLink" href="#{websiteURL}#{portfolioURL}" target="_blank") #{websiteURL}#{portfolioURL}
             
     div.row
         div.col-md-4.col-xs-12(id="adminOptions")
             div.accordion(id="adminOptionsAccordion")
-                h3 Upload Media
+                h3(id="uploadMediaSettings") Upload Media
                 div
                     form(id="uploadMedia" method="post" action="/admin/uploadMedia" enctype="multipart/form-data")
                         div.row
@@ -35,7 +37,7 @@ block content
                         div.row
                             div.col-xs-4.col-xs-offset-8
                                 input(type="submit" name="Upload" value="Upload")
-                h3 Categories
+                h3(id="categorySettings") Categories
                 div
                     div.row
                         div.col-xs-12(id="categories")
@@ -54,13 +56,13 @@ block content
                         div.row
                             div.col-xs-4.col-xs-offset-8
                                 button(id="addCategory") Add
-                h3(id="settings") Settings
+                h3(id="portfolioURLSettings") Portfolio URL
                 div
                     div.row
-                        div.col-xs-3
-                            label URL:
-                        div.col-xs-9
-                            p(id="currentPortfolioURL") #{portfolioURL}
+                        div.col-xs-12
+                            label(for="currentPortfolioURL") #{websiteURL}
+                        div.col-xs-12
+                            p(id="currentPortfolioURL" name="currentPortfolioURL") #{portfolioURL}
                             span(id="portfolioURLStatusIcon" aria-hidden="true")
                     div.row
                         div.col-xs-4.col-xs-offset-4
@@ -68,18 +70,20 @@ block content
                         div.col-xs-4
                             button(id="editPortfolioURL") Edit
                             button(id="cancelPortfolioURL") Cancel
-                    hr
+                h3(id="contactPictureSettings") Contact Page Picture
+                div
                     form(id="changeContactPicture" method="post" action="/admin/changeContactPicture" enctype="multipart/form-data")
                         div.row
-                            div.col-xs-3
-                                label(for="contactPictureFile") Contact Picture:
+                            if contactPage.picture
+                                div.col-xs-3
+                                    img(src=src="#{contactPage.picture}" alt="Current Contact Picture")
                             div.col-xs-9
                                 input(type="file" name="contactPictureFile")
-                        div.row
                             div.col-xs-4.col-xs-offset-8
-                                input(type="submit" name="Upload" value="Upload")
+                                input(type="submit" value="Upload")
                             
         div.col-md-8.col-xs-12
+            h2.mobileShow Portfolio Pages
             div.tabs(id="adminPagesTabs")
                 ul
                     li
@@ -88,11 +92,15 @@ block content
                         a(href="#contact") Contact
                 div#home
                     if mediaItems.length == 0
-                        p.center You do not have any media items
+                        p.center.noMediaItems You do not have any media items yet
+                        div.row
+                            div.col-sm-offset-3.col-sm-6.col-xs-12
+                                a(href="#uploadMediaSettings")
+                                    button(id="triggerUploadMedia") Go to Media Upload Panel
                     else
                         div(id="sortable")
                             -for(var i = 0; i < mediaItems.length; i++)
-                                div.col-md-3.col-xs-4
+                                div.col-md-3.col-xs-6
                                     figure(id="#{mediaItems[i]._id}")
                                         div.row
                                             div.col-xs-9(class="categoryOptions" data-category="#{mediaItems[i].category}")
@@ -103,20 +111,21 @@ block content
                                             img(src='#{mediaItems[i].filePath}' alt='Alt Text' class='thumbnail')
                                         else if(mediaItems[i].mediaType == 'swf')
                                             div.objectContainer
-                                                object(classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%")
+                                                object.relative(classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="100%" height="100%")
                                                     param(name='movie' value='#{mediaItems[i].filePath}')
                                                     param(name='quality' value='high')
                                                     param(name='scale' value='default')
                                                     embed(src='#{mediaItems[i].filePath}' quality="high" type='#{mediaItems[i].file.mimetype}' width='100%' height='100%' scale="default" pluginspage="http://www.macromedia.com/go/getflashplayer")
+                                                div(class="flashUnavailable") Sorry, this flash file is not supported on your device
                                         else if(mediaItems[i].mediaType == "video")
                                             div.objectContainer
                                                 video(controls)
                                                     source(src='#{mediaItems[i].filePath}' type='#{mediaItems[i].file.mimetype}' volume="0")
                                                                 
-                                        figcaption(contenteditable="true") #{mediaItems[i].fileTitle}
+                                        figcaption(tabindex="#{i}" contenteditable="true") #{mediaItems[i].fileTitle}
                 div#contact
                     div.row
-                        div.col-xs-6
+                        div.col-md-6.col-xs-12
                             div.row
                                 div.col-xs-3
                                     label Name:
@@ -139,5 +148,5 @@ block content
                                 div.col-xs-12
                                     textarea(id="contactInfo" rows="4" contenteditable="true") #{contactPage.info}
                         if contactPage.picture
-                            div.col-xs-6
+                            div.col-md-6.col-xs-12
                                 img(id="contactPicture" src="#{contactPage.picture}" alt="#{contactPage.contactDetails.name}")
