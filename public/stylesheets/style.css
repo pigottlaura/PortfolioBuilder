@@ -84,8 +84,8 @@ figure div {
     padding: 0 !important;
 }
 
-figure > button {
-    z-index: 1;
+figure > button, select {
+    z-index: 2;
 }
 video {
     margin: 0, auto;
@@ -135,14 +135,22 @@ label span {
     font-weight: normal;
 }
 
-.flashUnavailable{
+object {
     position: absolute;
-    top: 0;
+    z-index: 1;
+}
+.flashUnavailable {
+    position: absolute;
+    top: 45%;
     left: 0;
     text-align: center;
-    z-index: -2;
+    z-index: 0;
 }
-    
+.flashUnavailable span {
+    position: static;
+    color: #CCED11;
+    font-size: 5vw !important;
+}
 /* To match with MD of bootstrap CSS */
 @media screen and (max-width: 991px) {
     .mobileShow {
@@ -176,22 +184,23 @@ label span {
         font-size: 4vw;
     }
     .ui-tabs-nav a {
-        margin-top: 0;
+        font-weight: 700;
+        margin-top: 3vw;
         width: 100%;
     }
     
     body * {
-        font-size: 3.6vw;
+        font-size: 3.6vw !important;
     }
 
     h1 {
-        font-size: 4.5vw;
+        font-size: 4.5vw !important;
     }
     h2 {
-        font-size: 4.2vw;
+        font-size: 4.2vw !important;
     }
     h3 {
-        font-size: 3.9vw;
+        font-size: 3.9vw !important;
     }
 
     h1, h2 {
@@ -229,10 +238,10 @@ label span {
     .noMediaItems {
         margin-top: 12vh;
     }
-    video {
-        left: 0 !important;
+    button, input {
+        padding: 2vw 2vw !important;
     }
-    form input {
-        padding: 6vw 2vw;
+    select {
+        padding: 4vw 2vw !important;
     }
 }
