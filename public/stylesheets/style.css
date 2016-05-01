@@ -143,7 +143,7 @@ object {
     display: none;
 }
 
-figure video, figure object, .objectContainer {
+#portfolioPagesTabs figure video, #portfolioPagesTabs figure object, #portfolioPagesTabs .objectContainer {
     min-height: 40vh !important;
 }
 /* To match with MD of bootstrap CSS */
@@ -252,7 +252,7 @@ figure video, figure object, .objectContainer {
         color: #CCED11;
         font-size: 5vw !important;
     }
-    figure video, figure object, .objectContainer {
+    #portfolioPagesTabs figure video, #portfolioPagesTabs figure object, #portfolioPagesTabs .objectContainer {
         min-height: 45vh;
     }
 }
