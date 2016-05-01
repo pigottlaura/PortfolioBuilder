@@ -357,7 +357,7 @@ jQuery(document).ready(function ($) {
     $("#currentPortfolioURL").keyup(function (event) {
 
         // Temporarily storing the requested URL, cast to lowercase and with all spaces removed from it
-        var requestedURL = $("#currentPortfolioURL").text().toLowerCase().replace(/ /g, "");;
+        var requestedURL = $("#currentPortfolioURL").text().toLowerCase().replace(/ /g, "");
 
         // Checking if the new value of the url input is equal to it's previous value (i.e. no change occurred)
         if ($(this).text() == originalPortfolioURL) {
@@ -405,7 +405,7 @@ jQuery(document).ready(function ($) {
                 // Since this is an asynchronous request, there will be a time delay between the user clicking the button, and
                 // the category being added to the server, so waiting until the server resonds to add the new category to
                 // the list of existing category's (directly above the add button)
-                $("#categories").append("<div class='row'><div class='col-xs-offset-2 col-xs-8'>" + serverResponse.newCategory + "</div><div class='col-xs-2'><span class='deleteCategory glyphicon glyphicon-trash' aria-hidden='true' id='" + serverResponse.newCategory + "'></span></div>");
+                $("#categories").append("<div class='row'><div class='col-xs-offset-2 col-xs-8'>" + serverResponse.newCategory + "</div><div class='col-xs-2'><span class='deleteCategory glyphicon glyphicon-trash' aria-hidden='true' data-deletecategory='" + serverResponse.newCategory + "'></span></div>");
 
                 // Returning the focus to the new category input, so that the user can continue to type and add new category's
                 // without having to click into it again
@@ -447,8 +447,9 @@ jQuery(document).ready(function ($) {
 
         // Sending an AJAX request to the server, with the id of the delete button that was clicked (which will be
         // equal to the name of that category)
-        $.post("/admin/deleteCategory", { deleteCategory: $(event.target).attr("id") }, function (serverResponse) {
+        $.post("/admin/deleteCategory", { deleteCategory: $(event.target).data("deletecategory") }, function (serverResponse) {
 
+            console.log("del response from db - " + serverResponse.deletedCategory);
             // Looping through the select elements of media item, so that this category can be removed from their
             // options, once the server responds
             $(".mediaCategory option").each(function (index) {
@@ -474,7 +475,7 @@ jQuery(document).ready(function ($) {
 
             // Finding the category element in the list of category's in the admin panel, and removing it (based
             // on the category that the server has just deleted, incase responses come back in the wrong order)
-            $("#" + serverResponse.deletedCategory).parent().parent().remove();
+            $("#categories").find("[data-deletecategory='" + serverResponse.deletedCategory + "']").parent().parent().remove();
         }, "json");
         
         // Swapping the deleteCategory button's icon from a trash can to an hour glass, so that if there is a time
