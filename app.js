@@ -34,7 +34,6 @@ var mainUploadDirectory = process.env.NODE_ENV == "development" ? './public/medi
 // appear as a folder hierarchy.
 var uploadsDirectories = [
     mainUploadDirectory,
-    mainUploadDirectory + "audio",
     mainUploadDirectory + "image",
     mainUploadDirectory + "swf",
     mainUploadDirectory + "video",
@@ -70,15 +69,15 @@ var multerFileFilter = function (req, file, cb) {
         // Storing the second half of this string, i.e. file type (e.g. jpg)
         file.mediaType = file.mimetype.split("/")[0];
         file.fileType = file.mimetype.split("/")[1];
-        
-        if(file.fileType == "x-shockwave-flash"){
+
+        if (file.fileType == "x-shockwave-flash") {
             file.mediaType = file.fileType = "swf";
         }
 
         // Logging out the file type to the console (testing purposes)
         console.log("MULTER FILTER - This file is a " + file.mediaType + " file. More specifically, a " + file.fileType + " file.");
 
-        if (file.mediaType == "image" || file.mediaType == "audio" || file.mediaType == "video" || file.fileType == "swf") {
+        if (file.mediaType == "image" || file.mediaType == "video" || file.fileType == "swf") {
             console.log("MULTER FILTER - This is a supported filetype for this application - accepting this file");
             cb(null, true);
         } else {
@@ -104,11 +103,15 @@ var multerStorage = multer.diskStorage({
             // Setting the pathname so that multer knows where to store swf files
             pathName = mainUploadDirectory + '/swf';
         } else {
-            // Setting the pathname so that multer knows where to store all other video, audio and image files
+            // Setting the pathname so that multer knows where to store all other video and image files
             pathName = mainUploadDirectory + "/" + file.mediaType;
         }
 
         console.log("MULTER STORAGE - " + pathName);
+
+        req.setTimeout(15000, function (err) {
+            console.log("MULTER - Server timed out " + err);
+        });
 
         // Using the destination function's callback to pass the required pathname back
         // so that multer knows where to store this file

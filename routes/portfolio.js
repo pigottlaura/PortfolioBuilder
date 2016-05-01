@@ -16,11 +16,11 @@ router.get("/:portfolioURL", function (req, res, next) {
             } else {
                 console.log("INDEX - portfolio exists");
 
-                portfolio.sortMediaItems(portfolio, function (sortedMediaItems) {
+                portfolio.sortMediaItems(function () {
                     console.log("PORTFOLIO - media items sorted");
                     res.render("portfolio", {
                         title: "Welcome to " + portfolio.owner.firstName + "'s Portfolio",
-                        mediaItems: sortedMediaItems,
+                        mediaItems: portfolio.pages.home.mediaItems,
                         contactPage: portfolio.pages.contact,
                         categories: portfolio.pages.home.categories
                     });

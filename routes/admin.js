@@ -21,13 +21,13 @@ router.get('/', function (req, res, next) {
       } else {
         console.log("This user has " + portfolio.pages.home.mediaItems.length + " media items");
 
-        portfolio.sortMediaItems(portfolio, function (sortedMediaItems) {
+        portfolio.sortMediaItems(function () {
           res.render("admin", {
             title: "Admin Section",
             websiteURL: websiteURL + "portfolio/",
             portfolioURL: portfolio.portfolioURL,
             user: portfolio.owner,
-            mediaItems: sortedMediaItems,
+            mediaItems: portfolio.pages.home.mediaItems,
             contactPage: portfolio.pages.contact,
             categories: portfolio.pages.home.categories
           });

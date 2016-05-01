@@ -1,9 +1,19 @@
 // Requiring the mongoose module, so that I can begin setting up templates
-// for the documents which will be stored in this database i.e. Users and 
-// MediaItems
+// for the documents which will be stored in this database i.e. Users, Portfolios
+// and MediaItems
 var mongoose = require("mongoose");
+
+// Requiring the Schema constructor from the mongoose object, so that I can create
+// custom schemas for each of the models in the database. Originally I declared these
+// schemas withing the .model() method, but I found that by creating them seperately first,
+// I could then add middleware to them, which could be shared with all instances of that
+// schema i.e. using a .post() middleware on the MediaItemSchema, so that every time a media
+// item is saved to the database, it's id will also be added to the owners portfolio document
 var Schema = mongoose.Schema;
 
+// Creating the users schema, from which all users documents will be based upon. Not all users
+// will have all of these properties (i.e. google logins will not result in a username and password,
+// but in a google id).
 var UserSchema = new Schema({
     username: String,
     password: String,
@@ -26,6 +36,11 @@ var UserSchema = new Schema({
     }
 });
 
+// Creating the portfolio schema, from which all portfolio documents will be based upon. The purpose of 
+// this schema is to provide a link between users and media items. The id of the owner, and any media
+// items they have, will be stored within instances of this document as ObjectId's. When retrieving a portfolio
+// from the database, I call the .populate() method of mongoose as part of the query, so that all object id's
+// which reference other documents will also be returned in the result (much like an SQL table JOIN)
 var PortfolioSchema = new Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
@@ -54,8 +69,10 @@ var PortfolioSchema = new Schema({
     }
 });
 
-PortfolioSchema.methods.sortMediaItems = function (portfolio, cb) {
-    portfolio.pages.home.mediaItems.sort(function (a, b) {
+// Adding a function to the methods object of the Portfolio schema, so that all instances
+// of models of this schema can call the sortMediaItems method upon themselves, and hae
+PortfolioSchema.methods.sortMediaItems = function (cb) {
+    this.pages.home.mediaItems.sort(function (a, b) {
         var returnVal = 0;
         if (a.indexPosition > b.indexPosition) {
             returnVal = 1;
@@ -72,7 +89,7 @@ PortfolioSchema.methods.sortMediaItems = function (portfolio, cb) {
         }
         return returnVal;
     });
-    cb(portfolio.pages.home.mediaItems);
+    cb();
 };
 
 var MediaItemSchema = new Schema({
