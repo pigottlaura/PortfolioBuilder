@@ -287,6 +287,13 @@ jQuery(document).ready(function ($) {
         // Checking that the new url is not equal to the existing one (i.e. no change was made)
         if ($("#currentPortfolioURL").text() != originalPortfolioURL) {
 
+            // Adding an hour glass beside the portfolio link, so the user knows it is being updated
+            $("#portfolioLinkStatus").addClass("glyphicon-hourglass");
+
+            // Disabling the edit button, so the user cannot try to make an edit while the url is being
+            // updated
+            $("#editPortfolioURL").attr("disabled", "disabled");
+
             // Temporarily storing the requested URL, cast to lowercase and with all spaces removed from it
             var requestedURL = $("#currentPortfolioURL").text().toLowerCase().replace(/ /g, "");
 
@@ -314,6 +321,12 @@ jQuery(document).ready(function ($) {
                     $("#portfolioLink")
                         .attr("href", responseData.url + responseData.portfolioURL)
                         .text(responseData.url + responseData.portfolioURL);
+
+                    // Removing the hour glass beside the portfolio link
+                    $("#portfolioLinkStatus").removeClass("glyphicon-hourglass");
+
+                    // Enabling the edit button, so the user can edit the url again
+                    $("#editPortfolioURL").removeAttr("disabled");
                 } else {
 
                     // As these credentials are not available, resetting the url input to be equal to it's previous value
@@ -407,7 +420,7 @@ jQuery(document).ready(function ($) {
                 // i.e. if this is the category of the current figure (which would have been added to the parent's data attribute
                 // while rendering on the server)                
                 if ($(this).parent().data("category") == serverResponse.newCategory) {
-                    
+
                     // Since this is the category of this figure, setting the value of this select element to be 
                     // equal to it (i.e. to reflect the media item's current category)
                     $(this).val(serverResponse.newCategory);
@@ -420,26 +433,26 @@ jQuery(document).ready(function ($) {
     // new elements can then have the click event bound to them). Detecting clicks on their deleteCategory buttons,
     // so that a request can be sent to the server to delete them
     $("#categories").on("click", ".deleteCategory", function (event) {
-        
+
         // Sending an AJAX request to the server, with the id of the delete button that was clicked (which will be
         // equal to the name of that category)
         $.post("/admin/deleteCategory", { deleteCategory: $(event.target).attr("id") }, function (serverResponse) {
-            
+
             // Looping through the select elements of media item, so that this category can be removed from their
             // options, once the server responds
             $(".mediaCategory option").each(function (index) {
-                
+
                 // Checking if this category was the current category of this media item
                 if ($(this).text() == serverResponse.deletedCategory) {
-                    
+
                     // Removing the selected attribute from the option, so that it no longer appears as the 
                     // selected option on this media item
                     $(this).removeAttr("selected").remove();
-                    
+
                     // Setting the value of this media item's select element to be "none" i.e. the default
                     // value for select elements
                     $(this).parent().val('none');
-                    
+
                     // Decided not to reset the category of this media item on the server, as if the user wants
                     // to re-add this category later on, the media items that were previously assoicated with it
                     // will automatically reset to it. Even though media items may maintain a category that doesn't
@@ -447,7 +460,7 @@ jQuery(document).ready(function ($) {
                     // the admin panel nor the portfolio page (unless the category is added again)
                 }
             });
-            
+
             // Finding the category element in the list of category's in the admin panel, and removing it (based
             // on the category that the server has just deleted, incase responses come back in the wrong order)
             $("#" + serverResponse.deletedCategory).parent().parent().remove();
@@ -488,8 +501,8 @@ jQuery(document).ready(function ($) {
             // the user understands why the form would not submit
             $(event.target).find("input[type='file']").addClass("formWarning");
         }
-        
-        if(allowSubmit){
+
+        if (allowSubmit) {
             // Unbinding the click event from this form, so that the user cannot accidentally submit
             // it twice while it is still being processed (this will reset once the file has been uploaded
             // as the page will be refreshed)
