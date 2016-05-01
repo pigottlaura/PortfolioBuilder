@@ -469,11 +469,6 @@ jQuery(document).ready(function ($) {
             // Changing allow submit to true, so that this form can be sent to the server
             allowSubmit = true;
 
-            // Unbinding the click event from this form, so that the user cannot accidentally submit
-            // it twice while it is still being processed (this will reset once the file has been uploaded
-            // as the page will be refreshed)
-            $(event.target).unbind("click");
-
             // Checking which form triggered the event
             if ($(event.target).attr("id") == "changeContactPicture") {
 
@@ -492,6 +487,13 @@ jQuery(document).ready(function ($) {
             // Since the file input in this form contains no file, adding the form warning class to it so that
             // the user understands why the form would not submit
             $(event.target).find("input[type='file']").addClass("formWarning");
+        }
+        
+        if(allowSubmit){
+            // Unbinding the click event from this form, so that the user cannot accidentally submit
+            // it twice while it is still being processed (this will reset once the file has been uploaded
+            // as the page will be refreshed)
+            $(event.target).find("input[type=submit]").attr("disabled", "disabled");
         }
 
         // Returning the value of allowSubmit to the function, which will determine whether or not this form
