@@ -476,6 +476,11 @@ jQuery(document).ready(function ($) {
             // on the category that the server has just deleted, incase responses come back in the wrong order)
             $("#" + serverResponse.deletedCategory).parent().parent().remove();
         }, "json");
+        
+        // Swapping the deleteCategory button's icon from a trash can to an hour glass, so that if there is a time
+        // delay, the user will know that the request is in progress. Also unbinding the click event from this button
+        // so that only one delete request will be sent to the server (i.e. they cannot click it again)
+        $(event.target).removeClass("glyphicon-trash").addClass("glyphicon-hourglass").unbind("click");
     });
 
     // Checking the forms that contain file uploads, to ensure a file has been selected before 
