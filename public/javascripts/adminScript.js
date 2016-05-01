@@ -126,6 +126,7 @@ jQuery(document).ready(function ($) {
 
     $("#contactPicture").click(function (event) {
         $("#contactPictureSettings").trigger("click");
+        location.href = "#contactPictureSettings";
     });
 
     $(".deleteMedia").click(function (event) {
