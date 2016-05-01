@@ -48,7 +48,7 @@ passport.use(new GoogleStrategy({
             } else {
                 // Checking if any users were returned form this query i.e. if the user already exists
                 if (user == null) {
-                    console.log("GOOGLE - " + profile.name.givenName + " " + profile.name.familyName, + " is a new user");
+                    console.log("GOOGLE - " + profile.name.givenName + " " + profile.name.familyName + " is a new user");
 
                     // Creating a new user document, based on the user model (sourced from the exports
                     // of the databaseModels module)
