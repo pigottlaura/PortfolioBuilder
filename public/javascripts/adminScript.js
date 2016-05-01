@@ -240,7 +240,7 @@ jQuery(document).ready(function ($) {
     // field, as opposed to the click and type method I use for everything else, is that I feel this is the most
     // significant input on the screen, as if someone were to inadvertantly change their portfolio URL, and employeer
     // may no longer be able to find it. This method allows them to cancel the edit, before it is sent to the server
-    $("#editPortfolioURL").on("click", function (event) {
+    $("#editPortfolioURL").click(function (event) {
 
         // Setting the content editable property of the paragraph holding the URL to true (i.e. so it can be manipulated).
         // Calling focus on it, so the user knows it is now editable
@@ -292,7 +292,7 @@ jQuery(document).ready(function ($) {
 
             // Disabling the edit button, so the user cannot try to make an edit while the url is being
             // updated
-            $("#editPortfolioURL").unbind("click");
+            $("#editPortfolioURL").attr("disabled", "disabled");
 
             // Temporarily storing the requested URL, cast to lowercase and with all spaces removed from it
             var requestedURL = $("#currentPortfolioURL").text().toLowerCase().replace(/ /g, "");
@@ -326,7 +326,7 @@ jQuery(document).ready(function ($) {
                     $("#portfolioLinkStatus").removeClass("glyphicon-hourglass");
 
                     // Enabling the edit button, so the user can edit the url again
-                    $("#editPortfolioURL").bind("click");
+                    $("#editPortfolioURL").removeAttr("disabled");
                 } else {
 
                     // As these credentials are not available, resetting the url input to be equal to it's previous value
@@ -394,46 +394,50 @@ jQuery(document).ready(function ($) {
     // portfolio. These category's are used on the admin panel to decide which options to display in the select elements
     // on each media item, and on the portfolio page to decide which options to give visitors to filter the users 
     // portfolio by
-    $("#addCategory").on("click", function (event) {
+    $("#addCategory").click(function (event) {
 
-        // Temporarily disabling this button, so that users can't accidentally send multiple requests to the server
-        // while waiting for the first to go through
-        $("#addCategory").unbind("click");
+        // Checking that the new category has a value before allowing it to be sent to the server
+        if($("#newCategory").val().length > 0){
+            
+            // Temporarily disabling this button, so that users can't accidentally send multiple requests to the server
+            // while waiting for the first to go through
+            $("#addCategory").attr("disabled", "disabled");
 
-        // Sending an AJAX request to the server with the name of the new category
-        $.post("/admin/addNewCategory", { newCategory: $("#newCategory").val() }, function (serverResponse) {
+            // Sending an AJAX request to the server with the name of the new category
+            $.post("/admin/addNewCategory", { newCategory: $("#newCategory").val() }, function (serverResponse) {
 
-            // Since this is an asynchronous request, there will be a time delay between the user clicking the button, and
-            // the category being added to the server, so waiting until the server resonds to add the new category to
-            // the list of existing category's (directly above the add button)
-            $("#categories").append("<div class='row'><div class='col-xs-10'>" + serverResponse.newCategory + "</div><div class='col-xs-2'><button class='deleteCategory' id='" + serverResponse.newCategory + "'>x</button></div>");
+                // Since this is an asynchronous request, there will be a time delay between the user clicking the button, and
+                // the category being added to the server, so waiting until the server resonds to add the new category to
+                // the list of existing category's (directly above the add button)
+                $("#categories").append("<div class='row'><div class='col-xs-10'>" + serverResponse.newCategory + "</div><div class='col-xs-2'><span class='deleteCategory glyphicon glyphicon-trash' aria-hidden='true' id='" + serverResponse.newCategory + "'></span></div>");
 
-            // Returning the focus to the new category input, so that the user can continue to type and add new category's
-            // without having to click into it again
-            $("#newCategory").val("").focus();
+                // Returning the focus to the new category input, so that the user can continue to type and add new category's
+                // without having to click into it again
+                $("#newCategory").val("").focus();
 
-            // Enabling the add category button, as the previous request has just completed
-            $("#addCategory").bind("click");
+                // Enabling the add button 
+                $("#addCategory").removeAttr("disabled");
 
-            // Looping through each of the select elements on the media items, and adding this new category as an option
-            $(".mediaCategory").each(function (index) {
+                // Looping through each of the select elements on the media items, and adding this new category as an option
+                $(".mediaCategory").each(function (index) {
 
-                // Adding a new option to this select element, using the name returned in the response data, just incase 
-                // multiple category's are added one after the other, and come back in the wrong order, I want to 
-                // ensure I am adding the right one
-                $(this).append("<option value='" + serverResponse.newCategory + "'>" + serverResponse.newCategory + "</option>");
+                    // Adding a new option to this select element, using the name returned in the response data, just incase 
+                    // multiple category's are added one after the other, and come back in the wrong order, I want to 
+                    // ensure I am adding the right one
+                    $(this).append("<option value='" + serverResponse.newCategory + "'>" + serverResponse.newCategory + "</option>");
 
-                // Checking if the name of this category matches with the select options parent element's data-category attribute
-                // i.e. if this is the category of the current figure (which would have been added to the parent's data attribute
-                // while rendering on the server)                
-                if ($(this).parent().data("category") == serverResponse.newCategory) {
+                    // Checking if the name of this category matches with the select options parent element's data-category attribute
+                    // i.e. if this is the category of the current figure (which would have been added to the parent's data attribute
+                    // while rendering on the server)                
+                    if ($(this).parent().data("category") == serverResponse.newCategory) {
 
-                    // Since this is the category of this figure, setting the value of this select element to be 
-                    // equal to it (i.e. to reflect the media item's current category)
-                    $(this).val(serverResponse.newCategory);
-                }
-            });
-        }, "json");
+                        // Since this is the category of this figure, setting the value of this select element to be 
+                        // equal to it (i.e. to reflect the media item's current category)
+                        $(this).val(serverResponse.newCategory);
+                    }
+                });
+            }, "json");
+        }
     });
 
     // Dynamically generated category's were not being detected by click(), so using on() instead (as these
@@ -510,7 +514,7 @@ jQuery(document).ready(function ($) {
         }
 
         if (allowSubmit) {
-            // Unbinding the click event from this form, so that the user cannot accidentally submit
+            // Disabeling the submit button of the form so that the user cannot accidentally submit
             // it twice while it is still being processed (this will reset once the file has been uploaded
             // as the page will be refreshed)
             $(event.target).find("input[type=submit]").attr("disabled", "disabled");

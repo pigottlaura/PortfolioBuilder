@@ -48,7 +48,7 @@ block content
                                         div.row
                                             div.col-xs-10(class="category") #{categories[i]}
                                             div.col-xs-2
-                                                button(class="deleteCategory" id="#{categories[i]}") x
+                                                span(class="deleteCategory glyphicon glyphicon-trash" aria-hidden="true" id="#{categories[i]}")
                     div.row
                         div.col-xs-3
                             label New Category:
@@ -56,7 +56,7 @@ block content
                             input(id="newCategory")
                         div.row
                             div.col-xs-4.col-xs-offset-8
-                                button(id="addCategory") Add
+                                input(id="addCategory" type="submit" value="Add")
                 h3(id="portfolioURLSettings") Portfolio URL
                 div
                     div.row
@@ -69,7 +69,7 @@ block content
                         div.col-xs-4.col-xs-offset-4
                             button(id="savePortfolioURL") Save
                         div.col-xs-4
-                            button(id="editPortfolioURL") Edit
+                            input(type="submit" id="editPortfolioURL" value="Edit")
                             button(id="cancelPortfolioURL") Cancel
                 h3(id="contactPictureSettings") Contact Page Picture
                 div
