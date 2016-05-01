@@ -146,7 +146,7 @@ var multerStorage = multer.diskStorage({
 
         // Increasing the time out for the request, as file uploads take a long time on Azure - not really
         // improving the issue for videos through
-        req.setTimeout(30000, function (err) {
+        req.setTimeout(60000, function (err) {
             console.log("MULTER - Server timed out " + err);
         });
 
