@@ -5,12 +5,20 @@ jQuery(document).ready(function ($) {
     // on the login screen, and in the admin panel
     $(".tabs").tabs();
 
+    // Every time the page loads, getting the previous tab index for any jQuery UI tabs() elments on
+    // the screen, so that if the page has just reloaded, or the user was directed back here, they
+    // see the same layout
     $(".tabs").each(function (index) {
+        // Getting the cookie data of this element's cookie, by passing it's id to the getCookieData() method 
+        // I created below. This will return an object with two properties - exists and value
         var cookieData = getCookieData($(this).attr("id"));
 
+        // If the cookie for this tab element already exists, getting it's value and setting the tabs element to this
         if (cookieData.exists) {
             $(this).tabs("option", "active", cookieData.value);
         } else {
+            // Since the cookie does not already exist, creating a new one, with the same name as this tabs element
+            // id, and the index value of the current tab it is on
             document.cookie = $(this).attr("id") + "=" + $(this).tabs("option", "active");
         }
     });
@@ -18,6 +26,7 @@ jQuery(document).ready(function ($) {
     // Everytime the window is resized, calling the same resizeFigures() method so that the figures
     // will be recalculated and the containers sized appropriatley
     $(window).resize(function () {
+
         // Calling the resizeFigures() method, as defined below. The purpose of this method is to
         // combat the issues with resizing of embedded objects (such as swfs and videos). As I wanted
         // to make each of these elements responsive (along with any other media elements on the page).
@@ -27,6 +36,7 @@ jQuery(document).ready(function ($) {
         resizeFigures();
     });
 
+    // Waiting until all elements on the page have loaded before resizing them
     window.onload = function () {
         console.log("Window Loaded");
 
@@ -39,19 +49,35 @@ jQuery(document).ready(function ($) {
         resizeFigures();
     }
 
+    // Every time an accordion is activated (i.e. clicked on) storing the current accordion index position in a
+    // cookie so that if the page reloads, or the user is directed back here, they will see the same layout as before
     $(".accordion").on("accordionactivate", function (event, ui) {
+
+        // Removing any warnings from form inputs, as when a user changes tabs they must no longer be trying to
+        // submit a form
         $("form input").not("[type='submit']").removeClass("formWarning");
 
+        // Setting the cookie with the same name as this accordion element's id to be equal to the number of the 
+        // accordion heading it is now on
         document.cookie = $(event.target).attr("id") + "=" + $(event.target).accordion("option", "active"); + ";path=/";
     });
 
+    // Every time a tab is activated (i.e. clicked on) storing the current tabs index position in a cookie so that
+    // if the page reloads, or the user is directed back here, they will see the same layout as before
     $(".tabs").on("tabsactivate", function (event, ui) {
+
+        // Resizing all figures again, as a change of tabs can cause the swfs to disappear
         resizeFigures();
+
+        // Removing any warnings from form inputs, as when a user changes accordion headings they must no longer 
+        // be trying to submit a form
+        $("form input").not("[type='submit']").removeClass("formWarning");
+
         console.log("Changing " + $(event.target).attr("id") + " to " + $(event.target).tabs("option", "active"));
 
+        // Setting the cookie with the same name as this tab element's id to be equal to the number of the tab
+        // it is now on
         document.cookie = $(event.target).attr("id") + "=" + $(event.target).tabs("option", "active"); + ";path=/";
-
-        $("form input").not("[type='submit']").removeClass("formWarning");
     });
 });
 
