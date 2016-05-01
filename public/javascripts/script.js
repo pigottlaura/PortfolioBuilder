@@ -29,6 +29,11 @@ jQuery(document).ready(function ($) {
     $(window).resize(function () {
         resizeFigures();
     });
+    
+    window.onload = function(){
+        console.log("Window Loaded");
+        resizeFigures();
+    }
 
     $(".accordion").on("accordionactivate", function (event, ui) {
         $("form input").not("[type='submit']").removeClass("formWarning");
