@@ -141,7 +141,7 @@ object {
 }
 .flashUnavailable {
     position: absolute;
-    top: 45%;
+    top: 35%;
     left: 0;
     text-align: center;
     z-index: 0;
