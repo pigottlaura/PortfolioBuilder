@@ -325,6 +325,10 @@ jQuery(document).ready(function ($) {
                     // Removing the hour glass beside the portfolio link
                     $("#portfolioLinkStatus").removeClass("glyphicon-hourglass");
 
+                    // Removing all classes from the status icon, as it no longer needs to display feedback on whether this url
+                    // is available or not
+                    $("#portfolioURLStatusIcon").removeAttr("class");
+
                     // Enabling the edit button, so the user can edit the url again
                     $("#editPortfolioURL").removeAttr("disabled");
                 } else {
@@ -345,10 +349,6 @@ jQuery(document).ready(function ($) {
 
         // Removing the content editable attribute from the url input, as the user has finished editing it
         $("#currentPortfolioURL").removeAttr("contenteditable");
-
-        // Removing all classes from the status icon, as it no longer needs to display feedback on whether this url
-        // is available or not
-        $("#portfolioURLStatusIcon").removeAttr("class");
     });
 
     // Each time the user releases a key while typing in the url input field, sending an AJAX request to the server
@@ -397,7 +397,7 @@ jQuery(document).ready(function ($) {
     $("#addCategory").click(function (event) {
 
         // Checking that the new category has a value before allowing it to be sent to the server
-        if($("#newCategory").val().length > 0){
+        if ($("#newCategory").val().length > 0) {
 
             // Sending an AJAX request to the server with the name of the new category
             $.post("/admin/addNewCategory", { newCategory: $("#newCategory").val() }, function (serverResponse) {
@@ -433,7 +433,7 @@ jQuery(document).ready(function ($) {
                     }
                 });
             }, "json");
-            
+
             // Temporarily disabling this button, so that users can't accidentally send multiple requests to the server
             // while waiting for the first to go through
             $("#addCategory").attr("disabled", "disabled");
