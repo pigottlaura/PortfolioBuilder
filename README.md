@@ -141,3 +141,5 @@ Available on: http://portfoliobuilder.azurewebsites.net/
     - googlePassport - This module generates the basic setup for implementing Google passport, such as setting up the passport strategy (using keys generated from my Google Developer account - stored in environment variables for security purposes), the function called to authenticate a user's login with Google (once the callback has been received by the server). This function is triggered in the authentication.js route.
     - cryptoEncryption - An object containing two functions, one to encrypt text, and one to decrypt it. Using sample code from https://github.com/chris-rock/node-crypto-examples/blob/master/crypto-ctr.js as the basis of the encryption with Node.js's built in Crypto module.
     - database.js - The exports of the module contains the connection to the mongo database, which is set up and connected within this module. The purpose of this module is to allow multiple routes of the app to share the one database connection
+- Mobile Responsiveness
+    - This application scales to suit the screen dimensions of the device it is displayed on

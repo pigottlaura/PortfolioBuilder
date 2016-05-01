@@ -142,6 +142,10 @@ object {
 .flashUnavailable {
     display: none;
 }
+
+figure video, figure object, .objectContainer {
+    min-height: 30vh;
+}
 /* To match with MD of bootstrap CSS */
 @media screen and (max-width: 991px) {
     .mobileShow {
@@ -247,5 +251,8 @@ object {
         position: static;
         color: #CCED11;
         font-size: 5vw !important;
+    }
+    figure video, figure object, .objectContainer {
+        min-height: 45vh;
     }
 }
