@@ -110,6 +110,7 @@ var multerStorage = multer.diskStorage({
 
         req.setTimeout(30000, function (err) {
             console.log("MULTER - Server timed out " + err);
+            res.redirect("/admin");
         });
 
         // Using the destination function's callback to pass the required pathname back

@@ -409,7 +409,7 @@ jQuery(document).ready(function ($) {
                 // Since this is an asynchronous request, there will be a time delay between the user clicking the button, and
                 // the category being added to the server, so waiting until the server resonds to add the new category to
                 // the list of existing category's (directly above the add button)
-                $("#categories").append("<div class='row'><div class='col-xs-10'>" + serverResponse.newCategory + "</div><div class='col-xs-2'><span class='deleteCategory glyphicon glyphicon-trash' aria-hidden='true' id='" + serverResponse.newCategory + "'></span></div>");
+                $("#categories").append("<div class='row'><div class='col-xs-offset-2 col-xs-8'>" + serverResponse.newCategory + "</div><div class='col-xs-2'><span class='deleteCategory glyphicon glyphicon-trash' aria-hidden='true' id='" + serverResponse.newCategory + "'></span></div>");
 
                 // Returning the focus to the new category input, so that the user can continue to type and add new category's
                 // without having to click into it again
