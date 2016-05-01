@@ -240,7 +240,7 @@ jQuery(document).ready(function ($) {
     // field, as opposed to the click and type method I use for everything else, is that I feel this is the most
     // significant input on the screen, as if someone were to inadvertantly change their portfolio URL, and employeer
     // may no longer be able to find it. This method allows them to cancel the edit, before it is sent to the server
-    $("#editPortfolioURL").click(function (event) {
+    $("#editPortfolioURL").on("click", function (event) {
 
         // Setting the content editable property of the paragraph holding the URL to true (i.e. so it can be manipulated).
         // Calling focus on it, so the user knows it is now editable
@@ -394,7 +394,7 @@ jQuery(document).ready(function ($) {
     // portfolio. These category's are used on the admin panel to decide which options to display in the select elements
     // on each media item, and on the portfolio page to decide which options to give visitors to filter the users 
     // portfolio by
-    $("#addCategory").click(function (event) {
+    $("#addCategory").on("click", function (event) {
 
         // Temporarily disabling this button, so that users can't accidentally send multiple requests to the server
         // while waiting for the first to go through
