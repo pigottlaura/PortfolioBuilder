@@ -144,7 +144,7 @@ object {
 }
 
 figure video, figure object, .objectContainer {
-    min-height: 30vh;
+    min-height: 40vh !important;
 }
 /* To match with MD of bootstrap CSS */
 @media screen and (max-width: 991px) {
