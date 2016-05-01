@@ -140,16 +140,7 @@ object {
     z-index: 1;
 }
 .flashUnavailable {
-    position: absolute;
-    top: 35%;
-    left: 0;
-    text-align: center;
-    z-index: 0;
-}
-.flashUnavailable span {
-    position: static;
-    color: #CCED11;
-    font-size: 5vw !important;
+    display: none;
 }
 /* To match with MD of bootstrap CSS */
 @media screen and (max-width: 991px) {
@@ -243,5 +234,18 @@ object {
     }
     select {
         padding: 4vw 2vw !important;
+    }
+    .flashUnavailable {
+        display: block;
+        position: absolute;
+        top: 35%;
+        left: 0;
+        text-align: center;
+        z-index: 0;
+    }
+    .flashUnavailable span {
+        position: static;
+        color: #CCED11;
+        font-size: 5vw !important;
     }
 }
