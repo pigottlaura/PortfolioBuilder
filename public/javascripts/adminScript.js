@@ -292,7 +292,7 @@ jQuery(document).ready(function ($) {
 
             // Disabling the edit button, so the user cannot try to make an edit while the url is being
             // updated
-            $("#editPortfolioURL").attr("disabled", "disabled");
+            $("#editPortfolioURL").unbind("click");
 
             // Temporarily storing the requested URL, cast to lowercase and with all spaces removed from it
             var requestedURL = $("#currentPortfolioURL").text().toLowerCase().replace(/ /g, "");
@@ -326,7 +326,7 @@ jQuery(document).ready(function ($) {
                     $("#portfolioLinkStatus").removeClass("glyphicon-hourglass");
 
                     // Enabling the edit button, so the user can edit the url again
-                    $("#editPortfolioURL").removeAttr("disabled");
+                    $("#editPortfolioURL").bind("click");
                 } else {
 
                     // As these credentials are not available, resetting the url input to be equal to it's previous value
@@ -396,6 +396,10 @@ jQuery(document).ready(function ($) {
     // portfolio by
     $("#addCategory").click(function (event) {
 
+        // Temporarily disabling this button, so that users can't accidentally send multiple requests to the server
+        // while waiting for the first to go through
+        $("#addCategory").unbind("click");
+
         // Sending an AJAX request to the server with the name of the new category
         $.post("/admin/addNewCategory", { newCategory: $("#newCategory").val() }, function (serverResponse) {
 
@@ -407,6 +411,9 @@ jQuery(document).ready(function ($) {
             // Returning the focus to the new category input, so that the user can continue to type and add new category's
             // without having to click into it again
             $("#newCategory").val("").focus();
+
+            // Enabling the add category button, as the previous request has just completed
+            $("#addCategory").bind("click");
 
             // Looping through each of the select elements on the media items, and adding this new category as an option
             $(".mediaCategory").each(function (index) {
