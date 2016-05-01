@@ -11,48 +11,42 @@ var websiteURL = process.env.WEBSITE_URL || "http://localhost:3000/";
 // Get main admin dashboard
 router.get('/', function (req, res, next) {
   console.log("ADMIN - in admin section");
-  if (req.session.portfolio == null) {
-    console.log("ADMIN - User does not have portfolio on session");
-    Portfolio.findOne({ owner: req.session._userId }).populate("pages.home.mediaItems owner").exec(function (err, portfolio) {
-      if (err) {
-        console.log("Index - Could not check if this portfolio exists - " + err);
+  Portfolio.findOne({ owner: req.session._userId }).populate("pages.home.mediaItems owner").exec(function (err, portfolio) {
+    if (err) {
+      console.log("Index - Could not check if this portfolio exists - " + err);
+    } else {
+      if (portfolio == null) {
+        console.log("Index - This portfolio does not exist");
+        res.render("noportfolio", { title: "/ " + req.params.portfolioURL + " does not exist" });
       } else {
-        if (portfolio == null) {
-          console.log("Index - This portfolio does not exist");
-          res.render("noportfolio", { title: "/ " + req.params.portfolioURL + " does not exist" });
-        } else {
-          console.log("This user has " + portfolio.pages.home.mediaItems.length + " media items");
-          req.session.portfolio = portfolio;
-          req.session.sortedMediaItems = databaseModels.sortMediaItems(portfolio.pages.home.mediaItems);
+        console.log("This user has " + portfolio.pages.home.mediaItems.length + " media items");
 
-          console.log("ADMIN - User portfolio added to session - redirecting to admin");
-          res.redirect("/admin");
-
-        }
+        portfolio.sortMediaItems(portfolio, function (sortedMediaItems) {
+          res.render("admin", {
+            title: "Admin Section",
+            websiteURL: websiteURL + "portfolio/",
+            portfolioURL: portfolio.portfolioURL,
+            user: portfolio.owner,
+            mediaItems: sortedMediaItems,
+            contactPage: portfolio.pages.contact,
+            categories: portfolio.pages.home.categories
+          });
+        });
       }
-    });
-  } else {
-    console.log("ADMIN - User has portfolio on session - rendering");
-    res.render("admin", {
-      title: "Admin Section",
-      websiteURL: websiteURL + "portfolio/",
-      portfolioURL: req.session.portfolio.portfolioURL,
-      user: req.session.portfolio.owner,
-      mediaItems: req.session.sortedMediaItems,
-      contactPage: req.session.portfolio.pages.contact,
-      categories: req.session.portfolio.pages.home.categories
-    });
-  }
+    }
+  });
 });
 
 // Upload media to admin
 router.post("/uploadMedia", function (req, res, next) {
-  var owner = req.session._userId;
   var newMediaItems = [];
+  var totalFilesSaved = 0;
 
   for (var i = 0; i < req.files.length; i++) {
     console.log("ADMIN - file successfully uploaded");
+    
     var newMediaItemTitle = req.body.mediaItemTitle.length > 0 ? req.body.mediaItemTitle : req.files[i].originalname;
+    
     var newMediaItem = new MediaItem({
       owner: req.session._userId,
       file: req.files[i],
@@ -61,19 +55,22 @@ router.post("/uploadMedia", function (req, res, next) {
       fileTitle: newMediaItemTitle
     });
 
-    req.session.sortedMediaItems.unshift(newMediaItem);
     newMediaItems.push(newMediaItem);
   }
-
-  console.log("ADMIN - Redirecting user back to admin panel");
-  res.redirect("/admin");
 
   for (var i = 0; i < newMediaItems.length; i++) {
     newMediaItems[i].save(function (err, newMediaItem) {
       if (err) {
         console.log("ADMIN - Could not save media item to database - " + err);
+        res.redirect("/admin");
       } else {
         console.log("ADMIN - Media item successfully saved to database");
+        totalFilesSaved++;
+        
+        if(totalFilesSaved == newMediaItems.length){
+          console.log("ADMIN - All media items saved. Returning to admin panel");
+          res.redirect("/admin");
+        }
       }
     });
   }
@@ -83,13 +80,12 @@ router.post("/uploadMedia", function (req, res, next) {
 router.post("/changePortfolioURL", function (req, res, next) {
   console.log("ADMIN - requested portfolioURL to be changed - " + req.body.newPortfolioURL);
 
-  req.session.portfolio.portfolioURL = req.body.newPortfolioURL;
-
   Portfolio.update({ owner: req.session._userId }, { $set: { portfolioURL: req.body.newPortfolioURL.toLowerCase() } }, function (err, portfolio) {
     if (err) {
       console.log("ADMIN - Could not check if this portfolio exists - " + err);
     } else {
       console.log("ADMIN - updated portfolio URL");
+      res.send();
     }
   });
 });
@@ -97,15 +93,6 @@ router.post("/changePortfolioURL", function (req, res, next) {
 router.post("/deleteMedia", function (req, res, next) {
 
   console.log("ADMIN - delete media request received");
-
-  for (var i = 0; i < req.session.sortedMediaItems.length; i++) {
-    if (ObjectId(req.body.mediaId).equals(req.session.sortedMediaItems[i]._id)) {
-      req.session.sortedMediaItems.splice(i, 1);
-      break;
-    }
-  }
-  console.log("ADMIN - media item removed from session - returning user to admin panel");
-  res.json({ mediaId: req.body.mediaId });
 
   MediaItem.findOne({ "_id": ObjectId(req.body.mediaId) }, function (err, mediaItem) {
     if (err) {
@@ -120,91 +107,61 @@ router.post("/deleteMedia", function (req, res, next) {
           console.log("ADMIN - File Deleted");
         }
       });
+      res.json({ mediaId: mediaItem._id });
       mediaItem.remove();
     }
   });
 });
 
 router.post("/changeMediaTitle", function (req, res, next) {
-
-  for (var i = 0; i < req.session.sortedMediaItems.length; i++) {
-    if (ObjectId(req.body.mediaId).equals(req.session.sortedMediaItems[i]._id)) {
-      req.session.sortedMediaItems[i].fileTitle = req.body.newTitle;
-      break;
-    }
-  }
-
-  res.send();
-
   MediaItem.update({ "_id": ObjectId(req.body.mediaId) }, { $set: { fileTitle: req.body.newTitle } }, function (err, mediaItem) {
     if (err) {
       console.log("ADMIN - Unable to change media item title - " + err);
     } else {
       console.log("ADMIN - Media item title updated");
+      res.send();
     }
   });
 });
 
 router.post("/changeMediaOrder", function (req, res, next) {
   var newMediaOrder = JSON.parse(req.body.newOrder);
-
-  for (var n = 0; n < newMediaOrder.length; n++) {
-
-    for (var s = 0; s < req.session.sortedMediaItems.length; s++) {
-      if (ObjectId(newMediaOrder[n].mediaId).equals(req.session.sortedMediaItems[s]._id)) {
-        req.session.sortedMediaItems[s].indexPosition = newMediaOrder[n].indexPosition;
-        console.log(req.session.sortedMediaItems[s]._id + " is now at index " + req.session.sortedMediaItems[s].indexPosition);
-        break;
-      }
-    }
-  }
-
-  req.session.sortedMediaItems = databaseModels.sortMediaItems(req.session.sortedMediaItems);
-  console.log("ADMIN - media item order changed on session - returning user to admin panel");
+  var totalFilesSaved = 0;
   res.send();
 
   for (var i = 0; i < newMediaOrder.length; i++) {
     MediaItem.update({ "_id": ObjectId(newMediaOrder[i].mediaId) }, { $set: { indexPosition: newMediaOrder[i].indexPosition } }, function (err, docsEffected) {
       if (err) {
-        console.log("ADMIN - Could not update media item position updated in database - " + err);
+        console.log("ADMIN - Could not update media item position updated in the database - " + err);
+      } else {
+        console.log("ADMIN - Media item position successfully updated in the database");
+        totalFilesSaved++;
+        
+        if(totalFilesSaved == newMediaOrder.length){
+          console.log("ADMIN - All media items order updated in the database");
+        }
       }
     });
   }
 });
 
 router.post("/changeContactDetails", function (req, res, next) {
-  var newName = req.body.name;
-  var newEmail = req.body.email;
-  var newPhone = req.body.phone;
-  var newInfo = req.body.info;
-
-  req.session.portfolio.pages.contact.info = newInfo;
-  req.session.portfolio.pages.contact.contactDetails.name = newName;
-  req.session.portfolio.pages.contact.contactDetails.email = newEmail;
-  req.session.portfolio.pages.contact.contactDetails.phone = newPhone;
-
-  res.send();
-
   Portfolio.update({ owner: req.session._userId }, {
-    $set: { "pages.contact.contactDetails.name": newName, "pages.contact.contactDetails.email": newEmail, "pages.contact.contactDetails.phone": newPhone, "pages.contact.info": newInfo }
+    $set: { "pages.contact.contactDetails.name": req.body.name, "pages.contact.contactDetails.email": req.body.email, "pages.contact.contactDetails.phone": req.body.phone, "pages.contact.info": req.body.info }
   }, function (err, docsEffected) {
     if (err) {
       console.log("ADMIN - Could not update portfolio contact details - " + err);
     } else {
       console.log("ADMIN - Contact details successfully updated");
+      res.send();
     }
   });
 });
 
 router.post("/changeContactPicture", function (req, res, next) {
   var newPictureFilePath = req.files[0].path.split("public\\")[1];
-  var owner = req.session._userId;
 
-  req.session.portfolio.pages.contact.picture = newPictureFilePath;
-
-  res.redirect("/admin");
-
-  Portfolio.findOne({ owner: owner }, {}, function (err, portfolio) {
+  Portfolio.findOne({ owner: req.session._userId }, {}, function (err, portfolio) {
     if (err) {
     } else {
       if (portfolio.pages.contact.picture) {
@@ -223,6 +180,7 @@ router.post("/changeContactPicture", function (req, res, next) {
           console.log("ADMIN - could not save new contact picture");
         } else {
           console.log("ADMIN - new contact picture saved");
+          res.redirect("/admin");
         }
       });
     }
@@ -230,23 +188,19 @@ router.post("/changeContactPicture", function (req, res, next) {
 });
 
 router.post("/addNewCategory", function (req, res, next) {
-
   var newCategory = req.body.newCategory;
-
-  req.session.portfolio.pages.home.categories.push(newCategory);
-
-  res.send({ newCategory: newCategory });
-
+  
   Portfolio.findOne({ owner: req.session._userId }, {}, function (err, portfolio) {
     if (err) {
 
     } else {
-      portfolio.pages.home.categories.push(newCategory);
+      portfolio.pages.home.categories.push(req.body.newCategory);
       portfolio.save(function (err, portfolio) {
         if (err) {
           console.log("ADMIN - could not save new category to database");
         } else {
           console.log("ADMIN - new category saved to database");
+          res.send({ newCategory: newCategory });
         }
       });
     }
@@ -254,15 +208,7 @@ router.post("/addNewCategory", function (req, res, next) {
 });
 
 router.post("/deleteCategory", function (req, res, next) {
-
   var deleteCategory = req.body.deleteCategory;
-  
-  for(var i = 0; i < req.session.portfolio.pages.home.categories.length; i++){
-    if(req.session.portfolio.pages.home.categories[i] == deleteCategory){
-      req.session.portfolio.pages.home.categories.splice(i, 1);
-    }
-  }
-  res.send({ deletedCategory: deleteCategory })
 
   Portfolio.findOne({ owner: req.session._userId }, {}, function (err, portfolio) {
     if (err) {
@@ -276,6 +222,7 @@ router.post("/deleteCategory", function (req, res, next) {
               console.log("ADMIN - could not delete category from database");
             } else {
               console.log("ADMIN - category deleted from database");
+              res.send({ deletedCategory: deleteCategory })
             }
           });
         }
@@ -285,23 +232,12 @@ router.post("/deleteCategory", function (req, res, next) {
 });
 
 router.post("/changeMediaCategory", function (req, res, next) {
-  var mediaItem = req.body.mediaItem;
-  var category = req.body.category;
-  
-  for(var i = 0; i < req.session.sortedMediaItems.length; i++){
-    if(mediaItem == req.session.sortedMediaItems[i]._id){
-      req.session.sortedMediaItems[i].category = category;
-      console.log("ADMIN - Media item category updated on session");
-    }
-  }
-  
-  res.send();
-  
   MediaItem.update({ owner: req.session._userId, "_id": ObjectId(req.body.mediaItem) }, { $set: { category: req.body.category } }, function (err, docsEffected) {
     if (err) {
       console.log("ADMIN - Could not update media item category - " + err);
     } else {
       console.log("ADMIN - media item's category successfully updated");
+      res.send();
     }
   });
 });

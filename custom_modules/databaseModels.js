@@ -54,6 +54,27 @@ var PortfolioSchema = new Schema({
     }
 });
 
+PortfolioSchema.methods.sortMediaItems = function (portfolio, cb) {
+    portfolio.pages.home.mediaItems.sort(function (a, b) {
+        var returnVal = 0;
+        if (a.indexPosition > b.indexPosition) {
+            returnVal = 1;
+        } else if (a.indexPosition < b.indexPosition) {
+            returnVal = -1;
+        } else {
+            if (a.uploadedAt > b.uploadedAt) {
+                returnVal = -1;
+            } else if (a.uploadedAt < b.uploadedAt) {
+                returnVal = 1;
+            } else {
+                returnVal = 0;
+            }
+        }
+        return returnVal;
+    });
+    cb(portfolio.pages.home.mediaItems);
+};
+
 var MediaItemSchema = new Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
@@ -134,27 +155,6 @@ var UserModel = mongoose.model("User", UserSchema);
 var PortfolioModel = mongoose.model("Portfolio", PortfolioSchema);
 var MediaItemModel = mongoose.model("MediaItem", MediaItemSchema);
 
-function sortMediaItems (mediaItems, cb) {
-    mediaItems.sort(function (a, b) {
-        var returnVal = 0;
-        if (a.indexPosition > b.indexPosition) {
-            returnVal = 1;
-        } else if (a.indexPosition < b.indexPosition) {
-            returnVal = -1;
-        } else {
-            if (a.uploadedAt > b.uploadedAt) {
-                returnVal = -1;
-            } else if (a.uploadedAt < b.uploadedAt) {
-                returnVal = 1;
-            } else {
-                returnVal = 0;
-            }
-        }
-        return returnVal;
-    });
-    return mediaItems;
-}
-
 // Creating an object, which contains all of the database models (templates for 
 // documents in the database) so that it can be used as the module export, and
 // so any route that requires this module can then access these modules directly
@@ -162,8 +162,7 @@ function sortMediaItems (mediaItems, cb) {
 var databaseModels = {
     User: UserModel,
     MediaItem: MediaItemModel,
-    Portfolio: PortfolioModel,
-    sortMediaItems: sortMediaItems
+    Portfolio: PortfolioModel
 }
 
 // Setting the module exports to be equal to the object created above,

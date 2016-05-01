@@ -176,7 +176,7 @@ object {
     }
     .ui-tabs-nav a {
         font-weight: 700;
-        margin-top: 3vw;
+        padding-top: 4vw !important;
         width: 100%;
     }
     
