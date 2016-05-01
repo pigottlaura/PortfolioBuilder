@@ -91,7 +91,7 @@ passport.use(new GoogleStrategy({
                                 if (err) {
                                     console.log("GOOGLE - Could not save new portfolio to the database - " + err);
                                 } else {
-                                    console.log("GOOGLR - New portfolio successfully saved to the database");
+                                    console.log("GOOGLE - New portfolio successfully saved to the database");
                                     
                                     // Returning no error, along with the newUser to the function(as specified in the passport API)
                                     return done(null, newUser);
