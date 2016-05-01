@@ -15,23 +15,27 @@ jQuery(document).ready(function ($) {
         }
     });
 
-
-    // Calling the resizeFigures() method, as defined below. The purpose of this method is to
-    // combat the issues with resizing of embedded objects (such as swfs and videos). As I wanted
-    // to make each of these elements responsive (along with any other media elements on the page).
-    // Each video and swf is wrapped in a container, and set to scale to the container's size. In order
-    // to ensure that this container matches with the other figures on the screen, using this function
-    // to find the largest figure, and then resizing all other figures and containers to match this.
-    setTimeout(resizeFigures, 200);
-
     // Everytime the window is resized, calling the same resizeFigures() method so that the figures
     // will be recalculated and the containers sized appropriatley
     $(window).resize(function () {
+        // Calling the resizeFigures() method, as defined below. The purpose of this method is to
+        // combat the issues with resizing of embedded objects (such as swfs and videos). As I wanted
+        // to make each of these elements responsive (along with any other media elements on the page).
+        // Each video and swf is wrapped in a container, and set to scale to the container's size. In order
+        // to ensure that this container matches with the other figures on the screen, using this function
+        // to find the largest figure, and then resizing all other figures and containers to match this.
         resizeFigures();
     });
-    
-    window.onload = function(){
+
+    window.onload = function () {
         console.log("Window Loaded");
+
+        // Calling the resizeFigures() method, as defined below. The purpose of this method is to
+        // combat the issues with resizing of embedded objects (such as swfs and videos). As I wanted
+        // to make each of these elements responsive (along with any other media elements on the page).
+        // Each video and swf is wrapped in a container, and set to scale to the container's size. In order
+        // to ensure that this container matches with the other figures on the screen, using this function
+        // to find the largest figure, and then resizing all other figures and containers to match this.
         resizeFigures();
     }
 
