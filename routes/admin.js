@@ -95,11 +95,12 @@ router.post("/uploadMedia", function (req, res, next) {
     // just do here as it makes it easier for me to pass it to Jade later on to render an image, or other,
     // element from it). Taking the full file path, splitting it at "public//" and storing everything that came
     // after it as the "filePath"
+    var filePath = process.env.NODE_ENV == "development" ? "../" + req.files[i].path.split("public/")[1] ? "../" + req.files[i].path.split("public\\")[1];
     var newMediaItem = new MediaItem({
       owner: req.session._userId,
       file: req.files[i],
       mediaType: req.files[i].mediaType,
-      filePath: "../" + req.files[i].path.split("public\\")[1],
+      filePath: filePath,
       fileTitle: newMediaItemTitle
     });
 
