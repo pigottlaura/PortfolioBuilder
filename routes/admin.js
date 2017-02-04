@@ -270,7 +270,7 @@ router.post("/changeContactPicture", function (req, res, next) {
   // file path (which I just do here as it makes it easier for me to pass it to Jade later on to render the image.
   // Taking the full file path, splitting it at "public//" and storing everything that came
   // after it as the "filePath"
-  var newPictureFilePath = req.files[0].path.split("public\\")[1];
+  var newPictureFilePath = process.env.NODE_ENV == "development" ? req.files[0].path.split("public/")[1] : req.files[0].path.split("public\\")[1];
 
   // Querying the Portfolio modle to find the portfolio belonging to the current user
   Portfolio.findOne({ owner: req.session._userId }, {}, function (err, portfolio) {
