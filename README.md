@@ -2,7 +2,7 @@
 ## Log in and create an online portfolio in minutes
 
 Assignment-02 for the Server Side Programming module, as part of the Creative Multimedia B.Sc. (hons) degree course in Limerick Institute of Technology, Clonmel.
-Available on: http://portfoliobuilder.azurewebsites.net/
+Available on: http://portfolio-builder.herokuapp.com
 
 ### Project Specifications
 - Languages
